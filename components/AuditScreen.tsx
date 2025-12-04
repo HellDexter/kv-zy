@@ -140,15 +140,20 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
 
     try {
       // Check for API Key presence safely
-      let apiKey = "";
+      // Fallback to the provided key if process.env.API_KEY is missing
+      let apiKey = "AIzaSyCk_NcjJVsWg7wpE4Jq_-_r8ersoaQrwn4";
+      
       try {
-        apiKey = process.env.API_KEY || "";
+        if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+           apiKey = process.env.API_KEY;
+        }
       } catch (e) {
-        console.error("Environment access error:", e);
+        // Ignore env access errors, use fallback
+        console.warn("Using fallback API key");
       }
 
       if (!apiKey) {
-        console.error("API_KEY is missing. Please set process.env.API_KEY.");
+        console.error("API_KEY is missing.");
         throw new Error("Missing API Key");
       }
 
