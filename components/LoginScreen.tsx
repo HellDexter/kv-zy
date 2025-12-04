@@ -57,9 +57,9 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
           
           {/* Status Indicators */}
           <div className="absolute top-6 right-6 flex gap-2">
-            <div className={`w-1.5 h-1.5 rounded-full ${loading ? 'bg-yellow-500 animate-ping' : 'bg-red-500'}`}></div>
-            <div className="w-1.5 h-1.5 rounded-full bg-cyan-500/30"></div>
-            <div className="w-1.5 h-1.5 rounded-full bg-cyan-500/30"></div>
+            <div className={`w-1.5 h-1.5 rounded-full ${loading ? 'bg-rose-500 animate-ping' : 'bg-rose-500'}`}></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
           </div>
 
           <div className="text-center mb-10 relative">
