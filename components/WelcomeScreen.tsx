@@ -17,7 +17,7 @@ const WelcomeScreen: React.FC<Props> = ({ blocks, onStartBlock, onBack }) => {
       {/* Back Button */}
       <button 
         onClick={onBack}
-        className="mb-12 text-gray-500 hover:text-white transition-all duration-300 flex items-center gap-3 text-xs font-bold tracking-widest uppercase group animate-fade-in-up"
+        className="mb-12 text-gray-500 hover:text-white transition-all duration-300 flex items-center gap-3 text-xs font-bold tracking-widest uppercase group animate-fade-in-up font-mono"
       >
         <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-white/10 transition-all">
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
@@ -26,11 +26,11 @@ const WelcomeScreen: React.FC<Props> = ({ blocks, onStartBlock, onBack }) => {
       </button>
 
       <header className="mb-16 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/5 text-emerald-400 text-[10px] uppercase tracking-widest mb-6 backdrop-blur-sm">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/5 text-emerald-400 text-[10px] uppercase tracking-widest mb-6 backdrop-blur-sm font-mono">
           <BrainCircuit className="w-3 h-3" />
           Centrum testování
         </div>
-        <h1 className="text-4xl md:text-6xl font-serif-display text-white mb-6 tracking-tight">
+        <h1 className="text-4xl md:text-6xl font-display text-white mb-6 tracking-tight uppercase">
           Kvízy a <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-400">testy</span>
         </h1>
         <p className="text-gray-400 max-w-2xl text-lg font-light leading-relaxed">
@@ -67,7 +67,7 @@ const WelcomeScreen: React.FC<Props> = ({ blocks, onStartBlock, onBack }) => {
                     </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-emerald-100 font-serif-display transition-colors">
+                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-emerald-100 font-display uppercase transition-colors">
                   {block.title.replace(/Blok \d+: /, "")}
                 </h3>
                 
@@ -75,7 +75,7 @@ const WelcomeScreen: React.FC<Props> = ({ blocks, onStartBlock, onBack }) => {
                   {block.description}
                 </p>
 
-                <div className="mt-auto flex items-center gap-2 text-[11px] font-bold text-emerald-500/70 group-hover:text-emerald-400 uppercase tracking-widest transition-colors">
+                <div className="mt-auto flex items-center gap-2 text-[11px] font-bold text-emerald-500/70 group-hover:text-emerald-400 uppercase tracking-widest transition-colors font-mono">
                    Spustit test <ArrowRight className="w-3 h-3" />
                 </div>
               </div>

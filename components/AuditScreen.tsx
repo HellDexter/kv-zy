@@ -306,7 +306,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
       <div className="mb-8 animate-fade-in-up">
         <button 
           onClick={onBack}
-          className="text-gray-500 hover:text-white transition-all duration-300 flex items-center gap-3 text-xs font-bold tracking-widest uppercase group mb-6"
+          className="text-gray-500 hover:text-white transition-all duration-300 flex items-center gap-3 text-xs font-bold tracking-widest uppercase group mb-6 font-mono"
         >
           <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-pink-500/50 group-hover:bg-pink-500/10 transition-all">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
@@ -316,7 +316,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div>
-                <h1 className="text-3xl md:text-4xl font-serif-display text-white mb-2">
+                <h1 className="text-3xl md:text-4xl font-display text-white mb-2 uppercase">
                     Audit <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-600">zabezpečení</span>
                 </h1>
                 <p className="text-gray-400 text-sm">
@@ -341,7 +341,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
         <div className={`p-4 rounded-xl border ${percentage < 80 ? 'bg-rose-950/30 border-rose-500/30 text-rose-200' : 'bg-emerald-950/30 border-emerald-500/30 text-emerald-200'} transition-colors duration-500 flex items-start gap-3`}>
             {percentage < 80 ? <ShieldAlert className="w-6 h-6 flex-shrink-0 mt-0.5" /> : <ShieldCheck className="w-6 h-6 flex-shrink-0 mt-0.5" />}
             <div>
-                <h3 className="font-bold text-sm uppercase tracking-wider mb-1">
+                <h3 className="font-bold text-sm uppercase tracking-wider mb-1 font-display">
                     {percentage < 80 ? "Kritické bezpečnostní mezery" : "Výborná úroveň zabezpečení"}
                 </h3>
                 <p className="text-sm opacity-90">
@@ -357,7 +357,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
       <div className="space-y-6">
         {AUDIT_DATA.map((section, sIndex) => (
             <div key={sIndex} className="bg-[#0a0a0a]/80 border border-white/10 rounded-2xl p-6 animate-fade-in-up" style={{ animationDelay: `${sIndex * 100}ms` }}>
-                <h2 className="text-xl font-bold text-pink-400 mb-6 font-serif-display">{section.title}</h2>
+                <h2 className="text-xl font-bold text-pink-400 mb-6 font-display uppercase">{section.title}</h2>
                 <div className="space-y-4">
                     {section.items.map((item) => (
                         <div key={item.id} className="flex flex-col sm:flex-row sm:items-center gap-4 group">
@@ -377,7 +377,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
 
                             <button 
                                 onClick={() => initChat(item)}
-                                className="ml-10 sm:ml-0 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-pink-400 hover:text-white bg-pink-500/10 hover:bg-pink-500/20 px-3 py-1.5 rounded-full transition-all border border-pink-500/20 hover:border-pink-500/40 whitespace-nowrap w-fit"
+                                className="ml-10 sm:ml-0 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-pink-400 hover:text-white bg-pink-500/10 hover:bg-pink-500/20 px-3 py-1.5 rounded-full transition-all border border-pink-500/20 hover:border-pink-500/40 whitespace-nowrap w-fit font-mono"
                             >
                                 <Bot className="w-3 h-3" />
                                 Jak na to
@@ -422,7 +422,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                             <Bot className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                            <h3 className="text-sm font-bold text-white flex items-center gap-2 font-display uppercase">
                               Bezpečnostní Průvodce
                               <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded text-gray-400 font-mono">AI</span>
                             </h3>

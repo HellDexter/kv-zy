@@ -70,39 +70,39 @@ const ResultScreen: React.FC<Props> = ({ score, totalQuestions, onRestart, onBac
             </div>
 
             <h2 className="text-sm font-mono text-gray-500 mb-2 tracking-widest uppercase">VÝSLEDEK AUDITU</h2>
-            <h1 className={`text-4xl md:text-5xl font-serif-display font-bold text-white mb-4`}>{title}</h1>
+            <h1 className={`text-4xl md:text-5xl font-display font-bold text-white mb-4 uppercase`}>{title}</h1>
             <p className="text-gray-400 mb-10 max-w-md leading-relaxed">
               {message}
             </p>
 
             <div className="flex items-end justify-center gap-2 mb-12">
-              <span className={`text-7xl font-bold ${colorClass} leading-none tracking-tighter drop-shadow-lg`}>
+              <span className={`text-7xl font-bold font-mono ${colorClass} leading-none tracking-tighter drop-shadow-lg`}>
                 {percentage}
               </span>
-              <span className="text-2xl text-gray-500 font-light mb-2">%</span>
+              <span className="text-2xl text-gray-500 font-light mb-2 font-mono">%</span>
             </div>
 
             <div className="grid grid-cols-2 gap-4 w-full mb-8">
                <div className="bg-white/5 border border-white/5 rounded-xl p-4">
-                  <div className="text-gray-500 text-xs uppercase tracking-wider mb-1">Správně</div>
-                  <div className="text-2xl font-bold text-white">{score}</div>
+                  <div className="text-gray-500 text-xs uppercase tracking-wider mb-1 font-mono">Správně</div>
+                  <div className="text-2xl font-bold text-white font-mono">{score}</div>
                </div>
                <div className="bg-white/5 border border-white/5 rounded-xl p-4">
-                  <div className="text-gray-500 text-xs uppercase tracking-wider mb-1">Celkem</div>
-                  <div className="text-2xl font-bold text-white">{totalQuestions}</div>
+                  <div className="text-gray-500 text-xs uppercase tracking-wider mb-1 font-mono">Celkem</div>
+                  <div className="text-2xl font-bold text-white font-mono">{totalQuestions}</div>
                </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 w-full">
               <button
                 onClick={onRestart}
-                className="flex-1 bg-white text-black hover:bg-cyan-50 py-4 rounded-full font-bold text-sm tracking-wide transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2"
+                className="flex-1 bg-white text-black hover:bg-cyan-50 py-4 rounded-full font-bold text-sm tracking-wide transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2 font-display uppercase"
               >
                 <RotateCcw className="w-4 h-4" /> OPAKOVAT TEST
               </button>
               <button
                 onClick={onBackToMenu}
-                className="flex-1 bg-transparent hover:bg-white/5 text-gray-300 border border-white/20 py-4 rounded-full font-bold text-sm tracking-wide transition-all flex items-center justify-center gap-2"
+                className="flex-1 bg-transparent hover:bg-white/5 text-gray-300 border border-white/20 py-4 rounded-full font-bold text-sm tracking-wide transition-all flex items-center justify-center gap-2 font-display uppercase"
               >
                 <ArrowLeft className="w-4 h-4" /> ZPĚT DO MENU
               </button>

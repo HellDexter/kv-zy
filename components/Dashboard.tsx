@@ -18,7 +18,7 @@ const Dashboard: React.FC<Props> = ({ onNavigate }) => {
     <div className="max-w-6xl mx-auto px-6 py-12 md:py-20 relative z-10 flex flex-col items-center justify-center min-h-[80vh]">
       
       <header className="text-center mb-16 animate-fade-in-up">
-        <h1 className="text-4xl md:text-6xl font-serif-display text-white mb-6 tracking-tight">
+        <h1 className="text-4xl md:text-6xl font-display text-white mb-6 tracking-tight uppercase">
           Vyberte <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 to-blue-400">modul</span>
         </h1>
         <p className="text-gray-400 max-w-xl mx-auto text-lg font-light">
@@ -46,13 +46,13 @@ const Dashboard: React.FC<Props> = ({ onNavigate }) => {
                 <div className="bg-cyan-950/30 w-16 h-16 rounded-2xl flex items-center justify-center border border-cyan-500/20 mb-6 group-hover:scale-110 transition-transform duration-500">
                   <Shield className="w-8 h-8 text-cyan-400" />
                 </div>
-                <h2 className="text-3xl font-serif-display text-white mb-3">Kyberbezpečnost</h2>
+                <h2 className="text-3xl font-display text-white mb-3 uppercase">Kyberbezpečnost</h2>
                 <p className="text-gray-400 font-light leading-relaxed">
                   Komplexní průvodce digitální obranou. Kvízy, ochrana dat a prevence útoků.
                 </p>
               </div>
               
-              <div className="flex items-center gap-2 text-cyan-400 text-sm font-bold tracking-widest uppercase mt-4">
+              <div className="flex items-center gap-2 text-cyan-400 text-sm font-bold tracking-widest uppercase mt-4 font-mono">
                 Vstoupit <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
@@ -82,13 +82,13 @@ const Dashboard: React.FC<Props> = ({ onNavigate }) => {
                 <div className="bg-white/5 w-16 h-16 rounded-2xl flex items-center justify-center border border-white/10 mb-6">
                   <Bot className="w-8 h-8 text-white" />
                 </div>
-                <h2 className="text-3xl font-serif-display text-white mb-3">AI</h2>
+                <h2 className="text-3xl font-display text-white mb-3 uppercase">AI</h2>
                 <p className="text-gray-400 font-light leading-relaxed">
                   Pokročilé moduly umělé inteligence. Automatizace, LLM a neuronové sítě.
                 </p>
               </div>
               
-              <div className="flex items-center gap-2 text-gray-500 text-sm font-bold tracking-widest uppercase mt-4">
+              <div className="flex items-center gap-2 text-gray-500 text-sm font-bold tracking-widest uppercase mt-4 font-mono">
                 Nedostupné
               </div>
             </div>

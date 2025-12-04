@@ -14,7 +14,7 @@ const CyberMenu: React.FC<Props> = ({ onNavigate, onBack }) => {
       {/* Back Button */}
       <button 
         onClick={onBack}
-        className="mb-12 text-gray-500 hover:text-white transition-all duration-300 flex items-center gap-3 text-xs font-bold tracking-widest uppercase group animate-fade-in-up"
+        className="mb-12 text-gray-500 hover:text-white transition-all duration-300 flex items-center gap-3 text-xs font-bold tracking-widest uppercase group animate-fade-in-up font-mono"
       >
         <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-white/10 transition-all">
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
@@ -23,7 +23,7 @@ const CyberMenu: React.FC<Props> = ({ onNavigate, onBack }) => {
       </button>
 
       <header className="mb-16 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-        <h1 className="text-4xl md:text-5xl font-serif-display text-white mb-4">
+        <h1 className="text-4xl md:text-5xl font-display text-white mb-4 uppercase">
           Kyberbezpečnost
         </h1>
         <p className="text-gray-400 text-lg font-light max-w-2xl">
@@ -50,8 +50,8 @@ const CyberMenu: React.FC<Props> = ({ onNavigate, onBack }) => {
               <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-emerald-400 transition-colors" />
             </div>
             
-            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-100">Kvízy a Testy</h3>
-            <p className="text-gray-400 text-xs leading-relaxed mb-4">
+            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-100 font-display uppercase">Kvízy a Testy</h3>
+            <p className="text-gray-400 text-sm leading-relaxed mb-4">
               Interaktivní testování znalostí z 9 tematických bloků.
             </p>
             <div className="text-emerald-500 text-[10px] font-mono uppercase tracking-widest mt-auto">Dostupné</div>
@@ -75,8 +75,8 @@ const CyberMenu: React.FC<Props> = ({ onNavigate, onBack }) => {
               <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-purple-400 transition-colors" />
             </div>
             
-            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-purple-100">Prezentace</h3>
-            <p className="text-gray-400 text-xs leading-relaxed mb-4">
+            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-purple-100 font-display uppercase">Prezentace</h3>
+            <p className="text-gray-400 text-sm leading-relaxed mb-4">
               Studijní materiály a detailní výklad problematiky.
             </p>
             <div className="text-purple-500 text-[10px] font-mono uppercase tracking-widest mt-auto">Dostupné</div>
@@ -100,8 +100,8 @@ const CyberMenu: React.FC<Props> = ({ onNavigate, onBack }) => {
               <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-pink-400 transition-colors" />
             </div>
             
-            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-pink-100">Praktická cvičení</h3>
-            <p className="text-gray-400 text-xs leading-relaxed mb-4">
+            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-pink-100 font-display uppercase">Praktická cvičení</h3>
+            <p className="text-gray-400 text-sm leading-relaxed mb-4">
               Audity, checklisty a AI asistent pro zabezpečení vašich zařízení v reálném čase.
             </p>
             <div className="text-pink-500 text-[10px] font-mono uppercase tracking-widest mt-auto">Nové</div>

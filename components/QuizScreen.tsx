@@ -36,7 +36,7 @@ const QuizScreen: React.FC<Props> = ({
       <div className="flex items-center justify-between mb-12 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
         <button 
           onClick={onBackToMenu}
-          className="text-gray-500 hover:text-white transition-all duration-300 flex items-center gap-3 text-xs font-bold tracking-widest uppercase group"
+          className="text-gray-500 hover:text-white transition-all duration-300 flex items-center gap-3 text-xs font-bold tracking-widest uppercase group font-mono"
         >
           <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-white/10 transition-all">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
@@ -82,8 +82,8 @@ const QuizScreen: React.FC<Props> = ({
           {/* Question Container */}
           <div key={currentQuestionIndex} className="relative z-10 animate-fade-in-up">
             <div className="mb-10">
-               <span className="text-cyan-500 text-xs font-bold tracking-widest uppercase mb-4 block opacity-80">Otázka {currentQuestionIndex + 1}</span>
-               <h2 className="text-2xl md:text-4xl font-serif-display text-white leading-snug drop-shadow-lg">
+               <span className="text-cyan-500 text-xs font-bold tracking-widest uppercase mb-4 block opacity-80 font-mono">Otázka {currentQuestionIndex + 1}</span>
+               <h2 className="text-2xl md:text-3xl font-display text-white leading-snug drop-shadow-lg uppercase tracking-wide">
                   {question.question}
                </h2>
             </div>
@@ -133,7 +133,7 @@ const QuizScreen: React.FC<Props> = ({
               {!isAnswered && (
                 <button
                   onClick={onToggleHint}
-                  className="flex items-center gap-2 text-gray-500 hover:text-cyan-400 transition-colors text-xs font-bold tracking-widest uppercase mx-auto md:mx-0 group"
+                  className="flex items-center gap-2 text-gray-500 hover:text-cyan-400 transition-colors text-xs font-bold tracking-widest uppercase mx-auto md:mx-0 group font-mono"
                 >
                   <div className="p-1 rounded-full bg-white/5 group-hover:bg-cyan-500/10 transition-colors">
                       <HelpCircle className="w-4 h-4" />
@@ -156,7 +156,7 @@ const QuizScreen: React.FC<Props> = ({
                         <Zap className="w-6 h-6" />
                      </div>
                      <div>
-                        <p className={`text-base font-bold mb-1 ${selectedAnswer === question.correctAnswer ? 'text-green-400' : 'text-red-400'}`}>
+                        <p className={`text-base font-bold mb-1 uppercase font-display ${selectedAnswer === question.correctAnswer ? 'text-green-400' : 'text-red-400'}`}>
                           {selectedAnswer === question.correctAnswer ? "Správná analýza" : "Chybné vyhodnocení"}
                         </p>
                         <p className="text-xs text-gray-400 leading-relaxed max-w-lg">{question.hint}</p>
@@ -165,7 +165,7 @@ const QuizScreen: React.FC<Props> = ({
                   
                   <button
                     onClick={onNextQuestion}
-                    className="w-full md:w-auto bg-white text-black hover:bg-cyan-50 px-8 py-4 rounded-xl font-bold text-xs tracking-widest uppercase shadow-[0_0_25px_rgba(255,255,255,0.2)] hover:shadow-[0_0_35px_rgba(6,182,212,0.4)] transition-all duration-300 flex items-center justify-center gap-3 transform hover:-translate-y-1 active:scale-95"
+                    className="w-full md:w-auto bg-white text-black hover:bg-cyan-50 px-8 py-4 rounded-xl font-bold text-xs tracking-widest uppercase shadow-[0_0_25px_rgba(255,255,255,0.2)] hover:shadow-[0_0_35px_rgba(6,182,212,0.4)] transition-all duration-300 flex items-center justify-center gap-3 transform hover:-translate-y-1 active:scale-95 font-display"
                   >
                     Další krok <ArrowRight className="w-4 h-4" />
                   </button>

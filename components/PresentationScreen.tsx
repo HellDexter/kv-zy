@@ -25,13 +25,13 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
         <div className="flex items-center justify-between mb-6 animate-fade-in-up">
           <button 
             onClick={() => setSelectedBlockId(null)}
-            className="text-gray-400 hover:text-white transition-all duration-300 flex items-center gap-3 text-xs font-bold tracking-widest uppercase group bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hover:border-white/30"
+            className="text-gray-400 hover:text-white transition-all duration-300 flex items-center gap-3 text-xs font-bold tracking-widest uppercase group bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hover:border-white/30 font-mono"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
             <span>Zpět na seznam</span>
           </button>
           
-          <h2 className="text-white font-serif-display text-xl hidden md:block">
+          <h2 className="text-white font-display text-xl hidden md:block uppercase">
             {selectedBlock?.title}
           </h2>
 
@@ -41,7 +41,7 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
                   href={resourceUrl} 
                   target="_blank" 
                   rel="noreferrer"
-                  className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase bg-purple-950/50 hover:bg-purple-900/50 text-purple-400 px-4 py-2 rounded-full border border-purple-500/30 transition-all shadow-[0_0_15px_rgba(168,85,247,0.2)]"
+                  className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase bg-purple-950/50 hover:bg-purple-900/50 text-purple-400 px-4 py-2 rounded-full border border-purple-500/30 transition-all shadow-[0_0_15px_rgba(168,85,247,0.2)] font-mono"
                 >
                   <ExternalLink className="w-4 h-4" />
                   <span className="hidden sm:inline">Otevřít v novém okně</span>
@@ -50,7 +50,7 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
                 <a 
                   href={resourceUrl} 
                   download 
-                  className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase bg-cyan-950/50 hover:bg-cyan-900/50 text-cyan-400 px-4 py-2 rounded-full border border-cyan-500/30 transition-all"
+                  className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase bg-cyan-950/50 hover:bg-cyan-900/50 text-cyan-400 px-4 py-2 rounded-full border border-cyan-500/30 transition-all font-mono"
                 >
                   <Download className="w-4 h-4" />
                   <span className="hidden sm:inline">Stáhnout PDF</span>
@@ -96,7 +96,7 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
       {/* Back Button */}
       <button 
         onClick={onBack}
-        className="mb-12 text-gray-500 hover:text-white transition-all duration-300 flex items-center gap-3 text-xs font-bold tracking-widest uppercase group animate-fade-in-up"
+        className="mb-12 text-gray-500 hover:text-white transition-all duration-300 flex items-center gap-3 text-xs font-bold tracking-widest uppercase group animate-fade-in-up font-mono"
       >
         <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-white/10 transition-all">
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
@@ -105,11 +105,11 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
       </button>
 
       <header className="mb-16 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-500/5 text-purple-400 text-[10px] uppercase tracking-widest mb-6 backdrop-blur-sm">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-500/5 text-purple-400 text-[10px] uppercase tracking-widest mb-6 backdrop-blur-sm font-mono">
           <FileText className="w-3 h-3" />
           Knihovna materiálů
         </div>
-        <h1 className="text-4xl md:text-6xl font-serif-display text-white mb-6 tracking-tight">
+        <h1 className="text-4xl md:text-6xl font-display text-white mb-6 tracking-tight uppercase">
           Prezentace <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-400">kurzu</span>
         </h1>
         <p className="text-gray-400 max-w-2xl text-lg font-light leading-relaxed">
@@ -147,7 +147,7 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
                     </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-purple-100 font-serif-display transition-colors">
+                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-purple-100 font-display uppercase transition-colors">
                   {block.title.replace(/^Blok \d+: /, "")}
                 </h3>
                 
@@ -155,7 +155,7 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
                   {block.description}
                 </p>
 
-                <div className="mt-auto flex items-center gap-2 text-[11px] font-bold text-purple-500/70 group-hover:text-purple-400 uppercase tracking-widest transition-colors">
+                <div className="mt-auto flex items-center gap-2 text-[11px] font-bold text-purple-500/70 group-hover:text-purple-400 uppercase tracking-widest transition-colors font-mono">
                    {isGamma ? (
                      <>Spustit prezentaci <MonitorPlay className="w-3 h-3" /></>
                    ) : (

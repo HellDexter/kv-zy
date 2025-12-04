@@ -67,7 +67,7 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
               <div className="absolute inset-0 bg-cyan-500/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
               <ScanEye className={`w-10 h-10 text-cyan-400 transition-all duration-500 ${loading ? 'scale-110 text-white' : 'group-hover:scale-110'}`} />
             </div>
-            <h1 className="text-3xl font-serif-display text-white mb-2 tracking-wide">
+            <h1 className="text-3xl font-display text-white mb-2 tracking-wide uppercase">
               Vstup do systému
             </h1>
             <p className="text-[10px] text-gray-500 uppercase tracking-[0.3em] font-mono">
@@ -86,7 +86,7 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className={`block w-full pl-11 pr-4 py-4 bg-white/[0.03] border rounded-lg text-white placeholder-gray-700 focus:outline-none focus:shadow-[0_0_20px_rgba(6,182,212,0.1)] transition-all duration-300 text-sm ${error ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-cyan-500/50 focus:bg-cyan-500/[0.02]'}`}
+                  className={`block w-full pl-11 pr-4 py-4 bg-white/[0.03] border rounded-lg text-white font-mono placeholder-gray-700 focus:outline-none focus:shadow-[0_0_20px_rgba(6,182,212,0.1)] transition-all duration-300 text-sm ${error ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-cyan-500/50 focus:bg-cyan-500/[0.02]'}`}
                   placeholder="Zadejte přihlašovací jméno"
                 />
               </div>
@@ -102,7 +102,7 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`block w-full pl-11 pr-4 py-4 bg-white/[0.03] border rounded-lg text-white placeholder-gray-700 focus:outline-none focus:shadow-[0_0_20px_rgba(6,182,212,0.1)] transition-all duration-300 text-sm ${error ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-cyan-500/50 focus:bg-cyan-500/[0.02]'}`}
+                  className={`block w-full pl-11 pr-4 py-4 bg-white/[0.03] border rounded-lg text-white font-mono placeholder-gray-700 focus:outline-none focus:shadow-[0_0_20px_rgba(6,182,212,0.1)] transition-all duration-300 text-sm ${error ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-cyan-500/50 focus:bg-cyan-500/[0.02]'}`}
                   placeholder="••••••••"
                 />
               </div>
@@ -118,7 +118,7 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full relative group overflow-hidden bg-white text-black py-4 rounded-lg font-bold text-sm tracking-widest uppercase transition-all duration-300 hover:bg-cyan-50 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] disabled:opacity-80 disabled:cursor-not-allowed mt-10"
+              className="w-full relative group overflow-hidden bg-white text-black py-4 rounded-lg font-bold text-sm tracking-widest uppercase transition-all duration-300 hover:bg-cyan-50 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] disabled:opacity-80 disabled:cursor-not-allowed mt-10 font-display"
             >
               <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/80 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_infinite]"></div>
               <div className="flex items-center justify-center gap-3 relative z-10">
