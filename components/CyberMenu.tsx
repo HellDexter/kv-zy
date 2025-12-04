@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ArrowLeft, BrainCircuit, Presentation, ArrowRight, ClipboardList } from 'lucide-react';
 
@@ -23,7 +22,7 @@ const CyberMenu: React.FC<Props> = ({ onNavigate, onBack }) => {
       </button>
 
       <header className="mb-16 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-        <h1 className="text-4xl md:text-5xl font-display text-white mb-4 uppercase">
+        <h1 className="text-2xl sm:text-4xl md:text-5xl font-display text-white mb-4 uppercase break-words">
           Kyberbezpečnost
         </h1>
         <p className="text-gray-400 text-lg font-light max-w-2xl">
