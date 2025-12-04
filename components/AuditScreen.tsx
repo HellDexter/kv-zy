@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Check, Bot, X, ShieldAlert, ShieldCheck, Send, Paperclip, Image as ImageIcon, Trash2, Loader2 } from 'lucide-react';
-import { GoogleGenAI, Chat, Content } from "@google/genai";
+import { GoogleGenAI, Chat } from "@google/genai";
 
 interface Props {
   onBack: () => void;
@@ -101,7 +101,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
     setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  // Helper to convert File to Base64 (without prefix for API, with prefix for preview)
+  // Helper to convert File to Base64
   const fileToGenerativePart = async (file: File): Promise<{ inlineData: { data: string; mimeType: string } }> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -133,17 +133,15 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       
       const systemInstruction = `
-        Jsi interaktivní bezpečnostní expert a průvodce.
-        Tvým úkolem je pomoci uživateli splnit bezpečnostní bod auditu: "${item.label}" (${item.aiPrompt}).
+        Jsi trpělivý bezpečnostní průvodce (AI agent). Tvým úkolem je provést uživatele nastavením bodu: "${item.label}".
         
-        PRAVIDLA CHOVÁNÍ:
-        1. NEGENERUJ celý návod najednou.
-        2. Nejprve uživatele stručně pozdrav a ZEPTEJ SE na kontext (např. "Jaký operační systém používáte?", "Máte Android nebo iPhone?", "Jakou značku routeru máte?").
-        3. Čekej na odpověď uživatele.
-        4. Poté navrhni první krok řešení.
-        5. Vždy se ptej, zda se krok povedl nebo zda uživatel vidí danou nabídku, než přejdeš k dalšímu kroku.
-        6. Pokud uživatel nahraje obrázek (screenshot), analyzuj ho a přesně popiš, kam má kliknout.
-        7. Mluv přátelsky, stručně a srozumitelně.
+        PŘÍSNÁ PRAVIDLA KOMUNIKACE:
+        1. NEGENERUJ CELÝ NÁVOD NAJEDNOU. Musíš postupovat krok za krokem.
+        2. KROK 1 (Iniciace): Pozdrav uživatele a zeptej se ho na zařízení/OS (např. "Máte Windows nebo Mac?", "Jaký máte router?"), pokud to není zřejmé.
+        3. KROK 2 (Instrukce): Jakmile znáš kontext, napiš PRVNÍ krok co má uživatel udělat.
+        4. Čekej na potvrzení uživatele, že krok zvládl, nebo na jeho dotaz.
+        5. Pokud uživatel pošle obrázek (screenshot), analyzuj ho a řekni mu přesně, kam má kliknout.
+        6. Buď stručný, nápomocný a lidský.
       `;
 
       const chat = ai.chats.create({
@@ -155,8 +153,8 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
 
       chatSessionRef.current = chat;
 
-      // Start the conversation proactively to get the greeting
-      const result = await chat.sendMessage({ message: "Začni konverzaci." });
+      // Trigger the first response (Greeting + Context Question)
+      const result = await chat.sendMessage({ message: "Jsem připraven. Pozdrav mě a zeptej se na potřebné informace pro tento úkol." });
       const responseText = result.text;
 
       setChatHistory([{ role: 'model', text: responseText }]);
@@ -202,11 +200,9 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
         parts.push(part);
       }
 
-      // Send to Gemini
-      // Note: chat.sendMessage takes a string or Array<ContentPart>
+      // Send to Gemini using the correct parameter 'message' for the Chat API
       const result = await chatSessionRef.current.sendMessage({
-         // @ts-ignore - The SDK types might be slightly off in some versions, but this structure is standard for multimodal
-         content: { parts } 
+         message: parts
       });
 
       const responseText = result.text;
@@ -342,7 +338,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                                 className="ml-10 sm:ml-0 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-pink-400 hover:text-white bg-pink-500/10 hover:bg-pink-500/20 px-3 py-1.5 rounded-full transition-all border border-pink-500/20 hover:border-pink-500/40 whitespace-nowrap w-fit"
                             >
                                 <Bot className="w-3 h-3" />
-                                Průvodce nastavením
+                                Jak na to
                             </button>
                         </div>
                     ))}
@@ -359,18 +355,20 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
             
             {/* Chat Container */}
             <div 
-              className={`relative bg-[#111] border border-white/10 w-full md:max-w-2xl h-full md:h-[80vh] md:rounded-2xl shadow-2xl flex flex-col animate-fade-in-up overflow-hidden ${isDragging ? 'border-pink-500 border-2' : ''}`}
+              className={`relative bg-[#111] border border-white/10 w-full md:max-w-2xl h-full md:h-[80vh] md:rounded-2xl shadow-2xl flex flex-col animate-fade-in-up overflow-hidden ${isDragging ? 'border-pink-500 shadow-[0_0_30px_rgba(236,72,153,0.3)]' : ''}`}
               onDragOver={onDragOver}
               onDragLeave={onDragLeave}
               onDrop={onDrop}
             >
                 
-                {/* Drag Overlay */}
+                {/* Drag Overlay with instruction */}
                 {isDragging && (
                   <div className="absolute inset-0 bg-pink-500/20 z-50 flex items-center justify-center backdrop-blur-sm pointer-events-none">
-                    <div className="bg-[#111] p-6 rounded-xl border border-pink-500 text-pink-400 font-bold flex flex-col items-center gap-2">
-                       <ImageIcon className="w-8 h-8" />
-                       <span>Pusťte obrázek pro nahrání</span>
+                    <div className="bg-[#111] p-6 rounded-xl border border-pink-500 text-pink-400 font-bold flex flex-col items-center gap-3 shadow-2xl scale-110 transition-transform">
+                       <div className="p-3 bg-pink-500/20 rounded-full">
+                         <ImageIcon className="w-8 h-8" />
+                       </div>
+                       <span>Pusťte soubor pro vložení do chatu</span>
                     </div>
                   </div>
                 )}
@@ -486,8 +484,8 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                               handleSendMessage();
                             }
                           }}
-                          placeholder="Napište zprávu nebo vložte screenshot..."
-                          className="flex-grow bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-pink-500/50 resize-none max-h-32 min-h-[44px]"
+                          placeholder="Napište zprávu nebo přetáhněte screenshot..."
+                          className={`flex-grow bg-[#0a0a0a] border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-pink-500/50 resize-none max-h-32 min-h-[44px] transition-colors ${isDragging ? 'border-pink-500 bg-pink-500/10' : 'border-white/10'}`}
                           rows={1}
                         />
                         
