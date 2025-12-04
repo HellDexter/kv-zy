@@ -85,6 +85,17 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
               </iframe>
            </div>
         </div>
+
+        {/* Bottom Back Button - Requested by user */}
+        <div className="mt-6 flex justify-center animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+          <button 
+            onClick={() => setSelectedBlockId(null)}
+            className="text-gray-400 hover:text-white transition-all duration-300 flex items-center gap-3 text-xs font-bold tracking-widest uppercase group bg-black/50 backdrop-blur-md px-6 py-3 rounded-full border border-white/10 hover:border-white/30 hover:bg-white/10"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+            <span>Zpět na přehled</span>
+          </button>
+        </div>
       </div>
     );
   }

@@ -1,3 +1,4 @@
+
 import { Block } from './types';
 
 export const courseData: Block[] = [
@@ -6,6 +7,7 @@ export const courseData: Block[] = [
     title: "Blok 1: Úvod do kyberbezpečnosti",
     description: "Psychologie útoků, CIA triáda a proč je člověk hlavním cílem.",
     icon: "ShieldAlert",
+    gammaUrl: "https://gamma.app/embed/2iu9jifo4h854di",
     questions: [
       {
         id: 1,
@@ -84,6 +86,7 @@ export const courseData: Block[] = [
     title: "Blok 2: Základy bezpečnosti na internetu",
     description: "Domény, HTTPS, rozpoznání podvodů a ochrana účtů.",
     icon: "Globe",
+    gammaUrl: "https://gamma.app/embed/gtqi1rkuvdn8gp9",
     questions: [
       {
         id: 1,
@@ -241,6 +244,7 @@ export const courseData: Block[] = [
     title: "Blok 4: Bankovnictví a nákupy",
     description: "Vishing, podvody na bazarech, ochrana karet a osobních údajů.",
     icon: "CreditCard",
+    gammaUrl: "https://gamma.app/embed/50rktgysrfatwbu",
     questions: [
       {
         id: 1,
@@ -319,6 +323,7 @@ export const courseData: Block[] = [
     title: "Blok 5: Kryptoměny",
     description: "Blockchain, peněženky, seed a jak se nenechat okrást.",
     icon: "Bitcoin",
+    gammaUrl: "https://gamma.app/embed/c2gss863zymwaa3",
     questions: [
       {
         id: 1,
@@ -397,6 +402,7 @@ export const courseData: Block[] = [
     title: "Blok 6: Řešení incidentů",
     description: "První pomoc při útoku: co dělat hned a co nedělat.",
     icon: "Siren",
+    gammaUrl: "https://gamma.app/embed/47zu26hursvze6w",
     questions: [
       {
         id: 1,
@@ -475,6 +481,7 @@ export const courseData: Block[] = [
     title: "Blok 7: Implementace a pravidla",
     description: "Systematická bezpečnost, 3-2-1 zálohování a firemní kultura.",
     icon: "ClipboardCheck",
+    gammaUrl: "https://gamma.app/embed/him3c2lvp8rtr3p",
     questions: [
       {
         id: 1,
@@ -553,6 +560,7 @@ export const courseData: Block[] = [
     title: "Blok 8: Legislativa a NIS2",
     description: "Zákon o kybernetické bezpečnosti, povinnosti firem a hrozby.",
     icon: "Scale",
+    gammaUrl: "https://gamma.app/embed/kly8j6dfnxfii4k",
     questions: [
       {
         id: 1,
@@ -631,6 +639,7 @@ export const courseData: Block[] = [
     title: "Blok 9: Role AI v kyberbezpečnosti",
     description: "Deepfakes, voice cloning, automatizace útoků a obrana.",
     icon: "Bot",
+    gammaUrl: "https://gamma.app/embed/da2nk7b93e89j4z",
     questions: [
       {
         id: 1,
