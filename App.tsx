@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { courseData } from './data';
 import { QuizState } from './types';
 import WelcomeScreen from './components/WelcomeScreen';
@@ -13,6 +13,59 @@ import AuditScreen from './components/AuditScreen';
 
 // Define possible views for the app
 type View = 'login' | 'dashboard' | 'cyber_menu' | 'quizzes' | 'presentations' | 'practical_exercises' | 'quiz' | 'result';
+
+// Helper component for Grid Beams
+const GridBeams: React.FC = () => {
+  const [beams, setBeams] = useState<{ id: number; type: 'h' | 'v'; pos: number; delay: number; duration: number; color: string }[]>([]);
+
+  useEffect(() => {
+    // Generate static random beams on mount to avoid hydration mismatch or re-renders
+    const newBeams = [];
+    const GRID_SIZE = 40; // Pixels, matching CSS
+    const colors = ['emerald', 'purple', 'rose'];
+    
+    // Horizontal beams (moving along rows)
+    for (let i = 0; i < 8; i++) {
+      newBeams.push({
+        id: i,
+        type: 'h' as const,
+        pos: Math.floor(Math.random() * 20) * GRID_SIZE, // Random row
+        delay: Math.random() * 10,
+        duration: 3 + Math.random() * 5,
+        color: colors[Math.floor(Math.random() * colors.length)]
+      });
+    }
+
+    // Vertical beams (moving along columns)
+    for (let i = 0; i < 8; i++) {
+      newBeams.push({
+        id: i + 100,
+        type: 'v' as const,
+        pos: Math.floor(Math.random() * 40) * GRID_SIZE, // Random col
+        delay: Math.random() * 10,
+        duration: 3 + Math.random() * 5,
+        color: colors[Math.floor(Math.random() * colors.length)]
+      });
+    }
+    setBeams(newBeams);
+  }, []);
+
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      {beams.map((beam) => (
+        <div
+          key={beam.id}
+          className={`grid-beam ${beam.type === 'h' ? 'grid-beam-h' : 'grid-beam-v'} grid-beam-${beam.color}`}
+          style={{
+            [beam.type === 'h' ? 'top' : 'left']: `${beam.pos}px`,
+            animationDelay: `${beam.delay}s`,
+            animationDuration: `${beam.duration}s`
+          }}
+        ></div>
+      ))}
+    </div>
+  );
+};
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('login');
@@ -191,8 +244,13 @@ const App: React.FC = () => {
   return (
     <div className="relative min-h-screen w-full bg-[#050505] overflow-hidden selection:bg-cyan-500/30 selection:text-cyan-200 font-inter">
       {/* Global Dynamic Background Elements - Persistent across screens */}
+      
+      {/* Static Grid Pattern */}
       <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none fixed"></div>
       
+      {/* Dynamic Grid Beams */}
+      <GridBeams />
+
       {/* Glowing Orbs - Made subtler and slower */}
       <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] animate-float opacity-30 pointer-events-none fixed"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[700px] h-[700px] bg-cyan-500/10 rounded-full blur-[100px] animate-float opacity-20 pointer-events-none fixed" style={{ animationDelay: '4s' }}></div>
