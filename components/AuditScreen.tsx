@@ -73,6 +73,15 @@ interface Attachment {
   preview: string;
 }
 
+// Define the part interface expected by the SDK
+interface Part {
+  text?: string;
+  inlineData?: {
+    mimeType: string;
+    data: string;
+  };
+}
+
 const AuditScreen: React.FC<Props> = ({ onBack }) => {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   const [showChat, setShowChat] = useState(false);
@@ -101,8 +110,8 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
     setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  // Helper to convert File to Base64
-  const fileToGenerativePart = async (file: File): Promise<{ inlineData: { data: string; mimeType: string } }> => {
+  // Helper to convert File to Base64 Part
+  const fileToGenerativePart = async (file: File): Promise<Part> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -130,7 +139,20 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
     setLoading(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      // Check for API Key presence safely
+      let apiKey = "";
+      try {
+        apiKey = process.env.API_KEY || "";
+      } catch (e) {
+        console.error("Environment access error:", e);
+      }
+
+      if (!apiKey) {
+        console.error("API_KEY is missing. Please set process.env.API_KEY.");
+        throw new Error("Missing API Key");
+      }
+
+      const ai = new GoogleGenAI({ apiKey: apiKey });
       
       const systemInstruction = `
         Jsi trpělivý bezpečnostní průvodce (AI agent). Tvým úkolem je provést uživatele nastavením bodu: "${item.label}".
@@ -157,10 +179,20 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
       const result = await chat.sendMessage({ message: "Jsem připraven. Pozdrav mě a zeptej se na potřebné informace pro tento úkol." });
       const responseText = result.text;
 
-      setChatHistory([{ role: 'model', text: responseText }]);
+      // Safe access to text
+      if (responseText) {
+          setChatHistory([{ role: 'model', text: responseText }]);
+      } else {
+          setChatHistory([{ role: 'model', text: "Zdravím! S čím vám mohu pomoci ohledně tohoto nastavení?" }]);
+      }
+
     } catch (error) {
       console.error("AI Init Error:", error);
-      setChatHistory([{ role: 'model', text: "Omlouvám se, ale nepodařilo se navázat spojení s AI expertem. Zkuste to prosím později." }]);
+      let errorMessage = "Omlouvám se, ale nepodařilo se navázat spojení s AI expertem. Zkuste to prosím později.";
+      if (error instanceof Error && error.message.includes("Missing API Key")) {
+        errorMessage = "Chyba konfigurace: Chybí API klíč (API_KEY).";
+      }
+      setChatHistory([{ role: 'model', text: errorMessage }]);
     } finally {
       setLoading(false);
     }
@@ -187,7 +219,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
 
     try {
       // Prepare parts for API
-      const parts: any[] = [];
+      const parts: Part[] = [];
       
       // Add text if exists
       if (currentMessage.trim()) {
@@ -199,14 +231,19 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
         const part = await fileToGenerativePart(att.file);
         parts.push(part);
       }
-
-      // Send to Gemini using the correct parameter 'message' for the Chat API
+      
+      // Send to Gemini
+      // If no text but images, parts is valid. If text only, parts is valid.
       const result = await chatSessionRef.current.sendMessage({
          message: parts
       });
 
       const responseText = result.text;
-      setChatHistory(prev => [...prev, { role: 'model', text: responseText }]);
+      if (responseText) {
+        setChatHistory(prev => [...prev, { role: 'model', text: responseText }]);
+      } else {
+        setChatHistory(prev => [...prev, { role: 'model', text: "Omlouvám se, nerozuměl jsem. Můžete to zkusit znovu?" }]);
+      }
 
     } catch (error) {
       console.error("Send Error:", error);
