@@ -85,17 +85,6 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
               </iframe>
            </div>
         </div>
-
-        {/* Bottom Back Button - Requested by user */}
-        <div className="mt-6 flex justify-center animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-          <button 
-            onClick={() => setSelectedBlockId(null)}
-            className="text-gray-400 hover:text-white transition-all duration-300 flex items-center gap-3 text-xs font-bold tracking-widest uppercase group bg-black/50 backdrop-blur-md px-6 py-3 rounded-full border border-white/10 hover:border-white/30 hover:bg-white/10"
-          >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-            <span>Zpět na přehled</span>
-          </button>
-        </div>
       </div>
     );
   }
@@ -153,13 +142,13 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
                     <div className="w-12 h-12 rounded-xl bg-purple-950/20 border border-purple-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                          <IconComponent className="w-6 h-6 text-purple-400" />
                     </div>
-                    <div className={`text-[10px] font-mono border border-white/5 px-2 py-1 rounded bg-black/40 transition-colors ${isGamma ? 'text-pink-400 border-pink-500/20' : 'text-gray-600 group-hover:text-purple-300'}`}>
-                        {isGamma ? 'INTERAKTIVNÍ' : 'PDF'}
+                    <div className={`text-xs font-bold font-mono border border-white/5 px-3 py-1 rounded bg-black/40 transition-colors ${isGamma ? 'text-pink-400 border-pink-500/20' : 'text-gray-500 group-hover:text-purple-300'}`}>
+                        BLOK {block.id}
                     </div>
                 </div>
 
                 <h3 className="text-xl font-bold text-white mb-3 group-hover:text-purple-100 font-serif-display transition-colors">
-                  {block.title}
+                  {block.title.replace(/^Blok \d+: /, "")}
                 </h3>
                 
                 <p className="text-sm text-gray-500 font-light leading-relaxed mb-8 group-hover:text-gray-400 transition-colors">
