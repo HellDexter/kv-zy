@@ -21,29 +21,29 @@ const GridBeams: React.FC = () => {
   useEffect(() => {
     // Generate static random beams on mount to avoid hydration mismatch or re-renders
     const newBeams = [];
-    const GRID_SIZE = 40; // Pixels, matching CSS
+    const GRID_SIZE = 60; // Pixels, matching CSS (increased for lower density)
     const colors = ['emerald', 'purple', 'rose'];
     
-    // Horizontal beams (moving along rows)
-    for (let i = 0; i < 8; i++) {
+    // Horizontal beams (moving along rows) - Reduced count to 3
+    for (let i = 0; i < 3; i++) {
       newBeams.push({
         id: i,
         type: 'h' as const,
-        pos: Math.floor(Math.random() * 20) * GRID_SIZE, // Random row
-        delay: Math.random() * 10,
-        duration: 3 + Math.random() * 5,
+        pos: Math.floor(Math.random() * 15) * GRID_SIZE, // Adjusted for larger grid
+        delay: Math.random() * 15, // Longer delay spread
+        duration: 8 + Math.random() * 10, // Slower duration (8-18s)
         color: colors[Math.floor(Math.random() * colors.length)]
       });
     }
 
-    // Vertical beams (moving along columns)
-    for (let i = 0; i < 8; i++) {
+    // Vertical beams (moving along columns) - Reduced count to 3
+    for (let i = 0; i < 3; i++) {
       newBeams.push({
         id: i + 100,
         type: 'v' as const,
-        pos: Math.floor(Math.random() * 40) * GRID_SIZE, // Random col
-        delay: Math.random() * 10,
-        duration: 3 + Math.random() * 5,
+        pos: Math.floor(Math.random() * 30) * GRID_SIZE, // Adjusted for larger grid
+        delay: Math.random() * 15,
+        duration: 8 + Math.random() * 10, // Slower duration
         color: colors[Math.floor(Math.random() * colors.length)]
       });
     }
