@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ArrowLeft, BrainCircuit, Presentation, ArrowRight, ClipboardList } from 'lucide-react';
 
@@ -22,7 +23,7 @@ const CyberMenu: React.FC<Props> = ({ onNavigate, onBack }) => {
       </button>
 
       <header className="mb-16 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-        <h1 className="text-2xl sm:text-4xl md:text-5xl font-display text-white mb-4 uppercase break-words">
+        <h1 className="text-xl sm:text-4xl md:text-5xl font-display text-white mb-4 uppercase break-words tracking-tighter md:tracking-normal">
           Kyberbezpečnost
         </h1>
         <p className="text-gray-400 text-lg font-light max-w-2xl">
@@ -82,7 +83,7 @@ const CyberMenu: React.FC<Props> = ({ onNavigate, onBack }) => {
           </div>
         </button>
 
-        {/* Practical Exercises Option - NEW */}
+        {/* Practical Exercises Option */}
         <button
           onClick={() => onNavigate('practical_exercises')}
           className="group relative p-1 rounded-3xl text-left transition-all duration-500 hover:-translate-y-1"
