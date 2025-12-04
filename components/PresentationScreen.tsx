@@ -91,7 +91,7 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
 
   // List View (Block Selection)
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 md:py-20 relative z-10">
+    <div className="max-w-7xl mx-auto px-6 py-12 md:py-20 relative z-10 min-h-screen">
       
       {/* Back Button */}
       <button 
@@ -117,7 +117,7 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
         {blocks.map((block, index) => {
            // @ts-ignore
            const IconComponent = Icons[block.icon] || Icons.FileText;

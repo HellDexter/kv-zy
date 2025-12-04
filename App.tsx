@@ -242,7 +242,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="relative min-h-screen w-full bg-[#050505] overflow-hidden selection:bg-cyan-500/30 selection:text-cyan-200 font-inter">
+    <div className="relative min-h-screen w-full bg-[#050505] overflow-x-hidden selection:bg-cyan-500/30 selection:text-cyan-200 font-inter">
       {/* Global Dynamic Background Elements - Persistent across screens */}
       
       {/* Static Grid Pattern */}

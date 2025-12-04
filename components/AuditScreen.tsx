@@ -300,13 +300,13 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 relative z-10 min-h-screen pb-24">
+    <div className="max-w-5xl mx-auto px-4 py-6 md:py-8 relative z-10 min-h-screen pb-24">
       
       {/* Header & Progress */}
-      <div className="mb-8 animate-fade-in-up">
+      <div className="mb-6 md:mb-8 animate-fade-in-up">
         <button 
           onClick={onBack}
-          className="text-gray-500 hover:text-white transition-all duration-300 flex items-center gap-3 text-xs font-bold tracking-widest uppercase group mb-6 font-mono"
+          className="text-gray-500 hover:text-white transition-all duration-300 flex items-center gap-2 md:gap-3 text-xs font-bold tracking-widest uppercase group mb-6 font-mono"
         >
           <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-pink-500/50 group-hover:bg-pink-500/10 transition-all">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
@@ -314,21 +314,22 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
           <span>Zpět</span>
         </button>
 
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 md:mb-8">
             <div>
-                <h1 className="text-3xl md:text-4xl font-display text-white mb-2 uppercase">
+                <h1 className="text-2xl md:text-4xl font-display text-white mb-2 uppercase">
                     Audit <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-600">zabezpečení</span>
                 </h1>
-                <p className="text-gray-400 text-sm">
-                    Proveďte kompletní kontrolu. Zaškrtněte splněné bod.
+                <p className="text-gray-400 text-xs md:text-sm">
+                    Proveďte kompletní kontrolu. Zaškrtněte splněné body.
                 </p>
             </div>
             
-            <div className="text-right">
-                <div className="text-4xl font-bold text-white mb-1 font-mono">
+            <div className="flex items-center justify-between md:block md:text-right">
+                <span className="text-sm font-mono text-gray-500 md:hidden">CELKEM HOTOVO</span>
+                <div className="text-3xl md:text-4xl font-bold text-white mb-1 font-mono">
                     {percentage}%
                 </div>
-                <div className="w-48 h-2 bg-white/10 rounded-full overflow-hidden">
+                <div className="w-full md:w-48 h-2 bg-white/10 rounded-full overflow-hidden">
                     <div 
                         className={`h-full transition-all duration-500 ${percentage < 80 ? 'bg-rose-500' : 'bg-emerald-500'}`}
                         style={{ width: `${percentage}%` }}
@@ -338,13 +339,13 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
         </div>
 
         {/* Warning Banner */}
-        <div className={`p-4 rounded-xl border ${percentage < 80 ? 'bg-rose-950/30 border-rose-500/30 text-rose-200' : 'bg-emerald-950/30 border-emerald-500/30 text-emerald-200'} transition-colors duration-500 flex items-start gap-3`}>
+        <div className={`p-4 rounded-xl border ${percentage < 80 ? 'bg-rose-950/30 border-rose-500/30 text-rose-200' : 'bg-emerald-950/30 border-emerald-500/30 text-emerald-200'} transition-colors duration-500 flex flex-col md:flex-row items-start gap-3`}>
             {percentage < 80 ? <ShieldAlert className="w-6 h-6 flex-shrink-0 mt-0.5" /> : <ShieldCheck className="w-6 h-6 flex-shrink-0 mt-0.5" />}
             <div>
                 <h3 className="font-bold text-sm uppercase tracking-wider mb-1 font-display">
                     {percentage < 80 ? "Kritické bezpečnostní mezery" : "Výborná úroveň zabezpečení"}
                 </h3>
-                <p className="text-sm opacity-90">
+                <p className="text-xs md:text-sm opacity-90 leading-relaxed">
                     {percentage < 80 
                         ? "Pokud jste zaškrtli méně než 80 % bodů, máte kritické bezpečnostní mezery. Začněte s nejdůležitějšími: aktualizace, šifrování a zálohy."
                         : "Skvělá práce! Vaše zařízení a data jsou dobře chráněna. Nezapomínejte na pravidelnou údržbu."}
@@ -354,14 +355,14 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
       </div>
 
       {/* Checklist Sections */}
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         {AUDIT_DATA.map((section, sIndex) => (
-            <div key={sIndex} className="bg-[#0a0a0a]/80 border border-white/10 rounded-2xl p-6 animate-fade-in-up" style={{ animationDelay: `${sIndex * 100}ms` }}>
-                <h2 className="text-xl font-bold text-pink-400 mb-6 font-display uppercase">{section.title}</h2>
+            <div key={sIndex} className="bg-[#0a0a0a]/80 border border-white/10 rounded-xl md:rounded-2xl p-4 md:p-6 animate-fade-in-up" style={{ animationDelay: `${sIndex * 100}ms` }}>
+                <h2 className="text-lg md:text-xl font-bold text-pink-400 mb-4 md:mb-6 font-display uppercase">{section.title}</h2>
                 <div className="space-y-4">
                     {section.items.map((item) => (
-                        <div key={item.id} className="flex flex-col sm:flex-row sm:items-center gap-4 group">
-                            <div className="flex items-start gap-4 flex-grow cursor-pointer" onClick={() => toggleCheck(item.id)}>
+                        <div key={item.id} className="flex flex-col sm:flex-row sm:items-center gap-3 md:gap-4 group">
+                            <div className="flex items-start gap-3 md:gap-4 flex-grow cursor-pointer" onClick={() => toggleCheck(item.id)}>
                                 <button 
                                     className={`mt-0.5 w-6 h-6 rounded border flex items-center justify-center transition-all duration-200 flex-shrink-0 ${checkedItems[item.id] ? 'bg-pink-500 border-pink-500 text-white' : 'bg-transparent border-white/20 hover:border-pink-400/50'}`}
                                 >
@@ -377,7 +378,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
 
                             <button 
                                 onClick={() => initChat(item)}
-                                className="ml-10 sm:ml-0 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-pink-400 hover:text-white bg-pink-500/10 hover:bg-pink-500/20 px-3 py-1.5 rounded-full transition-all border border-pink-500/20 hover:border-pink-500/40 whitespace-nowrap w-fit font-mono"
+                                className="ml-9 sm:ml-0 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-pink-400 hover:text-white bg-pink-500/10 hover:bg-pink-500/20 px-3 py-2 md:py-1.5 rounded-full transition-all border border-pink-500/20 hover:border-pink-500/40 whitespace-nowrap w-full sm:w-fit justify-center sm:justify-start font-mono"
                             >
                                 <Bot className="w-3 h-3" />
                                 Jak na to
@@ -397,7 +398,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
             
             {/* Chat Container */}
             <div 
-              className={`relative bg-[#111] border border-white/10 w-full md:max-w-2xl h-full md:h-[80vh] md:rounded-2xl shadow-2xl flex flex-col animate-fade-in-up overflow-hidden ${isDragging ? 'border-pink-500 shadow-[0_0_30px_rgba(236,72,153,0.3)]' : ''}`}
+              className={`relative bg-[#111] border-0 md:border border-white/10 w-full md:max-w-2xl h-full md:h-[80vh] md:rounded-2xl shadow-2xl flex flex-col animate-fade-in-up overflow-hidden ${isDragging ? 'border-pink-500 shadow-[0_0_30px_rgba(236,72,153,0.3)]' : ''}`}
               onDragOver={onDragOver}
               onDragLeave={onDragLeave}
               onDrop={onDrop}
@@ -416,28 +417,28 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                 )}
 
                 {/* Chat Header */}
-                <div className="p-4 border-b border-white/10 flex items-center justify-between bg-[#1a1a1a] flex-shrink-0">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center shadow-lg shadow-pink-500/20">
-                            <Bot className="w-6 h-6 text-white" />
+                <div className="p-4 border-b border-white/10 flex items-center justify-between bg-[#1a1a1a] flex-shrink-0 safe-top-padding">
+                    <div className="flex items-center gap-3 overflow-hidden">
+                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center shadow-lg shadow-pink-500/20 flex-shrink-0">
+                            <Bot className="w-5 h-5 md:w-6 md:h-6 text-white" />
                         </div>
-                        <div>
-                            <h3 className="text-sm font-bold text-white flex items-center gap-2 font-display uppercase">
+                        <div className="min-w-0">
+                            <h3 className="text-xs md:text-sm font-bold text-white flex items-center gap-2 font-display uppercase">
                               Bezpečnostní Průvodce
-                              <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded text-gray-400 font-mono">AI</span>
+                              <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded text-gray-400 font-mono hidden sm:inline-block">AI</span>
                             </h3>
-                            <p className="text-xs text-gray-400 truncate max-w-[200px] sm:max-w-xs">{chatTitle}</p>
+                            <p className="text-[10px] md:text-xs text-gray-400 truncate">{chatTitle}</p>
                         </div>
                     </div>
-                    <button onClick={() => setShowChat(false)} className="text-gray-400 hover:text-white p-2 hover:bg-white/10 rounded-lg transition-colors">
+                    <button onClick={() => setShowChat(false)} className="text-gray-400 hover:text-white p-2 hover:bg-white/10 rounded-lg transition-colors flex-shrink-0">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
 
                 {/* Chat Messages */}
-                <div className="flex-grow overflow-y-auto p-4 sm:p-6 space-y-6 bg-[#050505]">
+                <div className="flex-grow overflow-y-auto p-4 space-y-4 md:space-y-6 bg-[#050505]">
                     {chatHistory.map((msg, idx) => (
-                        <div key={idx} className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                        <div key={idx} className={`flex gap-3 md:gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                             <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-1 ${msg.role === 'model' ? 'bg-pink-500/20 text-pink-400' : 'bg-white/10 text-white'}`}>
                                 {msg.role === 'model' ? <Bot className="w-5 h-5" /> : <div className="w-2 h-2 bg-white rounded-full"></div>}
                             </div>
@@ -451,13 +452,13 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                                       key={imgIdx} 
                                       src={img} 
                                       alt="Uploaded content" 
-                                      className="max-w-[150px] max-h-[150px] rounded-lg border border-white/10 object-cover" 
+                                      className="max-w-[120px] md:max-w-[150px] max-h-[150px] rounded-lg border border-white/10 object-cover" 
                                     />
                                   ))}
                                 </div>
                               )}
 
-                              <div className={`rounded-2xl p-4 text-sm leading-relaxed shadow-sm ${msg.role === 'model' ? 'bg-[#1a1a1a] text-gray-200 border border-white/5 rounded-tl-none' : 'bg-pink-600 text-white rounded-tr-none'}`}>
+                              <div className={`rounded-2xl p-3 md:p-4 text-xs md:text-sm leading-relaxed shadow-sm ${msg.role === 'model' ? 'bg-[#1a1a1a] text-gray-200 border border-white/5 rounded-tl-none' : 'bg-pink-600 text-white rounded-tr-none'}`}>
                                   <div className="markdown-body" dangerouslySetInnerHTML={{ __html: msg.text.replace(/\n/g, '<br/>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}></div>
                               </div>
                             </div>
@@ -480,7 +481,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                 </div>
 
                 {/* Input Area */}
-                <div className="p-4 border-t border-white/10 bg-[#1a1a1a] flex-shrink-0">
+                <div className="p-3 md:p-4 border-t border-white/10 bg-[#1a1a1a] flex-shrink-0 safe-bottom-padding">
                     
                     {/* Attachments Preview */}
                     {attachments.length > 0 && (
@@ -490,7 +491,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                             <img src={att.preview} alt="preview" className="w-16 h-16 rounded-lg object-cover border border-white/20" />
                             <button 
                               onClick={() => removeAttachment(idx)}
-                              className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                              className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
                             >
                               <X className="w-3 h-3" />
                             </button>
@@ -499,7 +500,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                       </div>
                     )}
 
-                    <form onSubmit={handleSendMessage} className="flex gap-3 items-end">
+                    <form onSubmit={handleSendMessage} className="flex gap-2 md:gap-3 items-end">
                         <button
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
@@ -526,7 +527,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                               handleSendMessage();
                             }
                           }}
-                          placeholder="Napište zprávu nebo přetáhněte screenshot..."
+                          placeholder="Zpráva..."
                           className={`flex-grow bg-[#0a0a0a] border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-pink-500/50 resize-none max-h-32 min-h-[44px] transition-colors ${isDragging ? 'border-pink-500 bg-pink-500/10' : 'border-white/10'}`}
                           rows={1}
                         />
@@ -539,7 +540,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                           {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
                         </button>
                     </form>
-                    <p className="text-[10px] text-gray-500 text-center mt-2">
+                    <p className="text-[10px] text-gray-500 text-center mt-2 hidden md:block">
                        AI může dělat chyby. Citlivá data na screenshotech začerněte.
                     </p>
                 </div>
