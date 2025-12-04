@@ -1,3 +1,4 @@
+
 export interface Question {
   id: number;
   question: string;
@@ -12,6 +13,7 @@ export interface Block {
   description: string;
   icon: string;
   questions: Question[];
+  gammaUrl?: string; // Optional URL for Gamma.app presentation
 }
 
 export interface QuizState {

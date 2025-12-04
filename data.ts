@@ -3,703 +3,704 @@ import { Block } from './types';
 export const courseData: Block[] = [
   {
     id: 1,
-    title: "Blok 1: Úvod a psychologie útoků",
-    description: "Základy kyberbezpečnosti, CIA triáda a proč útočníci cílí na lidi.",
+    title: "Blok 1: Úvod do kyberbezpečnosti",
+    description: "Psychologie útoků, CIA triáda a proč je člověk hlavním cílem.",
     icon: "ShieldAlert",
     questions: [
       {
         id: 1,
-        question: "Co je hlavním cílem moderních kybernetických útočníků?",
-        options: ["Prolomit nejsložitější firewally", "Zmanipulovat člověka (nejslabší článek)", "Zničit hardware počítače", "Vypnout internet v celé zemi"],
+        question: "Jaká je základní myšlenka moderních kybernetických útoků?",
+        options: ["Útočník prolamuje technologii, ne lidi.", "Útočník neprolamuje zabezpečení, prolamuje člověka.", "Útoky cílí pouze na servery velkých firem.", "Hlavním cílem je zničit hardware."],
         correctAnswer: 1,
-        hint: "Útok na technologii je drahý a složitý. Útok na lidské emoce je levný a efektivní."
+        hint: "Technologie jsou dnes silné, proto útočníci cílí na nejslabší článek – lidské emoce a chyby."
       },
       {
         id: 2,
-        question: "Co znamená zkratka CIA v kontextu bezpečnosti dat?",
-        options: ["Central Intelligence Agency", "Confidentiality, Integrity, Availability (Důvěrnost, Integrita, Dostupnost)", "Control, Inspect, Analyze", "Computer Internet Access"],
-        correctAnswer: 1,
-        hint: "Jde o tři pilíře bezpečnosti: data musí být tajná, nezměněná a přístupná."
+        question: "Co znamená zkratka CIA v kontextu kyberbezpečnosti?",
+        options: ["Central Intelligence Agency", "Computer Internet Access", "Confidentiality, Integrity, Availability (Důvěrnost, Integrita, Dostupnost)", "Control, Inspect, Audit"],
+        correctAnswer: 2,
+        hint: "Jedná se o tři pilíře bezpečnosti. Pokud selže jeden, dojde k incidentu."
       },
       {
         id: 3,
-        question: "Jaký typ útoku využívá telefonní hovor k vylákání údajů?",
-        options: ["Phishing", "Smishing", "Vishing", "DDoS"],
-        correctAnswer: 2,
-        hint: "Slovo vzniklo spojením 'Voice' (hlas) a 'Phishing'."
+        question: "Co znamená porušení 'Integrity' dat?",
+        options: ["Data unikla na veřejnost.", "Data byla neoprávněně změněna nebo upravena (např. číslo účtu na faktuře).", "Služba je nedostupná.", "Heslo bylo prozrazeno."],
+        correctAnswer: 1,
+        hint: "Představte si, že někdo přepíše obsah dokumentu bez vašeho vědomí."
       },
       {
         id: 4,
-        question: "Která emoce NENÍ typicky zneužívána při sociálním inženýrství?",
-        options: ["Strach", "Urgentnost (spěch)", "Zvědavost", "Klid a rozvaha"],
-        correctAnswer: 3,
-        hint: "Útočník vás chce dostat pod tlak, abyste nepřemýšleli."
+        question: "Kolik procent útoků přibližně začíná lidskou chybou (např. kliknutím)?",
+        options: ["Asi 10 %", "Kolem 50 %", "Až 90 %", "Méně než 1 %"],
+        correctAnswer: 2,
+        hint: "Většina útoků vyžaduje aktivní zapojení oběti, jako je otevření přílohy."
       },
       {
         id: 5,
-        question: "Co je to ransomware?",
-        options: ["Program na zrychlení PC", "Škodlivý kód, který zašifruje data a žádá výkupné", "Antivirový program zdarma", "Hardware pro těžbu kryptoměn"],
+        question: "Jaké emoce útočníci nejčastěji zneužívají?",
+        options: ["Radost a klid", "Strach, urgentnost (spěch), zvědavost a autoritu", "Nudu a lhostejnost", "Lásku k technologiím"],
         correctAnswer: 1,
-        hint: "Název pochází z anglického slova 'ransom' (výkupné)."
+        hint: "Útočník vás chce dostat pod tlak, abyste přestali racionálně myslet."
       },
       {
         id: 6,
-        question: "Kolik procent útoků přibližně začíná lidskou chybou (např. kliknutím)?",
-        options: ["Asi 10 %", "Méně než 5 %", "Kolem 50 %", "Až 90 %"],
-        correctAnswer: 3,
-        hint: "Je to drtivá většina útoků."
+        question: "Co je to Phishing?",
+        options: ["Lov ryb na internetu", "Falešné e-maily vydávající se za důvěryhodné instituce", "Druh antiviru", "Legální marketingová strategie"],
+        correctAnswer: 1,
+        hint: "Cílem je 'ułowit' vaše hesla nebo údaje o kartě pomocí podvodné zprávy."
       },
       {
         id: 7,
-        question: "Co znamená porušení 'Integrity' v CIA triádě?",
-        options: ["Data byla smazána", "Data viděl někdo nepovolaný", "Data byla neoprávněně pozměněna (např. číslo účtu na faktuře)", "Systém je pomalý"],
-        correctAnswer: 2,
-        hint: "Představte si, že někdo přepíše částku na faktuře."
+        question: "Co je to Vishing?",
+        options: ["Video hovor", "Podvodný telefonát (Voice Phishing)", "Virtuální rybaření", "Vir v počítači"],
+        correctAnswer: 1,
+        hint: "Pachatel vám volá a vydává se například za bankéře nebo policistu."
       },
       {
         id: 8,
-        question: "Jak se nazývá podvodná SMS zpráva?",
-        options: ["Phishing", "Vishing", "Smishing", "Trashing"],
-        correctAnswer: 2,
-        hint: "Kombinace slova SMS a Phishing."
+        question: "Co je to Ransomware?",
+        options: ["Software na čištění PC", "Škodlivý kód, který zašifruje data a žádá výkupné", "Ochrana proti phishingu", "Program pro stahování hudby"],
+        correctAnswer: 1,
+        hint: "Útočník vaše data 'unese' a chce zaplatit za jejich vrácení."
       },
       {
         id: 9,
-        question: "Proč jsou útoky na běžné uživatele tak časté?",
-        options: ["Protože běžní uživatelé nemají peníze", "Protože je to těžší než útočit na banky", "Protože jsou automatizované a levné", "Protože útočníci se nudí"],
-        correctAnswer: 2,
-        hint: "Útočníci používají roboty k rozesílání milionů podvodů naráz."
+        question: "Co je typickým znakem útoku na 'důvěrnost' (Confidentiality)?",
+        options: ["Únik hesel z databáze", "Změna obsahu webu", "Výpadek e-mailové služby", "Zpomalení počítače"],
+        correctAnswer: 0,
+        hint: "Data vidí někdo, kdo k nim nemá mít přístup."
       },
       {
         id: 10,
-        question: "Co je to 'sociální inženýrství'?",
-        options: ["Oprava sociálních sítí", "Manipulace lidí k provedení určité akce", "Programování sociálních botů", "Tvorba webových stránek"],
-        correctAnswer: 1,
-        hint: "Jde o 'hackování' lidské mysli, ne počítače."
+        question: "Proč útočníci cílí na běžné uživatele?",
+        options: ["Protože nemají co dělat", "Protože běžní uživatelé nemají data", "Protože nástroje pro útoky jsou levné a automatizované", "Je to omyl, cílí jen na vlády"],
+        correctAnswer: 2,
+        hint: "Každý má cenná data (identitu, finance) a útoky lze provádět hromadně."
       }
     ]
   },
   {
     id: 2,
     title: "Blok 2: Základy bezpečnosti na internetu",
-    description: "Domény, HTTPS, hesla a dvoufaktorové ověřování.",
+    description: "Domény, HTTPS, rozpoznání podvodů a ochrana účtů.",
     icon: "Globe",
     questions: [
       {
         id: 1,
-        question: "Znamená ikonka zámečku (HTTPS) v prohlížeči, že je web důvěryhodný?",
-        options: ["Ano, vždy", "Ne, znamená to jen, že je komunikace šifrovaná", "Ano, garantuje to policie", "Znamená to, že web neobsahuje viry"],
+        question: "Znamená zelený zámeček (HTTPS) v prohlížeči, že je web bezpečný a poctivý?",
+        options: ["Ano, vždy.", "Ne, znamená pouze to, že komunikace je šifrovaná.", "Ano, garantuje to Google.", "Znamená to, že web neobsahuje viry."],
         correctAnswer: 1,
-        hint: "I podvodná stránka může mít šifrované spojení (zámeček)."
+        hint: "I podvodná stránka může mít certifikát zdarma a mít zámeček."
       },
       {
         id: 2,
-        question: "Která z těchto domén je podezřelá pro banku ČSOB?",
-        options: ["www.csob.cz", "ib.csob.cz", "csob-prihlaseni-bezpecne.com", "identita.csob.cz"],
+        question: "Která z těchto domén je s největší pravděpodobností podvodná (pokud hledáte ČSOB)?",
+        options: ["www.csob.cz", "ib.csob.cz", "csob-overeni.cz/login", "platby.csob.cz"],
         correctAnswer: 2,
-        hint: "Oficiální instituce málokdy používají pomlčky a divné koncovky jako .com nebo .net pro české služby."
+        hint: "Oficiální subdomény jsou před hlavní doménou. 'csob-overeni.cz' je úplně jiná doména."
       },
       {
         id: 3,
-        question: "Co je hlavním úkolem správce hesel (Password Manager)?",
-        options: ["Automaticky měnit hesla každý den", "Ukládat a generovat silná, unikátní hesla", "Posílat hesla kamarádům", "Zrychlit internet"],
-        correctAnswer: 1,
-        hint: "Pamatuje si za vás složitá hesla, vy si pamatujete jen jedno hlavní."
-      },
-      {
-        id: 4,
-        question: "Co je to 2FA (Dvoufaktorové ověřování)?",
-        options: ["Přihlášení dvěma různými hesly", "Nutnost potvrdit přihlášení druhým způsobem (např. mobil)", "Přihlášení na dvou počítačích", "Dvojitá kontrola antivirem"],
-        correctAnswer: 1,
-        hint: "Něco, co znáte (heslo) + něco, co máte (telefon/klíč)."
-      },
-      {
-        id: 5,
-        question: "Jaké je doporučené minimální délka bezpečného hesla?",
-        options: ["6 znaků", "8 znaků", "alespoň 14-16 znaků", "25 znaků"],
-        correctAnswer: 2,
-        hint: "Čím delší, tím odolnější proti prolomení hrubou silou."
-      },
-      {
-        id: 6,
-        question: "Je bezpečné ukládat hesla přímo do prohlížeče (bez hlavního hesla)?",
-        options: ["Ano, je to nejpohodlnější", "Ne, malware je může snadno ukrást", "Ano, Google to chrání", "Záleží na rychlosti internetu"],
-        correctAnswer: 1,
-        hint: "Specializovaný správce hesel je bezpečnější než prohlížeč."
-      },
-      {
-        id: 7,
-        question: "Co dělá funkce DNS?",
-        options: ["Zrychluje stahování", "Překládá názvy webů (např. seznam.cz) na IP adresy", "Blokuje viry", "Maže historii prohlížení"],
+        question: "Co je to DNS?",
+        options: ["Doručovací služba", "Systém překládající názvy webů (např. banka.cz) na IP adresy", "Druh antiviru", "Digitální Notářský Systém"],
         correctAnswer: 1,
         hint: "Funguje jako telefonní seznam internetu."
       },
       {
-        id: 8,
-        question: "Jak poznáte phishingový e-mail?",
-        options: ["Má hezkou grafiku", "Oslovuje vás jménem a příjmením", "Vytváří nátlak, obsahuje chyby a divné odkazy", "Přišel v noci"],
+        id: 4,
+        question: "Proč útočníci používají ve falešných odkazech zkracovače nebo překlepy?",
+        options: ["Aby ušetřili místo", "Aby vás zmátli a vy jste si nevšimli, že nejste na oficiálním webu", "Je to levnější", "Aby se web rychleji načetl"],
+        correctAnswer: 1,
+        hint: "Doufají, že přehlédnete rozdíl mezi 'banka.cz' a 'banka-login.com'."
+      },
+      {
+        id: 5,
+        question: "Jaké je hlavní pravidlo pro silné heslo?",
+        options: ["Jméno a rok narození", "Krátké, aby se dalo zapamatovat", "Dlouhé (14+ znaků), unikátní a složité", "Stejné pro všechny účty"],
         correctAnswer: 2,
-        hint: "Často chce, abyste klikli 'ihned' nebo 'do 24 hodin'."
+        hint: "Délka je důležitější než složitost, ale unikátnost je klíčová."
+      },
+      {
+        id: 6,
+        question: "Co je úkolem správce hesel (Password Manager)?",
+        options: ["Pamatovat si všechna vaše hesla a generovat nová silná", "Automaticky měnit hesla každý týden", "Posílat hesla e-mailem", "Jen kontrolovat viry"],
+        correctAnswer: 0,
+        hint: "Vy si pamatujete jen jedno 'master' heslo, on zbytek."
+      },
+      {
+        id: 7,
+        question: "Co je to 2FA (Dvoufaktorové ověřování)?",
+        options: ["Přihlášení dvěma hesly", "Přihlášení heslem + druhým faktorem (např. aplikace v mobilu)", "Přihlášení na dvou počítačích", "Dvojitá kontrola pravopisu"],
+        correctAnswer: 1,
+        hint: "Zvyšuje bezpečnost tím, že útočníkovi nestačí ukrást jen heslo."
+      },
+      {
+        id: 8,
+        question: "Co NENÍ znakem phishingového e-mailu?",
+        options: ["Naléhavá výzva k akci (do 24 hodin)", "Podezřelá adresa odesílatele", "Osobní oslovení a perfektní znalost vaší historie", "Gramatické chyby a špatná čeština"],
+        correctAnswer: 2,
+        hint: "Phishing je většinou masový a neosobní. Pokud zná detaily, může jít o cílený spear-phishing (vzácnější)."
       },
       {
         id: 9,
-        question: "Které rozšíření prohlížeče pomáhá blokovat reklamy a sledovací prvky?",
-        options: ["Adobe Flash", "uBlock Origin", "Java", "WinRAR"],
+        question: "Je bezpečné ukládat hesla přímo do prohlížeče bez ochrany?",
+        options: ["Ano, je to pohodlné", "Ne, malware je může snadno vykrást", "Ano, prohlížeč je trezor", "Záleží na značce počítače"],
         correctAnswer: 1,
-        hint: "Blokování reklam také snižuje riziko nákazy z webu."
+        hint: "Prohlížeče často ukládají hesla slabě zabezpečená."
       },
       {
         id: 10,
-        question: "Je bezpečné používat stejné heslo na všech stránkách?",
-        options: ["Ano, abych ho nezapomněl", "Ne, pokud unikne z jedné, útočník se dostane všude", "Ano, pokud je silné", "Jen na e-shopech"],
-        correctAnswer: 1,
-        hint: "Jeden únik dat by ohrozil celou vaši digitální identitu."
+        question: "K čemu slouží rozšíření 'uBlock Origin'?",
+        options: ["K blokování reklam a škodlivých skriptů", "K přehrávání videí", "K tvorbě hesel", "K těžbě kryptoměn"],
+        correctAnswer: 0,
+        hint: "Blokováním reklam snižujete riziko, že kliknete na podvodný banner."
       }
     ]
   },
   {
     id: 3,
-    title: "Blok 3: Ochrana zařízení a domácí sítě",
-    description: "Zabezpečení PC, mobilu, routeru a Wi-Fi.",
+    title: "Blok 3: Ochrana zařízení a sítě",
+    description: "Zabezpečení PC, mobilu, routeru, Wi-Fi a zálohování.",
     icon: "Wifi",
+    gammaUrl: "https://gamma.app/embed/sw8fkuzsjvzw8hs",
     questions: [
       {
         id: 1,
-        question: "Jaký je nejdůležitější krok pro zabezpečení operačního systému?",
-        options: ["Vypnout ho na noc", "Pravidelné automatické aktualizace", "Častá defragmentace disku", "Mít hezké pozadí plochy"],
+        question: "Proč je důležité instalovat aktualizace systému?",
+        options: ["Aby byl systém hezčí", "Opravují bezpečnostní chyby, které zneužívají útočníci", "Zpomalují počítač", "Přidávají jen nové emoji"],
         correctAnswer: 1,
-        hint: "Aktualizace opravují bezpečnostní díry, které zneužívají viry."
+        hint: "Neaktualizovaný systém je jako dům s otevřenými okny."
       },
       {
         id: 2,
-        question: "Co byste měli udělat s výchozím heslem u nového Wi-Fi routeru?",
-        options: ["Nechat ho, je na štítku", "Okamžitě ho změnit na silné unikátní heslo", "Změnit ho na '12345'", "Napsat ho na router fixou"],
+        question: "Co je to Firewall?",
+        options: ["Program na vypalování CD", "Ochranná zeď kontrolující příchozí a odchozí provoz", "Antivirus", "Hardware pro chlazení"],
         correctAnswer: 1,
-        hint: "Výchozí hesla jsou veřejně známá a útočníci je zkoušejí jako první."
+        hint: "Blokuje nechtěné spojení z internetu do vašeho počítače."
       },
       {
         id: 3,
-        question: "Co dělá Firewall?",
-        options: ["Chladí počítač", "Kontroluje a blokuje síťový provoz", "Zrychluje Wi-Fi", "Maže staré soubory"],
+        question: "Stačí pro běžného uživatele Windows Defender?",
+        options: ["Ne, je potřeba drahý antivirus", "Ano, spolu s rozumným chováním je dostatečný", "Antivirus není potřeba vůbec", "Jen pro offline práci"],
         correctAnswer: 1,
-        hint: "Funguje jako vrátný, který kontroluje, kdo vstupuje a odchází ze sítě."
+        hint: "Moderní vestavěné antiviry jsou velmi kvalitní."
       },
       {
         id: 4,
-        question: "K čemu slouží BitLocker (nebo FileVault)?",
-        options: ["K šifrování celého disku", "K uzamčení klávesnice", "K přehrávání hudby", "K blokování reklam"],
-        correctAnswer: 0,
-        hint: "Když vám ukradnou notebook, bez hesla se k datům na disku nedostanou."
+        question: "Co udělat jako první s novým Wi-Fi routerem?",
+        options: ["Zapojit a používat", "Změnit výchozí heslo administrace a Wi-Fi sítě", "Napsat heslo na router", "Vypnout ho"],
+        correctAnswer: 1,
+        hint: "Výchozí hesla (admin/admin) jsou veřejně známá."
       },
       {
         id: 5,
-        question: "Jaký je nejbezpečnější způsob odemykání telefonu?",
-        options: ["Gesto (vzor)", "PIN 0000", "Biometrie (otisk prstu / Face ID)", "Posuvník (Slide to unlock)"],
-        correctAnswer: 2,
-        hint: "Biometrie je unikátní pro každého člověka."
+        question: "Kdy byste měli používat VPN?",
+        options: ["Doma na zabezpečené síti", "Na veřejné Wi-Fi (kavárna, letiště)", "Vždy, když píšu e-mail", "Když chci rychlejší internet"],
+        correctAnswer: 1,
+        hint: "Na veřejné Wi-Fi může kdokoli odposlouchávat váš provoz. VPN to šifruje."
       },
       {
         id: 6,
-        question: "Co je to VPN?",
-        options: ["Virus Protection Network", "Virtual Private Network (šifrovaný tunel)", "Very Public Network", "Visual Photo Number"],
-        correctAnswer: 1,
-        hint: "Vytvoří bezpečný tunel mezi vámi a internetem, skryje vaši aktivitu."
+        question: "Co znamená pravidlo zálohování 3-2-1?",
+        options: ["3 kopie dat, 2 různá média, 1 kopie mimo domov", "3 disky, 2 počítače, 1 cloud", "3 hesla, 2 účty, 1 uživatel", "Odpočítávání do startu"],
+        correctAnswer: 0,
+        hint: "Chráníte vás to před selháním disku, krádeží i požárem."
       },
       {
         id: 7,
-        question: "Je bezpečné používat veřejnou Wi-Fi bez VPN pro bankovnictví?",
-        options: ["Ano, banka je zabezpečená", "Ne, útočník může odposlouchávat provoz", "Ano, pokud mám iPhone", "Ano, v kavárně je to bezpečné"],
+        question: "Co dělat při ztrátě telefonu?",
+        options: ["Koupit nový", "Vzdáleně ho uzamknout/vymazat (Find My Device) a blokovat SIM", "Nahlásit na Facebooku", "Nic"],
         correctAnswer: 1,
-        hint: "Veřejné sítě jsou často nezabezpečené a kdokoli může 'poslouchat'."
+        hint: "Rychlá reakce zabrání zneužití vašich dat a účtů."
       },
       {
         id: 8,
-        question: "Co je to IMEI?",
-        options: ["Jméno operátora", "Unikátní identifikační číslo telefonu", "Typ SIM karty", "Značka telefonu"],
-        correctAnswer: 1,
-        hint: "Potřebujete ho pro policii a operátora při krádeži telefonu."
+        question: "Jaký je bezpečný standard pro šifrování Wi-Fi?",
+        options: ["WEP", "WPA", "WPA2 nebo WPA3", "Žádné (Open)"],
+        correctAnswer: 2,
+        hint: "WEP je zastaralý a lze ho prolomit za minuty."
       },
       {
         id: 9,
-        question: "Měl by 'běžný uživatel' platit za drahý firemní EDR antivirus?",
-        options: ["Ano, je to nutnost", "Ne, Windows Defender většinou stačí", "Antivirus není potřeba vůbec", "Jen pokud má Mac"],
-        correctAnswer: 1,
-        hint: "Vestavěné nástroje jako Defender jsou dnes velmi kvalitní pro domácí použití."
+        question: "Co je to 'IoT' zařízení a proč je rizikové?",
+        options: ["Internet of Things (chytré žárovky, kamery) – často mají slabé zabezpečení", "Interní obchodní tým", "Nový typ počítače", "Bezpečnostní protokol"],
+        correctAnswer: 0,
+        hint: "Levná chytrá zařízení se často neaktualizují a mohou být vstupní branou do sítě."
       },
       {
         id: 10,
-        question: "Jaký šifrovací standard by měla mít vaše domácí Wi-Fi?",
-        options: ["WEP", "WPA", "WPA2 nebo WPA3", "Žádný (Open)"],
-        correctAnswer: 2,
-        hint: "WEP je velmi starý a snadno prolomitelný. WPA3 je nejnovější."
+        question: "Proč oddělovat síť pro hosty (Guest Network)?",
+        options: ["Aby měli pomalejší internet", "Aby se návštěva (nebo její zavirovaný mobil) nedostala k vašim datům", "Je to slušnost", "Nemá to smysl"],
+        correctAnswer: 1,
+        hint: "Chráníte tím svá citlivá data před zařízeními, kterým plně nedůvěřujete."
       }
     ]
   },
   {
     id: 4,
-    title: "Blok 4: Finance a online nákupy",
-    description: "Bezpečné platby, ochrana karet a podvody na bazarech.",
+    title: "Blok 4: Bankovnictví a nákupy",
+    description: "Vishing, podvody na bazarech, ochrana karet a osobních údajů.",
     icon: "CreditCard",
     questions: [
       {
         id: 1,
-        question: "Vyžaduje banka někdy PIN nebo heslo v e-mailu/telefonátu?",
-        options: ["Ano, pro ověření", "Občas, při problémech", "Nikdy", "Ano, při založení účtu"],
-        correctAnswer: 2,
-        hint: "Banka tyto údaje zná, nepotřebuje se vás ptát. Je to podvod."
+        question: "Co je to 'Vishing'?",
+        options: ["Podvodný e-mail", "Podvodný telefonát (Voice Phishing) vydávající se za banku/policii", "Virus v mobilu", "Nákup akcií"],
+        correctAnswer: 1,
+        hint: "Útočník volá a snaží se vás vystrašit, že vám mizí peníze z účtu."
       },
       {
         id: 2,
-        question: "Co je to 3D Secure?",
-        options: ["3D brýle pro bankovnictví", "Dodatečné ověření platby kartou (např. v aplikaci)", "Trojitá záloha dat", "Pojištění karty"],
+        question: "Vyžaduje banka někdy po telefonu váš PIN nebo heslo?",
+        options: ["Ano, pro ověření totožnosti", "Nikdy", "Občas, při problémech", "Ano, pro zrušení platby"],
         correctAnswer: 1,
-        hint: "Zajišťuje, že kartu používá opravdu její majitel (potvrzení v mobilu)."
+        hint: "Banka tyto údaje zná nebo je nepotřebuje. Kdo se ptá, je podvodník."
       },
       {
         id: 3,
-        question: "Jaký je typický podvod na Vinted/Marketplace?",
-        options: ["Kupující pošle peníze předem", "Kupující pošle odkaz na 'přijetí platby' nebo 'kurýra'", "Prodávající pošle zboží poštou", "Kupující si přijede osobně"],
+        question: "Jak funguje podvod 'Syn/Dcera v nouzi' na WhatsAppu?",
+        options: ["Dítě ztratí telefon", "Podvodník píše z cizího čísla: 'Ahoj mami, mám nové číslo' a žádá peníze", "Dítě chce kredit", "Je to reklama"],
         correctAnswer: 1,
-        hint: "Útočník se tváří, že už zaplatil, a chce po vás údaje z karty přes falešný odkaz."
+        hint: "Vždy zavolejte na původní číslo svého dítěte pro ověření."
       },
       {
         id: 4,
-        question: "Měli byste sdělovat SMS ověřovací kód někomu po telefonu?",
-        options: ["Ano, pokud tvrdí, že je z banky", "Ano, pokud je to policie", "Nikdy", "Ano, rodině"],
-        correctAnswer: 2,
-        hint: "Kód slouží jen vám k potvrzení vaší akce. Kdo ho má, ovládá váš účet."
+        question: "Co je typické pro podvody na Vinted/Marketplace?",
+        options: ["Kupující chce přijet osobně", "Kupující pošle odkaz na 'přijetí platby' nebo 'kurýra', kde máte zadat číslo karty", "Prodávající pošle zboží poštou", "Platba převodem"],
+        correctAnswer: 1,
+        hint: "Nikdy nezadávejte číslo karty, abyste PŘIJALI peníze."
       },
       {
         id: 5,
-        question: "Co dělat při podezření na zneužití platební karty?",
-        options: ["Čekat týden", "Napsat na Facebook", "Okamžitě kartu zablokovat (v aplikaci/telefonicky)", "Vybrat všechny peníze"],
-        correctAnswer: 2,
-        hint: "Rychlost je klíčová, aby útočník nestihl vybrat více."
+        question: "K čemu slouží 3D Secure?",
+        options: ["K lepší grafice bankovnictví", "Dodatečné ověření platby kartou (např. v aplikaci)", "Pojištění proti krádeži", "Trojitá kontrola zůstatku"],
+        correctAnswer: 1,
+        hint: "I když útočník zná číslo karty, bez potvrzení v mobilu nezaplatí."
       },
       {
         id: 6,
-        question: "Je bezpečné platit převodem neznámému e-shopu bez recenzí?",
-        options: ["Ano", "Ne, peníze už pravděpodobně neuvidíte", "Ano, pokud má hezký web", "Ano, pokud je to levné"],
+        question: "Co je 'Podvod se změněným číslem faktury'?",
+        options: ["Faktura je za jiné zboží", "Útočník zachytí e-mail a změní číslo účtu dodavatele na své", "Špatně spočítané DPH", "Faktura je v dolarech"],
         correctAnswer: 1,
-        hint: "U podvodných e-shopů je platba kartou bezpečnější (možnost reklamace - chargeback)."
+        hint: "Peníze pošlete podvodníkovi v domnění, že platíte dodavateli."
       },
       {
         id: 7,
-        question: "Co znamená 'Podvod se změněným číslem faktury'?",
-        options: ["Faktura je za jiné zboží", "Útočník v e-mailu změní číslo účtu dodavatele na své", "Faktura má špatné DPH", "Faktura je v jiné měně"],
-        correctAnswer: 1,
-        hint: "Peníze pošlete podvodníkovi místo obchodnímu partnerovi."
+        question: "Co NIKDY neposílat e-mailem nebo chatem?",
+        options: ["Faktury", "Fotografie z dovolené", "Fotku občanského průkazu a platební karty", "Pozdravy"],
+        correctAnswer: 2,
+        hint: "Tyto dokumenty umožňují kompletní krádež vaší identity."
       },
       {
         id: 8,
-        question: "Jak funguje podvod 'Syn/Dcera v nouzi' na WhatsAppu?",
-        options: ["Dítě ztratí telefon", "Útočník se vydává za dítě s novým číslem a žádá peníze", "Dítě chce kredit", "Dítě posílá fotky"],
-        correctAnswer: 1,
-        hint: "Vždy si ověřte zavoláním na původní číslo dítěte."
+        question: "Jak poznáte falešnou platební bránu?",
+        options: ["Chce přihlašovací údaje do bankovnictví nebo PIN", "Má zelený zámeček", "Vypadá jako ta od ČSOB", "Chce číslo karty"],
+        correctAnswer: 0,
+        hint: "Platební brána slouží jen pro kartu. Nikdy se tam nezadává heslo k účtu."
       },
       {
         id: 9,
-        question: "Pro online nákupy je nejbezpečnější používat:",
-        options: ["Hlavní kartu s celoživotními úsporami", "Jednorázovou virtuální kartu nebo kartu s limitem", "Cizí kartu", "Hotovost poštou"],
+        question: "Co je to 'Investiční podvod'?",
+        options: ["Nákup státních dluhopisů", "Platforma slibující nereálné zisky, která vám nedovolí vybrat peníze", "Spoření v bance", "Nákup akcií ČEZ"],
         correctAnswer: 1,
-        hint: "Když uniknou data virtuální karty, vaše hlavní úspory jsou v bezpečí."
+        hint: "Pokud někdo slibuje jistý zisk 300 %, je to vždy podvod."
       },
       {
         id: 10,
-        question: "Co NIKDY neposílat e-mailem/zprávou?",
-        options: ["Pozdrav", "Fotku kočky", "Fotku občanského průkazu a platební karty", "Fakturu"],
-        correctAnswer: 2,
-        hint: "Tyto doklady lze snadno zneužít pro krádež identity."
+        question: "Co dělat, když zjistíte, že jste naletěli?",
+        options: ["Stydět se a mlčet", "Okamžitě volat banku, blokovat karty a hlásit to policii", "Smazat e-mail", "Napsat podvodníkovi"],
+        correctAnswer: 1,
+        hint: "Rychlost je rozhodující. Banka může někdy platbu ještě zastavit."
       }
     ]
   },
   {
     id: 5,
-    title: "Blok 5: Kryptoměny a bezpečí",
-    description: "Blockchain, peněženky a jak nepřijít o peníze.",
+    title: "Blok 5: Kryptoměny",
+    description: "Blockchain, peněženky, seed a jak se nenechat okrást.",
     icon: "Bitcoin",
     questions: [
       {
         id: 1,
-        question: "Lze transakci v kryptoměnách (např. Bitcoin) zrušit nebo vrátit?",
-        options: ["Ano, zavolám na podporu Bitcoinu", "Ano, do 24 hodin", "Ne, transakce jsou nevratné", "Ano, za poplatek"],
-        correctAnswer: 2,
-        hint: "Neexistuje žádná 'banka', která by platbu stornovala. Co pošlete, je pryč."
+        question: "Co je hlavním znakem kryptoměnových transakcí?",
+        options: ["Lze je snadno reklamovat", "Jsou nezvratné – nelze je vrátit", "Garantuje je stát", "Jsou vždy anonymní"],
+        correctAnswer: 1,
+        hint: "Neexistuje 'krypto banka', kam zavoláte pro storno platby."
       },
       {
         id: 2,
-        question: "Co je to 'Seed phrase' (Seed)?",
-        options: ["Heslo k e-mailu", "Sada 12-24 slov, která je hlavním klíčem k penězům", "Název kryptoměny", "Semínko pro sázení"],
+        question: "Co je to 'Seed' (Seed phrase)?",
+        options: ["Heslo k aplikaci", "Sada 12-24 slov, která je hlavním klíčem k vaší peněžence", "Název coinu", "Semínko stromu"],
         correctAnswer: 1,
-        hint: "Kdo zná váš Seed, ten vlastní vaše peníze. Nikdy ho nikomu nedávejte."
+        hint: "Kdo zná váš Seed, ten vlastní vaše peníze. Je to to nejcennější."
       },
       {
         id: 3,
-        question: "Kde je nejbezpečnější uchovávat Seed?",
-        options: ["Vyfocený v mobilu", "Uložený v e-mailu", "Napsaný na papíře/kovu v trezoru (offline)", "V textovém souboru na ploše"],
+        question: "Kam si bezpečně uložit Seed?",
+        options: ["Vyfotit do mobilu", "Uložit do e-mailu nebo na Google Drive", "Napsat na papír/kov a uložit offline (trezor)", "Říct ho kamarádovi"],
         correctAnswer: 2,
-        hint: "Seed nesmí přijít do kontaktu s internetem, aby ho malware neukradl."
+        hint: "Seed nesmí nikdy přijít do kontaktu s internetem ani digitálním zařízením."
       },
       {
         id: 4,
-        question: "Jaký je hlavní znak podvodné investiční platformy?",
-        options: ["Slibuje garantované vysoké zisky (např. 100% měsíčně)", "Má ošklivý web", "Chce ověření identity", "Používá Bitcoin"],
-        correctAnswer: 0,
-        hint: "V investicích neexistuje vysoký zisk bez rizika. Pokud to zní příliš dobře, je to podvod."
+        question: "Vyžaduje oficiální podpora peněženky (MetaMask, Trezor) váš Seed?",
+        options: ["Ano, pro ověření", "Nikdy", "Občas", "Ano, při aktualizaci"],
+        correctAnswer: 1,
+        hint: "Nikdy. Kdo ho po vás chce, je 100% podvodník."
       },
       {
         id: 5,
-        question: "Co je to 'Hardware peněženka' (Trezor, Ledger)?",
-        options: ["Kožená peněženka", "Fyzické zařízení (USB) pro bezpečné uložení klíčů", "Aplikace v mobilu", "Banka"],
-        correctAnswer: 1,
-        hint: "Klíče jsou uloženy v zařízení a nikdy neopustí bezpečný čip."
+        question: "Co je to 'Hardware peněženka' (např. Trezor)?",
+        options: ["Fyzické zařízení pro nejbezpečnější uložení klíčů", "Kožená peněženka", "Aplikace v mobilu", "Banka"],
+        correctAnswer: 0,
+        hint: "Klíče jsou uloženy offline a viry v počítači na ně nedosáhnou."
       },
       {
         id: 6,
-        question: "Vyžaduje oficiální technická podpora peněženky váš Seed?",
-        options: ["Ano, pro opravu", "Nikdy", "Jen občas", "Ano, pro aktualizaci"],
-        correctAnswer: 1,
-        hint: "Podpora ho nepotřebuje. Kdo ho chce, je zloděj."
-      },
-      {
-        id: 7,
         question: "Co je to 'Rug Pull'?",
-        options: ["Nový tanec", "Druh koberce", "Podvod, kdy vývojáři vyberou peníze a zmizí", "Rychlý nákup"],
-        correctAnswer: 2,
+        options: ["Druh koberce", "Podvod, kdy vývojáři vyberou peníze z projektu a zmizí", "Rychlý nákup", "Legální investice"],
+        correctAnswer: 1,
         hint: "Doslova 'vytrhnutí koberce' pod nohama investorů."
       },
       {
-        id: 8,
-        question: "Je bezpečné skenovat náhodné QR kódy slibující kryptoměny zdarma?",
-        options: ["Ano, je to štěstí", "Ne, mohou vést na podvodné stránky nebo vykrást peněženku", "Ano, QR kódy jsou bezpečné", "Jen na letišti"],
+        id: 7,
+        question: "Co hrozí při skenování náhodných QR kódů pro 'krypto zdarma'?",
+        options: ["Dostanu peníze", "Může to schválit výběr všech mých prostředků (drainer)", "Nic se nestane", "Je to bezpečné"],
         correctAnswer: 1,
-        hint: "QR kód může spustit transakci, která vám vyluxuje účet."
+        hint: "QR kód může obsahovat škodlivý kontrakt, který vykradne peněženku."
+      },
+      {
+        id: 8,
+        question: "Co znamená 'Custodial' peněženka (např. na burze)?",
+        options: ["Klíče držíte vy", "Klíče drží burza (nemáte plnou kontrolu)", "Je to bezpečnější než Trezor", "Je to hardware"],
+        correctAnswer: 1,
+        hint: "Pokud burza zkrachuje, o peníze přijdete. 'Not your keys, not your coins'."
       },
       {
         id: 9,
-        question: "Co znamená, že je peněženka 'Non-custodial' (vlastní)?",
-        options: ["Peníze drží burza", "Za peníze ručí stát", "Vy a jen vy vlastníte klíče (a zodpovědnost)", "Je zdarma"],
-        correctAnswer: 2,
-        hint: "Jste svou vlastní bankou. Pokud ztratíte klíče, nikdo vám nepomůže."
+        question: "Jak poznáte falešnou investiční krypto platformu?",
+        options: ["Slibuje garantovaný vysoký zisk bez rizika", "Chce ověření identity", "Má licenci ČNB", "Upozorňuje na rizika"],
+        correctAnswer: 0,
+        hint: "V kryptu neexistuje 'jistý zisk'. Pokud to zní příliš dobře, je to podvod."
       },
       {
         id: 10,
-        question: "Proč útočníci rádi používají kryptoměny?",
-        options: ["Jsou ekologické", "Jsou těžko vystopovatelné a nevratné", "Jsou levné", "Mají hezká loga"],
+        question: "Co je 'Pig Butchering' (řeznictví)?",
+        options: ["Recept na maso", "Dlouhodobý podvod budující důvěru (romance/investice) před krádeží", "Těžba kryptoměn", "Nákup NFT"],
         correctAnswer: 1,
-        hint: "Pro policii je velmi obtížné (až nemožné) takové peníze zmrazit nebo vrátit."
+        hint: "Útočník si oběť 'vykrmuje' (získává důvěru) měsíce, než ji okrade."
       }
     ]
   },
   {
     id: 6,
     title: "Blok 6: Řešení incidentů",
-    description: "Co dělat, když se něco pokazí. První pomoc v kyberprostoru.",
+    description: "První pomoc při útoku: co dělat hned a co nedělat.",
     icon: "Siren",
     questions: [
       {
         id: 1,
-        question: "Co je první pravidlo při zjištění kybernetického útoku?",
-        options: ["Smazat disk", "Nepanikařit a jednat s rozvahou", "Vypnout elektřinu v celém domě", "Křičet"],
+        question: "Co je první pravidlo při zjištění kybernetického incidentu?",
+        options: ["Smazat disk", "Nepanikařit a jednat s rozvahou", "Vypnout elektřinu v celém domě", "Křičet na počítač"],
         correctAnswer: 1,
-        hint: "Panika vede k chybám. Zastavte se a přemýšlejte."
+        hint: "Panika vede k chybám. Zastavte se a přemýšlejte podle plánu."
       },
       {
         id: 2,
-        question: "Co udělat, pokud si myslíte, že máte v počítači virus/malware?",
-        options: ["Odpojit počítač od internetu", "Poslat virus kamarádovi", "Otevřít bankovnictví", "Nic, ono to zmizí"],
+        question: "Co udělat s napadeným zařízením (např. virem)?",
+        options: ["Okamžitě ho odpojit od internetu/sítě", "Poslat e-mail IT oddělení", "Přihlásit se do banky", "Nechat ho běžet"],
         correctAnswer: 0,
-        hint: "Odpojením zabráníte viru komunikovat s útočníkem a šířit se dál."
+        hint: "Zabráníte tím šíření nákazy na další zařízení nebo úniku dat."
       },
       {
         id: 3,
-        question: "K čemu slouží služba 'Have I Been Pwned'?",
-        options: ["K nákupu her", "Ke zjištění, zda můj e-mail/heslo uniklo v databázi hackerů", "K opravě počítače", "K blokování reklam"],
+        question: "Pokud zjistíte únik hesla k e-mailu, odkud ho změníte?",
+        options: ["Z napadeného počítače", "Z jiného, bezpečného zařízení (např. mobilu)", "Nezměním ho", "Pošlu ho útočníkovi"],
         correctAnswer: 1,
-        hint: "Zadáte e-mail a zjistíte, kde všude vaše data unikla."
+        hint: "Na napadeném PC může být keylogger, který nové heslo hned ukradne."
       },
       {
         id: 4,
-        question: "Pokud zjistíte, že vám někdo ukradl heslo k e-mailu, odkud ho změníte?",
-        options: ["Z napadeného počítače", "Z bezpečného zařízení (např. mobilu)", "Nezměním ho", "Napíšu útočníkovi"],
+        question: "Co je služba 'Have I Been Pwned'?",
+        options: ["Hra", "Nástroj pro kontrolu, zda váš e-mail nebo heslo uniklo v databázi hackerů", "Antivirus", "Sociální síť"],
         correctAnswer: 1,
-        hint: "Na napadeném počítači může útočník sledovat, co píšete."
+        hint: "Zjistíte tam, jestli jsou vaše přihlašovací údaje veřejně známé."
       },
       {
         id: 5,
         question: "Co dělat při krádeži telefonu?",
-        options: ["Koupit nový", "Vzdáleně ho uzamknout/vymazat a blokovat SIM", "Čekat, až se zloděj ozve", "Nahlásit to na Facebooku"],
+        options: ["Koupit nový", "Vzdáleně ho uzamknout (Find My), vymazat data a blokovat SIM u operátora", "Čekat", "Nahlásit na Facebooku"],
         correctAnswer: 1,
-        hint: "Rychlá reakce zabrání zloději dostat se k vašim datům a 2FA kódům."
+        hint: "Rychlá reakce ochrání vaše data i peníze (přes SMS kódy)."
       },
       {
         id: 6,
-        question: "Když omylem sdělíte údaje k bankovní kartě podvodníkovi, co uděláte?",
-        options: ["Okamžitě blokuji kartu v aplikaci/bance", "Počkám na výpis", "Změním heslo k e-mailu", "Nic"],
-        correctAnswer: 0,
-        hint: "Karta se dá zablokovat vteřiny po incidentu přes mobilní bankovnictví."
+        question: "Máte podezření na kompromitaci bankovního účtu. Co uděláte?",
+        options: ["Napíšu e-mail bance", "Zavolám do banky pro blokaci a změním hesla", "Počkám na výpis", "Vyberu hotovost"],
+        correctAnswer: 1,
+        hint: "Banka může okamžitě zastavit odchozí platby a zablokovat karty."
       },
       {
         id: 7,
-        question: "Pokud vás vydírá ransomware, máte platit výkupné?",
-        options: ["Ano, ihned", "Ne, není záruka vrácení dat a podporujete zločin", "Ano, ale jen půlku", "Možná"],
+        question: "Máte platit výkupné u Ransomwaru?",
+        options: ["Ano, hned", "Ne, není záruka vrácení dat a financujete zločin", "Ano, ale jen půlku", "Možná"],
         correctAnswer: 1,
-        hint: "Platit zločincům se nevyplácí. Často data stejně neobnoví."
+        hint: "Platba nezaručuje, že data dostanete zpět, a motivuje útočníky k dalším útokům."
       },
       {
         id: 8,
-        question: "Jak zjistíte IMEI telefonu pro policii?",
-        options: ["Vytočením *#06#", "Je napsané na displeji", "V telefonním seznamu", "Nevím"],
-        correctAnswer: 0,
-        hint: "Univerzální kód pro zobrazení sériového čísla."
+        question: "Co znamená funkce 'Odhlásit všechna zařízení'?",
+        options: ["Smaže účet", "Ukončí aktivní relace útočníka, pokud se dostal do vašeho účtu", "Vypne internet", "Smaže e-maily"],
+        correctAnswer: 1,
+        hint: "Je to klíčový krok při obnově kontroly nad e-mailem nebo sociální sítí."
       },
       {
         id: 9,
-        question: "Co znamená 'Odhlásit všechna zařízení' (z e-mailu/Facebooku)?",
-        options: ["Smaže účet", "Zruší přihlášení útočníka, pokud se tam dostal", "Vypne internet", "Smaže zprávy"],
+        question: "Co NIKDY nedělat při incidentu?",
+        options: ["Volat policii", "Mazat důkazy nebo reinstalovat systém bez zálohy důkazů", "Odpojit síť", "Změnit hesla"],
         correctAnswer: 1,
-        hint: "Užitečná funkce, která 'vykopne' všechny přihlášené uživatele."
+        hint: "Pokud chcete incident vyšetřit, potřebujete stopy (logy, soubory)."
       },
       {
         id: 10,
-        question: "Proč je důležité nahlásit závažné incidenty (např. bance/policii)?",
-        options: ["Aby měli statistiku", "Může to pomoci vrátit peníze a chránit ostatní", "Je to zákon", "Dostanu odměnu"],
+        question: "Proč hlásit incidenty (např. IT oddělení nebo policii)?",
+        options: ["Aby měli statistiku", "Může to zabránit škodám u ostatních a pomoci dopadnout pachatele", "Je to zbytečné", "Dostanu odměnu"],
         correctAnswer: 1,
-        hint: "Banka může zastavit transakce, policie může dopadnout pachatele."
+        hint: "Informace o útoku pomohou nastavit lepší obranu pro všechny."
       }
     ]
   },
   {
     id: 7,
-    title: "Blok 7: Implementace a procesy",
-    description: "Systematický přístup, zálohování a firemní kultura.",
+    title: "Blok 7: Implementace a pravidla",
+    description: "Systematická bezpečnost, 3-2-1 zálohování a firemní kultura.",
     icon: "ClipboardCheck",
     questions: [
       {
         id: 1,
-        question: "Co říká pravidlo zálohování 3-2-1?",
-        options: ["3 zálohy, 2 formáty, 1 mimo domov", "3 disky, 2 počítače, 1 cloud", "3 hodiny práce, 2 hodiny pauza, 1 oběd", "3 hesla, 2 uživatelé, 1 účet"],
-        correctAnswer: 0,
-        hint: "Klíčové je mít data na více místech a jedno z nich fyzicky jinde (proti požáru/krádeži)."
+        question: "Proč nestačí mít jen znalosti, ale je potřeba systém?",
+        options: ["Znalosti se zapomínají", "Bez systému a návyků člověk pod tlakem selže", "Systém je levnější", "Teorie je nuda"],
+        correctAnswer: 1,
+        hint: "Bezpečnost musí být rutina, ne jednorázová akce."
       },
       {
         id: 2,
-        question: "Co je to 'bezpečnostní kultura'?",
-        options: ["Sada pravidel na papíře", "Způsob myšlení a chování lidí ve firmě/doma", "Antivirový program", "Školení jednou za 10 let"],
-        correctAnswer: 1,
-        hint: "Je to o tom, že lidé sami od sebe poznají podezřelý e-mail a nahlásí ho."
+        question: "Co říká pravidlo zálohování 3-2-1?",
+        options: ["3 kopie dat, 2 různá média, 1 kopie fyzicky jinde (offsite)", "3 disky, 2 počítače, 1 cloud", "3 hesla, 2 účty, 1 uživatel", "Odpočítávání"],
+        correctAnswer: 0,
+        hint: "Zajišťuje, že data přežijí i požár nebo krádež všech zařízení v kanceláři."
       },
       {
         id: 3,
-        question: "Proč nestačí mít jen teoretické znalosti?",
-        options: ["Teorie je nudná", "Bez zavedeného systému a návyků člověk v krizi selže", "Znalosti zabírají místo v mozku", "Nestačí to"],
+        question: "Co je to 'Bezpečnostní kultura'?",
+        options: ["Směrnice v šuplíku", "Způsob myšlení a chování lidí, kde je bezpečnost přirozenou součástí práce", "Drahý software", "Přísné tresty"],
         correctAnswer: 1,
-        hint: "Útočníci spoléhají na to, že budete líní nebo ve stresu."
+        hint: "Lidé sami od sebe poznají a nahlásí podezřelý e-mail."
       },
       {
         id: 4,
-        question: "Jak často by se měly zálohovat kritické dokumenty?",
-        options: ["Jednou za rok", "Pravidelně a automaticky (např. denně)", "Až když se počítač rozbije", "Nikdy"],
+        question: "Jaké hesla bychom měli měnit?",
+        options: ["Všechna každých 90 dní", "Pouze ta kompromitovaná (uniklá) nebo při podezření", "Žádná", "Jen heslo k Wi-Fi"],
         correctAnswer: 1,
-        hint: "Automatizace je klíč. Na manuální zálohu zapomenete."
+        hint: "Nucená změna hesel vede k tomu, že si lidé píší hesla na papírky. Měňte jen při riziku."
       },
       {
         id: 5,
-        question: "Co znamená 'klasifikace dat'?",
-        options: ["Seřazení podle abecedy", "Rozdělení dat podle citlivosti (veřejné, interní, tajné)", "Mazání starých dat", "Komprese souborů"],
+        question: "Co je princip 'Need to know' (Minimální oprávnění)?",
+        options: ["Každý ví všechno", "Uživatel má přístup jen k datům nutným pro jeho práci", "Ředitel má všechna hesla", "Nikdo neví nic"],
         correctAnswer: 1,
-        hint: "Ne všechna data potřebují stejnou ochranu. Jídelníček vs. hesla."
+        hint: "Když se omezí přístup, omezí se i škoda při napadení účtu zaměstnance."
       },
       {
         id: 6,
-        question: "Co je nejčastější chybou při sdílení dat ve firmách?",
-        options: ["Používání e-mailu", "Sdílení přes soukromé kanály (WhatsApp, osobní Dropbox)", "Tisk dokumentů", "Používání USB"],
+        question: "Co je 'Audit log' (Logování)?",
+        options: ["Kniha příchodů", "Záznam o aktivitách v systému (kdo, kdy, co udělal)", "Seznam úkolů", "Antivirus"],
         correctAnswer: 1,
-        hint: "Shadow IT – firma nemá kontrolu nad daty na soukromých účtech."
+        hint: "Bez logů zpětně nezjistíte, co se stalo a kudy útočník přišel."
       },
       {
         id: 7,
-        question: "Jaký princip by měl platit pro přístupová práva?",
-        options: ["Všichni mají přístup ke všemu", "Princip nejnutnějšího privilegia (jen to, co potřebuji k práci)", "Přístup má jen ředitel", "Podle věku"],
+        question: "Co je častou chybou při sdílení souborů?",
+        options: ["Použití e-mailu", "Odkazy 'kdokoliv s odkazem' (Anyone with link)", "Použití USB", "Šifrování"],
         correctAnswer: 1,
-        hint: "Když se omezí přístup, omezí se i škoda při napadení účtu."
+        hint: "Takový odkaz může uniknout a soubor si stáhne kdokoli na internetu."
       },
       {
         id: 8,
-        question: "Co je to 'Audit log'?",
-        options: ["Kniha návštěv", "Záznam o tom, kdo, kdy a co dělal v systému", "Seznam úkolů", "Účetní uzávěrka"],
+        question: "Co znamená klasifikace dat?",
+        options: ["Seřazení podle abecedy", "Rozdělení dat podle citlivosti (veřejné, interní, citlivé)", "Mazání dat", "Komprese"],
         correctAnswer: 1,
-        hint: "Díky logům zpětně zjistíte, co se stalo během incidentu."
+        hint: "Veřejný ceník nepotřebuje stejnou ochranu jako databáze klientů."
       },
       {
         id: 9,
         question: "Co dělat při odchodu zaměstnance?",
-        options: ["Uspořádat párty", "Okamžitě zrušit přístupy ke všem systémům", "Nechat účet aktivní pro kolegy", "Smazat všechna data"],
+        options: ["Rozloučit se", "Okamžitě zrušit všechny jeho přístupy", "Nechat účet pro kolegy", "Smazat všechna data"],
         correctAnswer: 1,
-        hint: "Zapomenuté aktivní účty bývalých zaměstnanců jsou častou dírou do systému."
+        hint: "Aktivní účty bývalých zaměstnanců jsou častou bezpečnostní dírou."
       },
       {
         id: 10,
         question: "Je bezpečnost jednorázový projekt?",
-        options: ["Ano, nastavím a mám klid", "Ne, je to neustálý proces", "Ano, stačí koupit antivirus", "Ne, je to jen pro IT"],
+        options: ["Ano, koupím antivirus a mám klid", "Ne, je to neustálý proces vylepšování", "Ano, stačí nastavit firewall", "Ne, je to jen pro IT"],
         correctAnswer: 1,
-        hint: "Hrozby se vyvíjejí, vaše obrana se musí vyvíjet taky."
+        hint: "Hrozby se mění, vaše obrana se musí vyvíjet s nimi."
       }
     ]
   },
   {
     id: 8,
     title: "Blok 8: Legislativa a NIS2",
-    description: "Zákon o kybernetické bezpečnosti a evropská směrnice.",
+    description: "Zákon o kybernetické bezpečnosti, povinnosti firem a hrozby.",
     icon: "Scale",
     questions: [
       {
         id: 1,
-        question: "Co je to NIS2?",
-        options: ["Nový antivirus", "Evropská směrnice o kybernetické bezpečnosti", "Název hackerské skupiny", "Typ procesoru"],
+        question: "Co je NIS2?",
+        options: ["Nový typ viru", "Evropská směrnice o kybernetické bezpečnosti", "Název hackerské skupiny", "Program pro školy"],
         correctAnswer: 1,
-        hint: "Nařizuje firmám a státům lépe chránit své sítě."
+        hint: "Zavádí přísnější pravidla pro ochranu důležitých služeb v EU."
       },
       {
         id: 2,
-        question: "Koho se týká NIS2?",
-        options: ["Jen armády", "Širokého spektra firem (energetika, doprava, banky, zdravotnictví...)", "Pouze výrobců PC", "Běžných občanů doma"],
+        question: "Koho se NIS2 týká?",
+        options: ["Pouze armády", "Širokého spektra firem (energetika, doprava, zdravotnictví, digitální služby...)", "Jen výrobců PC", "Běžných domácností přímo"],
         correctAnswer: 1,
-        hint: "Týká se 'důležitých' a 'základních' služeb pro chod státu."
+        hint: "Týká se 'kritických' a 'důležitých' odvětví pro fungování společnosti."
       },
       {
         id: 3,
-        question: "Jaký úřad v ČR dohlíží na kybernetickou bezpečnost?",
-        options: ["NBÚ", "NÚKIB (Národní úřad pro kybernetickou a informační bezpečnost)", "ČNB", "Ministerstvo vnitra"],
+        question: "Který úřad v ČR dohlíží na kybernetickou bezpečnost?",
+        options: ["NBÚ", "NÚKIB (Národní úřad pro kybernetickou a informační bezpečnost)", "ČNB", "Policie ČR"],
         correctAnswer: 1,
-        hint: "Sídlí v Brně a je hlavní autoritou pro cyber security."
+        hint: "Je to ústřední orgán sídlící v Brně."
       },
       {
         id: 4,
-        question: "Co musí firmy podle NIS2 hlásit?",
-        options: ["Každý spam", "Významné kybernetické incidenty", "Změnu ředitele", "Nákup nových myší"],
+        question: "Co je to 'Risk Management' (Řízení rizik)?",
+        options: ["Pojištění", "Pravidelné vyhodnocování hrozeb a zavádění opatření k jejich zmírnění", "Hazardní hry", "Ignorování problémů"],
         correctAnswer: 1,
-        hint: "Stát musí vědět o útocích, které ohrožují služby."
+        hint: "Základní povinnost podle zákona – musíte vědět, co vás ohrožuje."
       },
       {
         id: 5,
-        question: "Jaký dopad má NIS2 na dodavatele velkých firem?",
-        options: ["Žádný", "Velké firmy budou po dodavatelích vyžadovat bezpečnost", "Dostanou pokutu", "Musí zavřít"],
+        question: "Co musí organizace dělat při významném incidentu?",
+        options: ["Tajit ho", "Nahlásit ho NÚKIBu (do 24/72 hodin)", "Napsat na Twitter", "Vypnout firmu"],
         correctAnswer: 1,
-        hint: "Bezpečnost se přenáší celým dodavatelským řetězcem."
+        hint: "Rychlé hlášení pomáhá varovat ostatní a řešit krizi."
       },
       {
         id: 6,
-        question: "Co je 'Management rizik' vyžadovaný zákonem?",
-        options: ["Pojištění proti požáru", "Pravidelné vyhodnocování hrozeb a zavádění opatření", "Hazardní hry", "Investování na burze"],
+        question: "Jaký dopad má NIS2 na dodavatele velkých firem?",
+        options: ["Žádný", "Velké firmy budou po dodavatelích vyžadovat dodržování bezpečnosti", "Dostanou pokutu", "Musí zavřít"],
         correctAnswer: 1,
-        hint: "Musíte vědět, co vás ohrožuje, abyste se mohli bránit."
+        hint: "Bezpečnost se 'přelévá' celým dodavatelským řetězcem."
       },
       {
         id: 7,
-        question: "Hrozí za nedodržení NIS2 pokuty?",
-        options: ["Ne, je to dobrovolné", "Ano, a mohou být velmi vysoké (až miliony EUR)", "Jen napomenutí", "Ano, 1000 Kč"],
+        question: "Hrozí za nedodržení zákona sankce?",
+        options: ["Ne, je to doporučení", "Ano, vysoké pokuty a odpovědnost vedení", "Jen napomenutí", "Ano, 100 Kč"],
         correctAnswer: 1,
-        hint: "Sankce jsou nastaveny tak, aby je firmy braly vážně."
+        hint: "Odpovědnost nese statutární orgán (jednatelé), ne jen IT."
       },
       {
         id: 8,
-        question: "Týká se NIS2 přímo běžného občana doma?",
-        options: ["Ano, musím hlásit viry", "Ne přímo, ale budu profitovat z bezpečnějších služeb", "Ano, musím mít speciální router", "Ne"],
+        question: "Týká se NIS2 běžného občana?",
+        options: ["Ano, musím se registrovat", "Ne přímo, ale přinese mi bezpečnější služby a ochranu dat", "Ano, musím mít certifikát", "Ne"],
         correctAnswer: 1,
-        hint: "Zákon reguluje firmy, aby vaše data a služby (voda, elektřina) byly v bezpečí."
+        hint: "Cílem je ochránit služby, které občan využívá (elektřina, banky, nemocnice)."
       },
       {
         id: 9,
-        question: "Kdy přibližně vstupuje regulace v platnost?",
-        options: ["Už platí (cca od 2024/2025)", "Za 10 let", "Nikdy", "V roce 2000"],
-        correctAnswer: 0,
-        hint: "Je to aktuální téma."
+        question: "Co patří mezi povinná technická opatření?",
+        options: ["Hezké webové stránky", "Silná hesla, 2FA, šifrování, zálohování", "Používání faxu", "Drahé židle"],
+        correctAnswer: 1,
+        hint: "Jde o základní hygienu, kterou jsme probírali v celém kurzu."
       },
       {
         id: 10,
-        question: "Co musí zajistit vedení firmy (jednatelé) podle NIS2?",
-        options: ["Nic, to dělá IT", "Musí se vzdělávat v bezpečnosti a nesou odpovědnost", "Musí umět programovat", "Musí koupit nejdražší software"],
+        question: "Kdo nese konečnou odpovědnost za kyberbezpečnost ve firmě?",
+        options: ["Externí IT firma", "Vedení společnosti (statutární orgán)", "Uklízečka", "Stát"],
         correctAnswer: 1,
-        hint: "Odpovědnost už nelze jen 'hodit na IT oddělení'."
+        hint: "Bezpečnost je manažerský problém, ne jen technický."
       }
     ]
   },
   {
     id: 9,
-    title: "Blok 9: Umělá inteligence (AI) a hrozby",
-    description: "Deepfakes, voice cloning a jak AI mění pravidla hry.",
+    title: "Blok 9: Role AI v kyberbezpečnosti",
+    description: "Deepfakes, voice cloning, automatizace útoků a obrana.",
     icon: "Bot",
     questions: [
       {
         id: 1,
-        question: "Jak AI pomáhá útočníkům při phishingu?",
-        options: ["Píše e-maily pomalu", "Vytváří perfektní texty bez gramatických chyb a v rodném jazyce", "Dělá v textech chyby", "Nepomáhá"],
+        question: "Jak AI změnila phishingové e-maily?",
+        options: ["Jsou plné chyb", "Jsou gramaticky dokonalé, personalizované a těžko rozeznatelné", "Chodí jen v noci", "Nepomohla jim"],
         correctAnswer: 1,
-        hint: "Dříve jsme poznali podvod podle špatné češtiny. To s AI končí."
+        hint: "Už se nedá spoléhat na špatnou češtinu jako indikátor podvodu."
       },
       {
         id: 2,
-        question: "Co je to 'Deepfake'?",
-        options: ["Hluboký bazén", "Video nebo audio vytvořené AI, které vypadá jako skutečná osoba", "Falešný profil na Facebooku", "Typ viru"],
-        correctAnswer: 1,
-        hint: "Můžete vidět video prezidenta říkat něco, co nikdy neřekl."
-      },
-      {
-        id: 3,
         question: "Co je to 'Voice Cloning'?",
-        options: ["Klonování ovcí", "Klonování hlasu (stačí pár vteřin záznamu k napodobení)", "Hlasové ovládání", "Zpěv s AI"],
+        options: ["Změna hlasu heliem", "Klonování hlasu pomocí AI (stačí pár vteřin záznamu)", "Hlasové ovládání", "Nahrávání hovorů"],
         correctAnswer: 1,
         hint: "Útočník vám může zavolat hlasem vašeho dítěte nebo šéfa."
       },
       {
-        id: 4,
-        question: "Jak se bránit proti AI podvodu 'Vnuk v nouzi' (hlas v telefonu)?",
-        options: ["Hned poslat peníze", "Zavěsit a zavolat zpět na ověřené číslo dotyčného", "Věřit AI", "Nic nedělat"],
+        id: 3,
+        question: "Co je to 'Deepfake' video?",
+        options: ["Video z hlubin moře", "Falešné video vytvořené AI, kde osoba říká/dělá něco, co se nestalo", "Špatně natočené video", "Video s filtry"],
         correctAnswer: 1,
-        hint: "Ověření jiným kanálem je nejlepší obrana."
+        hint: "Může sloužit k diskreditaci osob nebo k podvodům (např. falešný Elon Musk)."
+      },
+      {
+        id: 4,
+        question: "Jak se bránit proti AI podvodu 'Vnuk v nouzi' (falešný hlas)?",
+        options: ["Hned poslat peníze", "Zavěsit a zavolat zpět na známé číslo dotyčného", "Věřit tomu", "Nic nedělat"],
+        correctAnswer: 1,
+        hint: "Ověření jiným kanálem je nejspolehlivější obrana."
       },
       {
         id: 5,
-        question: "Může AI sloužit i k obraně?",
-        options: ["Ne, AI je zlá", "Ano, dokáže detekovat útoky rychleji než člověk", "Jen pro hraní her", "Ano, ale je to drahé"],
+        question: "Co jsou 'syntetické identity'?",
+        options: ["Plastoví lidé", "Neexistující osoby vytvořené AI (fotky, historie) pro podvody", "Roboti", "Přezdívky"],
         correctAnswer: 1,
-        hint: "Behaviorální analýza pomocí AI pozná, že se uživatel chová divně."
+        hint: "Lidé, kteří nikdy neexistovali, ale mají LinkedIn profil a 'fotku'."
       },
       {
         id: 6,
-        question: "Co jsou 'syntetické identity'?",
-        options: ["Plastové občanky", "Neexistující lidé vytvoření AI (fotky, profily)", "Roboti", "Přezdívky"],
+        question: "Jak AI pomáhá v obraně?",
+        options: ["Nijak", "Detekuje anomálie a chování v reálném čase rychleji než člověk", "Vytváří viry", "Zpomaluje PC"],
         correctAnswer: 1,
-        hint: "Lidé, kteří nikdy neexistovali, ale mají LinkedIn a Facebook."
+        hint: "AI dokáže analyzovat obrovské množství dat a najít útok v zárodku."
       },
       {
         id: 7,
-        question: "Jak poznat Deepfake video?",
-        options: ["Nelze to poznat", "Podle nepřirozeného mrkání, stínů nebo divných okrajů obličeje", "Je černobílé", "Má vodoznak"],
+        question: "Co je 'Prompt Injection'?",
+        options: ["Vakcína", "Útok na AI model pomocí škodlivého zadání (textu)", "Rychlé psaní", "Typ tiskárny"],
         correctAnswer: 1,
-        hint: "Technologie není dokonalá, hledejte vizuální chyby (glitche)."
+        hint: "Snaží se obejít bezpečnostní pravidla AI chatbota."
       },
       {
         id: 8,
         question: "Co je 'Liar's Dividend'?",
-        options: ["Dividenda z akcií", "Situace, kdy skuteční viníci tvrdí, že pravý důkaz je Deepfake", "Odměna za lhaní", "Typ podvodu"],
+        options: ["Odměna za lhaní", "Situace, kdy viníci popírají realitu tvrzením, že jde o Deepfake", "Dividenda z akcií", "Typ podvodu"],
         correctAnswer: 1,
-        hint: "Zločinci mohou popřít realitu tvrzením 'to vytvořila AI'."
+        hint: "Eroze důvěry: 'To video je falešné, udělala ho AI' (i když je pravé)."
       },
       {
         id: 9,
         question: "Jak rychle dokáže AI generovat nové varianty malwaru?",
-        options: ["Trvá to týdny", "Během vteřin", "Neumí to", "Jednou za rok"],
+        options: ["Měsíce", "Během vteřin", "Neumí to", "Jednou za rok"],
         correctAnswer: 1,
-        hint: "Automatizace umožňuje útočníkům být extrémně rychlí."
+        hint: "Automatizace umožňuje útočníkům obejít klasické antiviry."
       },
       {
         id: 10,
-        question: "Co musíme dělat v éře AI?",
-        options: ["Věřit všemu, co vidíme", "Být mnohem více skeptičtí a ověřovat informace", "Nepoužívat internet", "Bát se"],
+        question: "Co je nejdůležitější obranou v éře AI?",
+        options: ["Věřit očím a uším", "Zdravá skepse, ověřování informací a technická ochrana", "Nepoužívat technologie", "Bát se"],
         correctAnswer: 1,
-        hint: "Důvěřuj, ale prověřuj – teď platí dvojnásob."
+        hint: "Co vidíte a slyšíte, už nemusí být pravda. Důvěřuj, ale prověřuj."
       }
     ]
   }

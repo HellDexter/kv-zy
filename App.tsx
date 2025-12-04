@@ -1,11 +1,23 @@
+
 import React, { useState } from 'react';
 import { courseData } from './data';
 import { QuizState } from './types';
 import WelcomeScreen from './components/WelcomeScreen';
 import QuizScreen from './components/QuizScreen';
 import ResultScreen from './components/ResultScreen';
+import LoginScreen from './components/LoginScreen';
+import Dashboard from './components/Dashboard';
+import CyberMenu from './components/CyberMenu';
+import PresentationScreen from './components/PresentationScreen';
+import AuditScreen from './components/AuditScreen';
+
+// Define possible views for the app
+type View = 'login' | 'dashboard' | 'cyber_menu' | 'quizzes' | 'presentations' | 'practical_exercises' | 'quiz' | 'result';
 
 const App: React.FC = () => {
+  const [currentView, setCurrentView] = useState<View>('login');
+  
+  // Quiz State
   const [quizState, setQuizState] = useState<QuizState>({
     currentBlockId: null,
     currentQuestionIndex: 0,
@@ -15,6 +27,27 @@ const App: React.FC = () => {
     isFinished: false,
     answersHistory: []
   });
+
+  const handleLogin = () => {
+    setCurrentView('dashboard');
+  };
+
+  const handleDashboardNavigate = (module: 'cyber' | 'ai') => {
+    if (module === 'cyber') {
+      setCurrentView('cyber_menu');
+    }
+    // AI module is handled visually in Dashboard as locked
+  };
+
+  const handleCyberMenuNavigate = (subView: 'quizzes' | 'presentations' | 'practical_exercises') => {
+    if (subView === 'quizzes') {
+      setCurrentView('quizzes');
+    } else if (subView === 'presentations') {
+      setCurrentView('presentations');
+    } else {
+      setCurrentView('practical_exercises');
+    }
+  };
 
   const startBlock = (blockId: number) => {
     setQuizState({
@@ -26,6 +59,7 @@ const App: React.FC = () => {
       isFinished: false,
       answersHistory: []
     });
+    setCurrentView('quiz');
   };
 
   const handleSelectAnswer = (index: number) => {
@@ -59,10 +93,11 @@ const App: React.FC = () => {
         ...prev,
         isFinished: true
       }));
+      setCurrentView('result');
     }
   };
 
-  const handleBackToMenu = () => {
+  const handleBackToQuizMenu = () => {
     setQuizState({
       currentBlockId: null,
       currentQuestionIndex: 0,
@@ -72,6 +107,7 @@ const App: React.FC = () => {
       isFinished: false,
       answersHistory: []
     });
+    setCurrentView('quizzes');
   };
 
   const restartQuiz = () => {
@@ -80,37 +116,92 @@ const App: React.FC = () => {
     }
   };
 
-  // View Routing Logic
-  if (!quizState.currentBlockId) {
-    return <WelcomeScreen blocks={courseData} onStartBlock={startBlock} />;
-  }
-
-  const currentBlock = courseData.find(b => b.id === quizState.currentBlockId);
-  if (!currentBlock) return null;
-
-  if (quizState.isFinished) {
-    return (
-      <ResultScreen 
-        score={quizState.score} 
-        totalQuestions={currentBlock.questions.length}
-        onRestart={restartQuiz}
-        onBackToMenu={handleBackToMenu}
-      />
-    );
+  // Content Selection Logic
+  let content;
+  
+  switch (currentView) {
+    case 'login':
+      content = <LoginScreen onLogin={handleLogin} />;
+      break;
+    case 'dashboard':
+      content = <Dashboard onNavigate={handleDashboardNavigate} />;
+      break;
+    case 'cyber_menu':
+      content = <CyberMenu onNavigate={handleCyberMenuNavigate} onBack={() => setCurrentView('dashboard')} />;
+      break;
+    case 'quizzes':
+      content = (
+        <WelcomeScreen 
+          blocks={courseData} 
+          onStartBlock={startBlock} 
+          onBack={() => setCurrentView('cyber_menu')} 
+        />
+      );
+      break;
+    case 'presentations':
+      content = (
+        <PresentationScreen 
+          blocks={courseData}
+          onBack={() => setCurrentView('cyber_menu')} 
+        />
+      );
+      break;
+    case 'practical_exercises':
+      content = (
+        <AuditScreen 
+          onBack={() => setCurrentView('cyber_menu')}
+        />
+      );
+      break;
+    case 'quiz':
+      const currentBlock = courseData.find(b => b.id === quizState.currentBlockId);
+      if (currentBlock) {
+        content = (
+          <QuizScreen
+            block={currentBlock}
+            currentQuestionIndex={quizState.currentQuestionIndex}
+            question={currentBlock.questions[quizState.currentQuestionIndex]}
+            selectedAnswer={quizState.selectedAnswer}
+            showHint={quizState.showHint}
+            onSelectAnswer={handleSelectAnswer}
+            onToggleHint={() => setQuizState(prev => ({ ...prev, showHint: !prev.showHint }))}
+            onNextQuestion={handleNextQuestion}
+            onBackToMenu={handleBackToQuizMenu}
+          />
+        );
+      }
+      break;
+    case 'result':
+      const finishedBlock = courseData.find(b => b.id === quizState.currentBlockId);
+      if (finishedBlock) {
+        content = (
+          <ResultScreen 
+            score={quizState.score} 
+            totalQuestions={finishedBlock.questions.length}
+            onRestart={restartQuiz}
+            onBackToMenu={handleBackToQuizMenu}
+          />
+        );
+      }
+      break;
+    default:
+      content = <LoginScreen onLogin={handleLogin} />;
   }
 
   return (
-    <QuizScreen
-      block={currentBlock}
-      currentQuestionIndex={quizState.currentQuestionIndex}
-      question={currentBlock.questions[quizState.currentQuestionIndex]}
-      selectedAnswer={quizState.selectedAnswer}
-      showHint={quizState.showHint}
-      onSelectAnswer={handleSelectAnswer}
-      onToggleHint={() => setQuizState(prev => ({ ...prev, showHint: !prev.showHint }))}
-      onNextQuestion={handleNextQuestion}
-      onBackToMenu={handleBackToMenu}
-    />
+    <div className="relative min-h-screen w-full bg-[#050505] overflow-hidden selection:bg-cyan-500/30 selection:text-cyan-200 font-inter">
+      {/* Global Dynamic Background Elements - Persistent across screens */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none fixed"></div>
+      
+      {/* Glowing Orbs - Made subtler and slower */}
+      <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] animate-float opacity-30 pointer-events-none fixed"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[700px] h-[700px] bg-cyan-500/10 rounded-full blur-[100px] animate-float opacity-20 pointer-events-none fixed" style={{ animationDelay: '4s' }}></div>
+
+      {/* Main Content Area */}
+      <div className="relative z-10 w-full h-full">
+        {content}
+      </div>
+    </div>
   );
 };
 
