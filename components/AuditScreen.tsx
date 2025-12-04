@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Check, Bot, X, ShieldAlert, ShieldCheck, Send, Paperclip, Image as ImageIcon, Trash2, Loader2 } from 'lucide-react';
 import { GoogleGenAI, Chat } from "@google/genai";
@@ -378,7 +377,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
 
                             <button 
                                 onClick={() => initChat(item)}
-                                className="ml-9 sm:ml-0 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-pink-400 hover:text-white bg-pink-500/10 hover:bg-pink-500/20 px-3 py-2 md:py-1.5 rounded-full transition-all border border-pink-500/20 hover:border-pink-500/40 whitespace-nowrap w-full sm:w-fit justify-center sm:justify-start font-mono"
+                                className="mt-2 sm:mt-0 ml-0 sm:ml-0 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-pink-400 hover:text-white bg-pink-500/10 hover:bg-pink-500/20 px-3 py-2 md:py-1.5 rounded-full transition-all border border-pink-500/20 hover:border-pink-500/40 whitespace-nowrap w-full sm:w-fit justify-center sm:justify-start font-mono"
                             >
                                 <Bot className="w-3 h-3" />
                                 Jak na to
