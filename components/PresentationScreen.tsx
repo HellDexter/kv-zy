@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Block } from '../types';
 import * as Icons from 'lucide-react';
-import { ArrowLeft, FileText, ExternalLink, Download, Ban } from 'lucide-react';
+import { ArrowLeft, FileText, ExternalLink, Download, Ban, MonitorPlay } from 'lucide-react';
 
 interface Props {
   blocks: Block[];
@@ -12,10 +12,12 @@ interface Props {
 const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
   const [selectedBlockId, setSelectedBlockId] = useState<number | null>(null);
 
-  // If a block is selected, show the PDF viewer
+  // If a block is selected, show the viewer
   if (selectedBlockId !== null) {
     const selectedBlock = blocks.find(b => b.id === selectedBlockId);
-    const pdfPath = `pdfs/blok${selectedBlockId}.pdf`; // Assumes files are in public/pdfs/
+    
+    const isGamma = !!selectedBlock?.gammaUrl;
+    const resourceUrl = isGamma ? selectedBlock!.gammaUrl : `pdfs/blok${selectedBlockId}.pdf`;
 
     return (
       <div className="max-w-7xl mx-auto px-4 py-6 h-screen flex flex-col relative z-10">
@@ -34,36 +36,51 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
           </h2>
 
           <div className="flex gap-2">
-              <a 
-                href={pdfPath} 
-                download 
-                className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase bg-cyan-950/50 hover:bg-cyan-900/50 text-cyan-400 px-4 py-2 rounded-full border border-cyan-500/30 transition-all"
-              >
-                <Download className="w-4 h-4" />
-                <span className="hidden sm:inline">Stáhnout</span>
-              </a>
+              {isGamma ? (
+                <a 
+                  href={resourceUrl} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase bg-purple-950/50 hover:bg-purple-900/50 text-purple-400 px-4 py-2 rounded-full border border-purple-500/30 transition-all shadow-[0_0_15px_rgba(168,85,247,0.2)]"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span className="hidden sm:inline">Otevřít v novém okně</span>
+                </a>
+              ) : (
+                <a 
+                  href={resourceUrl} 
+                  download 
+                  className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase bg-cyan-950/50 hover:bg-cyan-900/50 text-cyan-400 px-4 py-2 rounded-full border border-cyan-500/30 transition-all"
+                >
+                  <Download className="w-4 h-4" />
+                  <span className="hidden sm:inline">Stáhnout PDF</span>
+                </a>
+              )}
           </div>
         </div>
 
-        {/* PDF Viewer Container */}
+        {/* Viewer Container */}
         <div className="flex-grow relative animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-           {/* Glow Border */}
-           <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/20 to-blue-600/10 rounded-xl blur-sm opacity-50"></div>
+           {/* Glow Border based on type */}
+           <div className={`absolute inset-0 bg-gradient-to-b ${isGamma ? 'from-purple-500/20 to-pink-600/10' : 'from-cyan-500/20 to-blue-600/10'} rounded-xl blur-sm opacity-50`}></div>
            
            {/* Iframe Wrapper */}
            <div className="absolute inset-0 bg-[#0a0a0a] rounded-xl border border-white/10 overflow-hidden shadow-2xl">
               {/* Top Line */}
-              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent z-20"></div>
+              <div className={`absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent ${isGamma ? 'via-purple-500/50' : 'via-cyan-500/50'} to-transparent z-20`}></div>
               
               <iframe 
-                src={`${pdfPath}#toolbar=0&view=FitH`}
+                src={isGamma ? resourceUrl : `${resourceUrl}#toolbar=0&view=FitH`}
                 className="w-full h-full border-0"
-                title="PDF Viewer"
+                title={selectedBlock?.title || "Presentation Viewer"}
+                allow="fullscreen"
               >
-                <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                <div className="flex flex-col items-center justify-center h-full text-gray-400 p-8 text-center">
                     <Ban className="w-12 h-12 mb-4 opacity-50" />
-                    <p>Váš prohlížeč nepodporuje zobrazení PDF.</p>
-                    <a href={pdfPath} className="text-cyan-400 underline mt-2" target="_blank" rel="noreferrer">Stáhnout soubor</a>
+                    <p>Váš prohlížeč nepodporuje zobrazení tohoto obsahu.</p>
+                    <a href={resourceUrl} className="text-purple-400 underline mt-2 hover:text-purple-300" target="_blank" rel="noreferrer">
+                        Otevřít prezentaci ručně
+                    </a>
                 </div>
               </iframe>
            </div>
@@ -96,7 +113,7 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
           Prezentace <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-400">kurzu</span>
         </h1>
         <p className="text-gray-400 max-w-2xl text-lg font-light leading-relaxed">
-          Prostudujte si detailní materiály k jednotlivým blokům. PDF dokumenty obsahují kompletní teorii, grafy a příklady.
+          Prostudujte si detailní materiály k jednotlivým blokům. Interaktivní prezentace a PDF dokumenty s kompletní teorií.
         </p>
       </header>
 
@@ -104,6 +121,7 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
         {blocks.map((block, index) => {
            // @ts-ignore
            const IconComponent = Icons[block.icon] || Icons.FileText;
+           const isGamma = !!block.gammaUrl;
 
            return (
             <button
@@ -124,8 +142,8 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
                     <div className="w-12 h-12 rounded-xl bg-purple-950/20 border border-purple-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                          <IconComponent className="w-6 h-6 text-purple-400" />
                     </div>
-                    <div className="text-[10px] font-mono text-gray-600 border border-white/5 px-2 py-1 rounded bg-black/40 group-hover:text-purple-300 transition-colors">
-                        PDF
+                    <div className={`text-[10px] font-mono border border-white/5 px-2 py-1 rounded bg-black/40 transition-colors ${isGamma ? 'text-pink-400 border-pink-500/20' : 'text-gray-600 group-hover:text-purple-300'}`}>
+                        {isGamma ? 'INTERAKTIVNÍ' : 'PDF'}
                     </div>
                 </div>
 
@@ -138,7 +156,11 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack }) => {
                 </p>
 
                 <div className="mt-auto flex items-center gap-2 text-[11px] font-bold text-purple-500/70 group-hover:text-purple-400 uppercase tracking-widest transition-colors">
-                   Otevřít dokument <ExternalLink className="w-3 h-3" />
+                   {isGamma ? (
+                     <>Spustit prezentaci <MonitorPlay className="w-3 h-3" /></>
+                   ) : (
+                     <>Otevřít dokument <ExternalLink className="w-3 h-3" /></>
+                   )}
                 </div>
               </div>
             </button>
