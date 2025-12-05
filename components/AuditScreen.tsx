@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Check, Bot, X, ShieldAlert, ShieldCheck, Send, Paperclip, Image as ImageIcon, Trash2, Loader2 } from 'lucide-react';
 import { GoogleGenAI, Chat } from "@google/genai";
@@ -138,22 +139,16 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
     setLoading(true);
 
     try {
-      // Check for API Key presence safely
-      // Fallback to the provided key if process.env.API_KEY is missing
-      let apiKey = "AIzaSyCk_NcjJVsWg7wpE4Jq_-_r8ersoaQrwn4";
+      // PRIORITY: Use the hardcoded key provided by user to ensure Vercel compatibility
+      // The environment variable check is secondary
+      const hardcodedKey = "AIzaSyBYgQJYyKsnOZpzmvweBR9hj00NzAn56Dk";
+      let apiKey = hardcodedKey;
       
-      try {
-        if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-           apiKey = process.env.API_KEY;
-        }
-      } catch (e) {
-        // Ignore env access errors, use fallback
-        console.warn("Using fallback API key");
-      }
-
-      if (!apiKey) {
-        console.error("API_KEY is missing.");
-        throw new Error("Missing API Key");
+      // Optional: If env var exists and is different, we could use it, 
+      // but for now we trust the hardcoded one as per request.
+      if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+         // console.log("Using ENV key"); 
+         // apiKey = process.env.API_KEY; 
       }
 
       const ai = new GoogleGenAI({ apiKey: apiKey });
@@ -191,12 +186,21 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
       }
 
     } catch (error) {
-      console.error("AI Init Error:", error);
-      let errorMessage = "Omlouvám se, ale nepodařilo se navázat spojení s AI expertem. Zkuste to prosím později.";
-      if (error instanceof Error && error.message.includes("Missing API Key")) {
-        errorMessage = "Chyba konfigurace: Chybí API klíč (API_KEY).";
+      console.error("AI Init Error FULL DETAILS:", error);
+      let errorMessage = "Omlouvám se, ale nepodařilo se navázat spojení s AI expertem.";
+      
+      if (error instanceof Error) {
+        // Provide more specific feedback based on common errors
+        if (error.message.includes("404")) {
+             errorMessage += " (Model nebyl nalezen - 404)";
+        } else if (error.message.includes("403")) {
+             errorMessage += " (Přístup zamítnut - 403. Zkontrolujte API klíč)";
+        } else if (error.message.includes("API Key")) {
+             errorMessage += " (Chyba API klíče)";
+        }
       }
-      setChatHistory([{ role: 'model', text: errorMessage }]);
+      
+      setChatHistory([{ role: 'model', text: errorMessage + " Zkuste to prosím později." }]);
     } finally {
       setLoading(false);
     }
@@ -377,7 +381,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
 
                             <button 
                                 onClick={() => initChat(item)}
-                                className="mt-2 sm:mt-0 ml-0 sm:ml-0 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-pink-400 hover:text-white bg-pink-500/10 hover:bg-pink-500/20 px-3 py-2 md:py-1.5 rounded-full transition-all border border-pink-500/20 hover:border-pink-500/40 whitespace-nowrap w-full sm:w-fit justify-center sm:justify-start font-mono"
+                                className="mt-2 sm:mt-0 ml-0 w-full sm:w-auto flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-pink-400 hover:text-white bg-pink-500/10 hover:bg-pink-500/20 px-3 py-2 md:py-1.5 rounded-full transition-all border border-pink-500/20 hover:border-pink-500/40 whitespace-nowrap justify-center sm:justify-start font-mono"
                             >
                                 <Bot className="w-3 h-3" />
                                 Jak na to
