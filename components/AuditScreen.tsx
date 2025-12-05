@@ -144,11 +144,8 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
       const hardcodedKey = "AIzaSyBYgQJYyKsnOZpzmvweBR9hj00NzAn56Dk";
       let apiKey = hardcodedKey;
       
-      // Optional: If env var exists and is different, we could use it, 
-      // but for now we trust the hardcoded one as per request.
       if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-         // console.log("Using ENV key"); 
-         // apiKey = process.env.API_KEY; 
+         // Fallback to env if present and different, but prefer hardcoded for this fix
       }
 
       const ai = new GoogleGenAI({ apiKey: apiKey });
@@ -165,8 +162,10 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
         6. Buď stručný, nápomocný a lidský.
       `;
 
+      // Use gemini-2.0-flash-exp as it's the current stable experimental model compatible with most keys
+      // gemini-2.5-flash caused 403, gemini-1.5-flash caused 404
       const chat = ai.chats.create({
-        model: "gemini-2.5-flash",
+        model: "gemini-2.0-flash-exp", 
         config: {
           systemInstruction: systemInstruction,
         }
@@ -192,15 +191,15 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
       if (error instanceof Error) {
         // Provide more specific feedback based on common errors
         if (error.message.includes("404")) {
-             errorMessage += " (Model nebyl nalezen - 404)";
+             errorMessage += " (Model nebyl nalezen - 404). Zkuste to později.";
         } else if (error.message.includes("403")) {
-             errorMessage += " (Přístup zamítnut - 403. Zkontrolujte API klíč)";
+             errorMessage += " (Přístup zamítnut - 403. Klíč nemá oprávnění k modelu).";
         } else if (error.message.includes("API Key")) {
-             errorMessage += " (Chyba API klíče)";
+             errorMessage += " (Chyba API klíče).";
         }
       }
       
-      setChatHistory([{ role: 'model', text: errorMessage + " Zkuste to prosím později." }]);
+      setChatHistory([{ role: 'model', text: errorMessage }]);
     } finally {
       setLoading(false);
     }
@@ -241,7 +240,6 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
       }
       
       // Send to Gemini
-      // If no text but images, parts is valid. If text only, parts is valid.
       const result = await chatSessionRef.current.sendMessage({
          message: parts
       });
