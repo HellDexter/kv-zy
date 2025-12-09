@@ -1,36 +1,49 @@
 
 import React, { useState } from 'react';
-import { Lock, User, ArrowRight, Fingerprint, ScanEye, AlertCircle } from 'lucide-react';
+import { Lock, User, ArrowRight, Fingerprint, ScanEye, AlertCircle, Loader2 } from 'lucide-react';
+import { supabase } from '../supabaseClient';
 
 interface Props {
-  onLogin: () => void;
+  onLoginSuccess: () => void;
 }
 
-const LoginScreen: React.FC<Props> = ({ onLogin }) => {
+const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     
-    // Simulate auth delay
-    setTimeout(() => {
-      if (username === 'student' && password === 'student') {
-        setIsSuccess(true);
-        setTimeout(() => {
-          onLogin();
-        }, 800); // Wait for unlock animation
-      } else {
-        setLoading(false);
-        setError('Neplatné údaje. Zkuste: student / student');
-        setPassword('');
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+
+      if (error) {
+        throw error;
       }
-    }, 1500);
+
+      if (data.user) {
+        setIsSuccess(true);
+        // Short delay for animation before callback
+        setTimeout(() => {
+          onLoginSuccess();
+        }, 800);
+      }
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message === "Invalid login credentials" 
+        ? "Neplatný e-mail nebo heslo." 
+        : "Chyba přihlášení. Zkontrolujte připojení.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -77,23 +90,24 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
 
           <form onSubmit={handleSubmit} className="space-y-6 relative z-20">
             <div className="space-y-2 group">
-              <label className="text-[10px] text-gray-500 font-mono ml-1 group-focus-within:text-cyan-400 transition-colors uppercase">Uživatelské ID</label>
+              <label className="text-[10px] text-gray-500 font-mono ml-1 group-focus-within:text-cyan-400 transition-colors uppercase">E-mailová adresa</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <User className={`h-4 w-4 transition-colors duration-300 ${error ? 'text-red-400' : 'text-gray-600 group-focus-within:text-cyan-400'}`} />
                 </div>
                 <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className={`block w-full pl-11 pr-4 py-4 bg-white/[0.03] border rounded-lg text-white font-mono placeholder-gray-700 focus:outline-none focus:shadow-[0_0_20px_rgba(6,182,212,0.1)] transition-all duration-300 text-sm ${error ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-cyan-500/50 focus:bg-cyan-500/[0.02]'}`}
-                  placeholder="Zadejte přihlašovací jméno"
+                  placeholder="student@skola.cz"
+                  required
                 />
               </div>
             </div>
 
             <div className="space-y-2 group">
-              <label className="text-[10px] text-gray-500 font-mono ml-1 group-focus-within:text-cyan-400 transition-colors uppercase">Přístupový kód</label>
+              <label className="text-[10px] text-gray-500 font-mono ml-1 group-focus-within:text-cyan-400 transition-colors uppercase">Heslo</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <Lock className={`h-4 w-4 transition-colors duration-300 ${error ? 'text-red-400' : 'text-gray-600 group-focus-within:text-cyan-400'}`} />
@@ -104,6 +118,7 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
                   onChange={(e) => setPassword(e.target.value)}
                   className={`block w-full pl-11 pr-4 py-4 bg-white/[0.03] border rounded-lg text-white font-mono placeholder-gray-700 focus:outline-none focus:shadow-[0_0_20px_rgba(6,182,212,0.1)] transition-all duration-300 text-sm ${error ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-cyan-500/50 focus:bg-cyan-500/[0.02]'}`}
                   placeholder="••••••••"
+                  required
                 />
               </div>
             </div>
@@ -124,8 +139,8 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
               <div className="flex items-center justify-center gap-3 relative z-10">
                 {loading ? (
                   <>
-                    <Fingerprint className="w-4 h-4 animate-pulse text-cyan-600" />
-                    <span className="animate-pulse">Autorizace...</span>
+                    <Loader2 className="w-4 h-4 animate-spin text-cyan-600" />
+                    <span className="animate-pulse">Ověřování...</span>
                   </>
                 ) : (
                   <>
@@ -140,9 +155,9 @@ const LoginScreen: React.FC<Props> = ({ onLogin }) => {
           <div className="mt-10 pt-6 border-t border-white/5 flex justify-between items-center text-[10px] text-gray-600 font-mono">
             <span className="flex items-center gap-2">
               <span className={`w-1.5 h-1.5 rounded-full ${isSuccess ? 'bg-green-500' : (error ? 'bg-red-500' : 'bg-green-900')} transition-colors`}></span>
-              SECURE CONNECTION
+              SECURE DB CONNECTION
             </span>
-            <span>VER 2.4.0</span>
+            <span>SUPABASE CONNECTED</span>
           </div>
         </div>
       </div>

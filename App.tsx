@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { courseData } from './data';
-import { QuizState } from './types';
+import { QuizState, UserProfile } from './types';
 import WelcomeScreen from './components/WelcomeScreen';
 import QuizScreen from './components/QuizScreen';
 import ResultScreen from './components/ResultScreen';
@@ -10,6 +10,7 @@ import Dashboard from './components/Dashboard';
 import CyberMenu from './components/CyberMenu';
 import PresentationScreen from './components/PresentationScreen';
 import AuditScreen from './components/AuditScreen';
+import { supabase } from './supabaseClient';
 
 // Define possible views for the app
 type View = 'login' | 'dashboard' | 'cyber_menu' | 'quizzes' | 'presentations' | 'practical_exercises' | 'quiz' | 'result';
@@ -69,6 +70,8 @@ const GridBeams: React.FC = () => {
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('login');
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [sessionLoading, setSessionLoading] = useState(true);
   
   // Quiz State
   const [quizState, setQuizState] = useState<QuizState>({
@@ -81,15 +84,70 @@ const App: React.FC = () => {
     answersHistory: []
   });
 
-  const handleLogin = () => {
-    setCurrentView('dashboard');
+  // Check for existing session on mount
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        await fetchProfile(session.user.id);
+        setCurrentView('dashboard');
+      }
+      setSessionLoading(false);
+    };
+
+    checkSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session) {
+        await fetchProfile(session.user.id);
+        setCurrentView('dashboard');
+      } else {
+        setUserProfile(null);
+        setCurrentView('login');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) throw error;
+      if (data) {
+        setUserProfile(data as UserProfile);
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
+
+  const handleLoginSuccess = async () => {
+    // Profile fetching is handled by the onAuthStateChange listener
+    // Just ensure we transition view
+    // setCurrentView('dashboard'); 
   };
 
   const handleDashboardNavigate = (module: 'cyber' | 'ai') => {
     if (module === 'cyber') {
-      setCurrentView('cyber_menu');
+      if (userProfile?.access_cyber || userProfile?.is_admin) {
+        setCurrentView('cyber_menu');
+      } else {
+        alert("Nemáte přístup k tomuto modulu.");
+      }
+    } else if (module === 'ai') {
+      if (userProfile?.access_ai || userProfile?.is_admin) {
+        // AI Logic placeholder - for now assume it just stays on dashboard or shows alert
+        alert("AI Modul (Přístup povolen) - Sekce ve výstavbě");
+      } else {
+         // Locked UI handles visual, this is fallback
+      }
     }
-    // AI module is handled visually in Dashboard as locked
   };
 
   const handleCyberMenuNavigate = (subView: 'quizzes' | 'presentations' | 'practical_exercises') => {
@@ -169,15 +227,28 @@ const App: React.FC = () => {
     }
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setCurrentView('login');
+  };
+
+  if (sessionLoading) {
+    return (
+       <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+          <div className="text-cyan-500 font-mono animate-pulse">Načítání systému...</div>
+       </div>
+    );
+  }
+
   // Content Selection Logic
   let content;
   
   switch (currentView) {
     case 'login':
-      content = <LoginScreen onLogin={handleLogin} />;
+      content = <LoginScreen onLoginSuccess={handleLoginSuccess} />;
       break;
     case 'dashboard':
-      content = <Dashboard onNavigate={handleDashboardNavigate} />;
+      content = <Dashboard onNavigate={handleDashboardNavigate} userProfile={userProfile} onLogout={handleLogout} />;
       break;
     case 'cyber_menu':
       content = <CyberMenu onNavigate={handleCyberMenuNavigate} onBack={() => setCurrentView('dashboard')} />;
@@ -238,7 +309,7 @@ const App: React.FC = () => {
       }
       break;
     default:
-      content = <LoginScreen onLogin={handleLogin} />;
+      content = <LoginScreen onLoginSuccess={handleLoginSuccess} />;
   }
 
   return (

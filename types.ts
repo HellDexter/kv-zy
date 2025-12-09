@@ -25,3 +25,11 @@ export interface QuizState {
   isFinished: boolean;
   answersHistory: boolean[]; // tracks correct/incorrect for summary
 }
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  access_cyber: boolean;
+  access_ai: boolean;
+  is_admin: boolean;
+}
