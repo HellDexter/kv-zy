@@ -1,9 +1,10 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// POZOR: Nahraďte tyto hodnoty svými údaji ze Supabase (Settings -> API)
-// Pro lokální vývoj je ideální dát je do .env souboru (VITE_SUPABASE_URL, atd.)
-const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://vas-projekt.supabase.co';
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || 'vas-anon-klic';
+// URL vašeho projektu
+const supabaseUrl = 'https://eowcpeqfujcugfcjrhze.supabase.co';
+
+// Váš PUBLIC (anon) klíč - tento je bezpečný pro použití v prohlížeči
+const supabaseAnonKey = 'sb_publishable_zPGy3yn2OV6Z2Ha6ONoC3A_aKD1flKP';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
