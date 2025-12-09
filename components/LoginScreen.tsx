@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Lock, User, ArrowRight, Fingerprint, ScanEye, AlertCircle, Loader2, Database, UserPlus } from 'lucide-react';
-import { supabase } from '../supabaseClient';
+import { supabase, SUPABASE_URL } from '../supabaseClient';
 import { createClient } from '@supabase/supabase-js';
 
 interface Props {
@@ -72,7 +72,7 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
     if (!secretKey) return;
 
     if (!secretKey.startsWith("sb_secret") && !secretKey.startsWith("ey")) {
-        alert("To nevypadá jako platný Secret Key.");
+        alert("To nevypadá jako platný Secret Key. Klíč musí začínat 'sb_secret' nebo 'ey'.");
         return;
     }
 
@@ -80,16 +80,16 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
     setImportStatus("Inicializace...");
 
     // Create a temporary client with admin rights using the provided secret key
-    // We get the project URL from the public client configuration
-    // @ts-ignore - internal property access to get URL
-    const projectUrl = supabase.supabaseUrl; 
-    const adminClient = createClient(projectUrl, secretKey);
+    // Using the explicitly exported SUPABASE_URL from supabaseClient.ts
+    const adminClient = createClient(SUPABASE_URL, secretKey);
 
     let successCount = 0;
-    let failCount = 0;
+    let existingCount = 0;
+    let errorCount = 0;
+    let lastErrorMessage = "";
 
     for (const student of STUDENTS_TO_IMPORT) {
-        setImportStatus(`Vytvářím: ${student.email}...`);
+        setImportStatus(`Zpracovávám: ${student.email}...`);
         
         try {
             // 1. Create User
@@ -101,23 +101,35 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
             });
 
             if (error) {
-                console.error(`Failed to create ${student.email}:`, error);
-                failCount++;
+                // Check if error is simply "User already registered"
+                if (error.message?.includes("already registered") || error.status === 422) {
+                    existingCount++;
+                } else {
+                    console.error(`Failed to create ${student.email}:`, error);
+                    errorCount++;
+                    lastErrorMessage = error.message;
+                }
             } else {
                 successCount++;
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
-            failCount++;
+            errorCount++;
+            lastErrorMessage = err.message || "Unknown error";
         }
     }
 
-    setImportStatus(`HOTOVO! Vytvořeno: ${successCount}, Chyby/Existující: ${failCount}`);
+    const finalMessage = errorCount > 0 
+        ? `CHYBA API KLÍČE nebo sítě!\n\nDetaily chyby: ${lastErrorMessage}\n\nZkontrolujte, že používáte 'service_role' klíč (ne 'anon'!).` 
+        : `Import dokončen.\n\nNově vytvořeno: ${successCount}\nJiž existovalo (OK): ${existingCount}\nHeslo pro všechny: ${DEFAULT_PASSWORD}`;
+
+    setImportStatus(errorCount > 0 ? "Chyba importu!" : "HOTOVO!");
+    
     setTimeout(() => {
         setImporting(false);
         setImportStatus("");
-        alert(`Import dokončen.\nÚspěšně vytvořeno: ${successCount}\nJiž existuje nebo chyba: ${failCount}\n\nHeslo pro všechny: ${DEFAULT_PASSWORD}`);
-    }, 1000);
+        alert(finalMessage);
+    }, 500);
   };
 
   return (
