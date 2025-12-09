@@ -1,14 +1,35 @@
 
 import React, { useState } from 'react';
-import { Lock, User, ArrowRight, Fingerprint, ScanEye, AlertCircle, Loader2 } from 'lucide-react';
+import { Lock, User, ArrowRight, Fingerprint, ScanEye, AlertCircle, Loader2, Database, UserPlus } from 'lucide-react';
 import { supabase } from '../supabaseClient';
+import { createClient } from '@supabase/supabase-js';
 
 interface Props {
   onLoginSuccess: () => void;
 }
 
+const STUDENTS_TO_IMPORT = [
+  { email: "turonova.luci@seznam.cz" },
+  { email: "m.galmus@seznam.cz" },
+  { email: "schranky@fise.cz" },
+  { email: "rudatanya@seznam.cz" },
+  { email: "idc100@seznam.cz" },
+  { email: "afc@seznam.cz" },
+  { email: "vecernicek470@gmail.com" },
+  { email: "udo219@seznam.cz" },
+  { email: "mirek.stepanek77@gmail.com" },
+  { email: "david6621@seznam.cz" },
+  { email: "Jirka.pfauser@seznam.cz" },
+  { email: "adelinkasklenarova@seznam.cz" },
+  { email: "stepanka@glanzova.cz" }
+];
+
+const DEFAULT_PASSWORD = "studenT@2025";
+
 const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
   const [loading, setLoading] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [importStatus, setImportStatus] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -44,6 +65,59 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAdminImport = async () => {
+    const secretKey = prompt("Pro hromadný import vložte 'service_role' (secret) klíč ze Supabase Settings -> API:");
+    if (!secretKey) return;
+
+    if (!secretKey.startsWith("sb_secret") && !secretKey.startsWith("ey")) {
+        alert("To nevypadá jako platný Secret Key.");
+        return;
+    }
+
+    setImporting(true);
+    setImportStatus("Inicializace...");
+
+    // Create a temporary client with admin rights using the provided secret key
+    // We get the project URL from the public client configuration
+    // @ts-ignore - internal property access to get URL
+    const projectUrl = supabase.supabaseUrl; 
+    const adminClient = createClient(projectUrl, secretKey);
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const student of STUDENTS_TO_IMPORT) {
+        setImportStatus(`Vytvářím: ${student.email}...`);
+        
+        try {
+            // 1. Create User
+            const { data, error } = await adminClient.auth.admin.createUser({
+                email: student.email,
+                password: DEFAULT_PASSWORD,
+                email_confirm: true, // Auto confirm
+                user_metadata: { access_cyber: true } // Redundant with SQL trigger but good for safety
+            });
+
+            if (error) {
+                console.error(`Failed to create ${student.email}:`, error);
+                failCount++;
+            } else {
+                successCount++;
+            }
+        } catch (err) {
+            console.error(err);
+            failCount++;
+        }
+    }
+
+    setImportStatus(`HOTOVO! Vytvořeno: ${successCount}, Chyby/Existující: ${failCount}`);
+    setTimeout(() => {
+        setImporting(false);
+        setImportStatus("");
+        alert(`Import dokončen.\nÚspěšně vytvořeno: ${successCount}\nJiž existuje nebo chyba: ${failCount}\n\nHeslo pro všechny: ${DEFAULT_PASSWORD}`);
+    }, 1000);
   };
 
   return (
@@ -152,12 +226,26 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
             </button>
           </form>
 
-          <div className="mt-10 pt-6 border-t border-white/5 flex justify-between items-center text-[10px] text-gray-600 font-mono">
-            <span className="flex items-center gap-2">
-              <span className={`w-1.5 h-1.5 rounded-full ${isSuccess ? 'bg-green-500' : (error ? 'bg-red-500' : 'bg-green-900')} transition-colors`}></span>
-              SECURE DB CONNECTION
-            </span>
-            <span>SUPABASE CONNECTED</span>
+          <div className="mt-10 pt-6 border-t border-white/5 flex flex-col gap-3">
+             <div className="flex justify-between items-center text-[10px] text-gray-600 font-mono">
+                <span className="flex items-center gap-2">
+                  <span className={`w-1.5 h-1.5 rounded-full ${isSuccess ? 'bg-green-500' : (error ? 'bg-red-500' : 'bg-green-900')} transition-colors`}></span>
+                  SECURE DB CONNECTION
+                </span>
+                <span>SUPABASE CONNECTED</span>
+             </div>
+
+             {/* Hidden Admin Tools */}
+             <div className="flex justify-center mt-2">
+                 <button 
+                   onClick={handleAdminImport}
+                   disabled={importing}
+                   className="flex items-center gap-2 text-[10px] text-gray-700 hover:text-cyan-500 transition-colors uppercase font-mono tracking-wider disabled:text-gray-800"
+                 >
+                    {importing ? <Loader2 className="w-3 h-3 animate-spin" /> : <UserPlus className="w-3 h-3" />}
+                    {importing ? importStatus : "⚡ Admin Import Třídy"}
+                 </button>
+             </div>
           </div>
         </div>
       </div>
