@@ -9,19 +9,19 @@ interface Props {
 }
 
 const STUDENTS_TO_IMPORT = [
-  { email: "turonova.luci@seznam.cz" },
-  { email: "m.galmus@seznam.cz" },
-  { email: "schranky@fise.cz" },
-  { email: "rudatanya@seznam.cz" },
-  { email: "idc100@seznam.cz" },
-  { email: "afc@seznam.cz" },
-  { email: "vecernicek470@gmail.com" },
-  { email: "udo219@seznam.cz" },
-  { email: "mirek.stepanek77@gmail.com" },
-  { email: "david6621@seznam.cz" },
-  { email: "Jirka.pfauser@seznam.cz" },
-  { email: "adelinkasklenarova@seznam.cz" },
-  { email: "stepanka@glanzova.cz" }
+  { email: "mordecaitwelve@gmail.com" }, // Petr Švejda
+  { email: "jura.romanenko@gmail.com" }, // Jurij Romanenko
+  { email: "rudaliubov@seznam.cz" },     // Liubov Ruda
+  { email: "hridel.vaclav@seznam.cz" },  // Václav Hřídel
+  { email: "robin1211@seznam.cz" },      // Robert Bílý
+  { email: "martina.wantochova@seznam.cz" }, // Martina Wantochová
+  { email: "anukak@seznam.cz" },         // JOSEF ŠŤASTNÝ
+  { email: "havelkova.ali@gmail.com" },  // ALENA HAVELKOVÁ
+  { email: "jan-palacky@seznam.cz" },    // Jan Palacký
+  { email: "miloshofman@seznam.cz" },    // Miloš Hofman
+  { email: "honza.cerny02@gmail.com" },  // Jan Černý
+  { email: "boris.planansky@fubraland.cz" }, // Boris Plaňanský
+  { email: "excuse_me@seznam.cz" }       // Vojtěch Vohrna
 ];
 
 const DEFAULT_PASSWORD = "studenT@2025";
@@ -92,12 +92,12 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
         setImportStatus(`Zpracovávám: ${student.email}...`);
         
         try {
-            // 1. Create User
+            // 1. Create User (or fail if exists)
             const { data, error } = await adminClient.auth.admin.createUser({
                 email: student.email,
                 password: DEFAULT_PASSWORD,
                 email_confirm: true, // Auto confirm
-                user_metadata: { access_cyber: true } // Redundant with SQL trigger but good for safety
+                user_metadata: { access_cyber: true, access_ai: true } 
             });
 
             if (error) {
@@ -112,6 +112,22 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
             } else {
                 successCount++;
             }
+
+            // 2. FORCE UPDATE Permissions (Grant AI Access)
+            // This runs regardless of whether the user was just created or already existed.
+            // Using service_role key bypasses RLS, so we can directly update the profiles table.
+            const { error: profileError } = await adminClient
+                .from('profiles')
+                .update({ 
+                    access_ai: true, 
+                    access_cyber: true 
+                })
+                .eq('email', student.email);
+
+            if (profileError) {
+                console.error(`Failed to update permissions for ${student.email}`, profileError);
+            }
+
         } catch (err: any) {
             console.error(err);
             errorCount++;
@@ -121,7 +137,7 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
 
     const finalMessage = errorCount > 0 
         ? `CHYBA API KLÍČE nebo sítě!\n\nDetaily chyby: ${lastErrorMessage}\n\nZkontrolujte, že používáte 'service_role' klíč (ne 'anon'!).` 
-        : `Import dokončen.\n\nNově vytvořeno: ${successCount}\nJiž existovalo (OK): ${existingCount}\nHeslo pro všechny: ${DEFAULT_PASSWORD}`;
+        : `Import dokončen.\n\nNově vytvořeno: ${successCount}\nJiž existovalo (Práva aktualizována): ${existingCount}\n\nVšichni nyní mají přístup k AI.\nHeslo: ${DEFAULT_PASSWORD}`;
 
     setImportStatus(errorCount > 0 ? "Chyba importu!" : "HOTOVO!");
     

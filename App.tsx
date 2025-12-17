@@ -86,13 +86,30 @@ const App: React.FC = () => {
 
   // Check for existing session on mount
   useEffect(() => {
+    let mounted = true;
+
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        await fetchProfile(session.user.id);
-        setCurrentView('dashboard');
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) throw error;
+
+        if (session) {
+          await fetchProfile(session.user.id);
+          if (mounted) setCurrentView('dashboard');
+        }
+      } catch (err) {
+        console.error("Chyba při inicializaci relace:", err);
+        // Pokud dojde k chybě (např. poškozená cookie), odhlásíme uživatele, aby se vyčistil stav
+        await supabase.auth.signOut();
+        if (mounted) {
+           setUserProfile(null);
+           setCurrentView('login');
+        }
+      } finally {
+        // Vždy ukončit načítání, i když dojde k chybě
+        if (mounted) setSessionLoading(false);
       }
-      setSessionLoading(false);
     };
 
     checkSession();
@@ -100,14 +117,21 @@ const App: React.FC = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session) {
         await fetchProfile(session.user.id);
-        setCurrentView('dashboard');
+        if (mounted) setCurrentView('dashboard');
       } else {
-        setUserProfile(null);
-        setCurrentView('login');
+        if (mounted) {
+           setUserProfile(null);
+           setCurrentView('login');
+        }
       }
+      // Failsafe: Ujistíme se, že loading zmizí i při změně stavu
+      if (mounted) setSessionLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const fetchProfile = async (userId: string) => {
@@ -235,7 +259,13 @@ const App: React.FC = () => {
   if (sessionLoading) {
     return (
        <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-          <div className="text-cyan-500 font-mono animate-pulse">Načítání systému...</div>
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative w-12 h-12">
+              <div className="absolute inset-0 border-2 border-cyan-500/20 rounded-full"></div>
+              <div className="absolute inset-0 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+            <div className="text-cyan-500 font-mono text-sm tracking-widest animate-pulse">NAČÍTÁNÍ SYSTÉMU...</div>
+          </div>
        </div>
     );
   }
