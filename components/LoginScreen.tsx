@@ -1,35 +1,14 @@
 
 import React, { useState } from 'react';
-import { Lock, User, ArrowRight, Fingerprint, ScanEye, AlertCircle, Loader2, Database, UserPlus } from 'lucide-react';
-import { supabase, SUPABASE_URL } from '../supabaseClient';
-import { createClient } from '@supabase/supabase-js';
+import { Lock, User, ArrowRight, ScanEye, AlertCircle, Loader2 } from 'lucide-react';
+import { supabase } from '../supabaseClient';
 
 interface Props {
   onLoginSuccess: () => void;
 }
 
-const STUDENTS_TO_IMPORT = [
-  { email: "mordecaitwelve@gmail.com" }, // Petr Švejda
-  { email: "jura.romanenko@gmail.com" }, // Jurij Romanenko
-  { email: "rudaliubov@seznam.cz" },     // Liubov Ruda
-  { email: "hridel.vaclav@seznam.cz" },  // Václav Hřídel
-  { email: "robin1211@seznam.cz" },      // Robert Bílý
-  { email: "martina.wantochova@seznam.cz" }, // Martina Wantochová
-  { email: "anukak@seznam.cz" },         // JOSEF ŠŤASTNÝ
-  { email: "havelkova.ali@gmail.com" },  // ALENA HAVELKOVÁ
-  { email: "jan-palacky@seznam.cz" },    // Jan Palacký
-  { email: "miloshofman@seznam.cz" },    // Miloš Hofman
-  { email: "honza.cerny02@gmail.com" },  // Jan Černý
-  { email: "boris.planansky@fubraland.cz" }, // Boris Plaňanský
-  { email: "excuse_me@seznam.cz" }       // Vojtěch Vohrna
-];
-
-const DEFAULT_PASSWORD = "studenT@2025";
-
 const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
   const [loading, setLoading] = useState(false);
-  const [importing, setImporting] = useState(false);
-  const [importStatus, setImportStatus] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -65,87 +44,6 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleAdminImport = async () => {
-    const secretKey = prompt("Pro hromadný import vložte 'service_role' (secret) klíč ze Supabase Settings -> API:");
-    if (!secretKey) return;
-
-    if (!secretKey.startsWith("sb_secret") && !secretKey.startsWith("ey")) {
-        alert("To nevypadá jako platný Secret Key. Klíč musí začínat 'sb_secret' nebo 'ey'.");
-        return;
-    }
-
-    setImporting(true);
-    setImportStatus("Inicializace...");
-
-    // Create a temporary client with admin rights using the provided secret key
-    // Using the explicitly exported SUPABASE_URL from supabaseClient.ts
-    const adminClient = createClient(SUPABASE_URL, secretKey);
-
-    let successCount = 0;
-    let existingCount = 0;
-    let errorCount = 0;
-    let lastErrorMessage = "";
-
-    for (const student of STUDENTS_TO_IMPORT) {
-        setImportStatus(`Zpracovávám: ${student.email}...`);
-        
-        try {
-            // 1. Create User (or fail if exists)
-            const { data, error } = await adminClient.auth.admin.createUser({
-                email: student.email,
-                password: DEFAULT_PASSWORD,
-                email_confirm: true, // Auto confirm
-                user_metadata: { access_cyber: true, access_ai: true } 
-            });
-
-            if (error) {
-                // Check if error is simply "User already registered"
-                if (error.message?.includes("already registered") || error.status === 422) {
-                    existingCount++;
-                } else {
-                    console.error(`Failed to create ${student.email}:`, error);
-                    errorCount++;
-                    lastErrorMessage = error.message;
-                }
-            } else {
-                successCount++;
-            }
-
-            // 2. FORCE UPDATE Permissions (Grant AI Access)
-            // This runs regardless of whether the user was just created or already existed.
-            // Using service_role key bypasses RLS, so we can directly update the profiles table.
-            const { error: profileError } = await adminClient
-                .from('profiles')
-                .update({ 
-                    access_ai: true, 
-                    access_cyber: true 
-                })
-                .eq('email', student.email);
-
-            if (profileError) {
-                console.error(`Failed to update permissions for ${student.email}`, profileError);
-            }
-
-        } catch (err: any) {
-            console.error(err);
-            errorCount++;
-            lastErrorMessage = err.message || "Unknown error";
-        }
-    }
-
-    const finalMessage = errorCount > 0 
-        ? `CHYBA API KLÍČE nebo sítě!\n\nDetaily chyby: ${lastErrorMessage}\n\nZkontrolujte, že používáte 'service_role' klíč (ne 'anon'!).` 
-        : `Import dokončen.\n\nNově vytvořeno: ${successCount}\nJiž existovalo (Práva aktualizována): ${existingCount}\n\nVšichni nyní mají přístup k AI.\nHeslo: ${DEFAULT_PASSWORD}`;
-
-    setImportStatus(errorCount > 0 ? "Chyba importu!" : "HOTOVO!");
-    
-    setTimeout(() => {
-        setImporting(false);
-        setImportStatus("");
-        alert(finalMessage);
-    }, 500);
   };
 
   return (
@@ -261,18 +159,6 @@ const LoginScreen: React.FC<Props> = ({ onLoginSuccess }) => {
                   SECURE DB CONNECTION
                 </span>
                 <span>SUPABASE CONNECTED</span>
-             </div>
-
-             {/* Hidden Admin Tools */}
-             <div className="flex justify-center mt-2">
-                 <button 
-                   onClick={handleAdminImport}
-                   disabled={importing}
-                   className="flex items-center gap-2 text-[10px] text-gray-700 hover:text-cyan-500 transition-colors uppercase font-mono tracking-wider disabled:text-gray-800"
-                 >
-                    {importing ? <Loader2 className="w-3 h-3 animate-spin" /> : <UserPlus className="w-3 h-3" />}
-                    {importing ? importStatus : "⚡ Admin Import Třídy"}
-                 </button>
              </div>
           </div>
         </div>
