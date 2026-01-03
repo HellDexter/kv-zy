@@ -84,64 +84,97 @@ const App: React.FC = () => {
     answersHistory: []
   });
 
+  // Safe loading handler with timeout
   useEffect(() => {
     let mounted = true;
 
-    const checkSession = async () => {
+    // Safety timeout - if session doesn't resolve in 6s, force login screen
+    const loadingTimeout = setTimeout(() => {
+      if (mounted && sessionLoading) {
+        console.warn("Auth initialization timed out, forcing login view.");
+        setSessionLoading(false);
+        setCurrentView('login');
+      }
+    }, 6000);
+
+    const initAuth = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) throw error;
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) throw sessionError;
+
         if (session) {
-          await fetchProfile(session.user.id);
-          if (mounted) setCurrentView('dashboard');
+          const profile = await fetchProfile(session.user.id);
+          if (mounted) {
+            if (profile) {
+              setCurrentView('dashboard');
+            } else {
+              // Session exists but profile failed - might be a stale session or deleted user
+              await supabase.auth.signOut();
+              setCurrentView('login');
+            }
+          }
+        } else {
+          if (mounted) setCurrentView('login');
         }
       } catch (err) {
-        console.error("Chyba při inicializaci relace:", err);
-        await supabase.auth.signOut();
+        console.error("Initialization error:", err);
         if (mounted) {
-           setUserProfile(null);
-           setCurrentView('login');
+          setCurrentView('login');
+          setUserProfile(null);
         }
       } finally {
-        if (mounted) setSessionLoading(false);
+        if (mounted) {
+          setSessionLoading(false);
+          clearTimeout(loadingTimeout);
+        }
       }
     };
 
-    checkSession();
+    initAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session) {
-        await fetchProfile(session.user.id);
-        if (mounted) setCurrentView('dashboard');
-      } else {
-        if (mounted) {
-           setUserProfile(null);
-           setCurrentView('login');
-        }
+    // Listen for auth changes (login/logout/token refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+
+      if (event === 'SIGNED_IN' && session) {
+        setSessionLoading(true);
+        const profile = await fetchProfile(session.user.id);
+        if (profile) setCurrentView('dashboard');
+        setSessionLoading(false);
+      } else if (event === 'SIGNED_OUT') {
+        setUserProfile(null);
+        setCurrentView('login');
+        setSessionLoading(false);
       }
-      if (mounted) setSessionLoading(false);
     });
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
+      clearTimeout(loadingTimeout);
     };
   }, []);
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = async (userId: string): Promise<UserProfile | null> => {
     try {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle(); // maybeSingle doesn't throw if not found
 
       if (error) throw error;
+      
       if (data) {
-        setUserProfile(data as UserProfile);
+        const profile = data as UserProfile;
+        setUserProfile(profile);
+        return profile;
       }
+      return null;
     } catch (error) {
       console.error('Error fetching profile:', error);
+      return null;
     }
   };
 
@@ -238,19 +271,25 @@ const App: React.FC = () => {
   };
 
   const handleLogout = async () => {
+    setSessionLoading(true);
     await supabase.auth.signOut();
-    setCurrentView('login');
+    // onAuthStateChange handles the state transition to login
   };
 
   if (sessionLoading) {
     return (
-       <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <div className="relative w-12 h-12">
-              <div className="absolute inset-0 border-2 border-cyan-500/20 rounded-full"></div>
+       <div className="min-h-screen bg-[#050505] flex items-center justify-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none"></div>
+          <div className="flex flex-col items-center gap-6 relative z-10">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 border-2 border-cyan-500/10 rounded-full"></div>
               <div className="absolute inset-0 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="absolute inset-2 border border-cyan-500/20 rounded-full animate-pulse"></div>
             </div>
-            <div className="text-cyan-500 font-mono text-sm tracking-widest animate-pulse">NAČÍTÁNÍ SYSTÉMU...</div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="text-cyan-500 font-mono text-sm tracking-[0.3em] font-bold animate-pulse">NAČÍTÁNÍ SYSTÉMU...</div>
+              <div className="text-[10px] text-gray-600 font-mono tracking-widest uppercase">Initializing Secure Session</div>
+            </div>
           </div>
        </div>
     );
