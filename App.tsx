@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { courseData, aiCourseData } from './data';
 import { QuizState, UserProfile } from './types';
 import WelcomeScreen from './components/WelcomeScreen';
@@ -63,6 +63,10 @@ const App: React.FC = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [sessionLoading, setSessionLoading] = useState(true);
   
+  // Ref for the current view to avoid stale closures in auth listener
+  const viewRef = useRef<View>('login');
+  useEffect(() => { viewRef.current = currentView; }, [currentView]);
+
   const [quizState, setQuizState] = useState<QuizState>({
     currentBlockId: null,
     currentQuestionIndex: 0,
@@ -73,7 +77,6 @@ const App: React.FC = () => {
     answersHistory: []
   });
 
-  // Memoized profile fetcher to avoid recreation
   const fetchProfile = useCallback(async (userId: string): Promise<UserProfile | null> => {
     try {
       const { data, error } = await supabase
@@ -81,7 +84,6 @@ const App: React.FC = () => {
         .select('*')
         .eq('id', userId)
         .maybeSingle();
-
       if (error) throw error;
       return data as UserProfile;
     } catch (error) {
@@ -93,34 +95,35 @@ const App: React.FC = () => {
   useEffect(() => {
     let mounted = true;
 
-    // Failsafe: Always disable loading after 8 seconds
+    // Failsafe timeout
     const globalTimeout = setTimeout(() => {
       if (mounted && sessionLoading) {
-        console.warn("Auth failsafe triggered.");
         setSessionLoading(false);
       }
-    }, 8000);
+    }, 10000);
 
-    // Single source of truth for Auth
+    // Setup listener ONCE
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!mounted) return;
 
-      console.log(`Auth Event: ${event}`);
+      console.log(`Auth System Event: ${event}`);
 
       try {
         if (session?.user) {
-          // If we have a session but no profile, or it's a new sign in
-          if (!userProfile || event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
-            const profile = await fetchProfile(session.user.id);
-            if (mounted) {
-              if (profile) {
-                setUserProfile(profile);
+          const profile = await fetchProfile(session.user.id);
+          
+          if (mounted) {
+            if (profile) {
+              setUserProfile(profile);
+              // ONLY redirect to dashboard if we are currently on the login screen
+              // This prevents resetting the view when user is already navigating menus
+              if (viewRef.current === 'login') {
                 setCurrentView('dashboard');
-              } else {
-                console.error("Profile not found for session.");
-                await supabase.auth.signOut();
-                setCurrentView('login');
               }
+            } else {
+              console.warn("Session active but profile missing. Signing out.");
+              await supabase.auth.signOut();
+              setCurrentView('login');
             }
           }
         } else {
@@ -131,7 +134,7 @@ const App: React.FC = () => {
           }
         }
       } catch (err) {
-        console.error("Auth transition error:", err);
+        console.error("Auth Transition Error:", err);
       } finally {
         if (mounted) {
           setSessionLoading(false);
@@ -144,7 +147,8 @@ const App: React.FC = () => {
       subscription.unsubscribe();
       clearTimeout(globalTimeout);
     };
-  }, [fetchProfile, userProfile, sessionLoading]);
+    // Empty dependency array ensures this effect only runs once on mount
+  }, [fetchProfile]);
 
   const handleDashboardNavigate = (module: Module) => {
     if (module === 'cyber') {
@@ -164,6 +168,21 @@ const App: React.FC = () => {
     }
   };
 
+  const handleLogout = async () => {
+    setSessionLoading(true);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch (err) {
+      console.error("Logout error:", err);
+      // Even if error occurs, force local state reset
+      setUserProfile(null);
+      setCurrentView('login');
+    } finally {
+      setSessionLoading(false);
+    }
+  };
+
   const currentModuleData = activeModule === 'cyber' ? courseData : aiCourseData;
 
   const startBlock = (blockId: number) => {
@@ -179,47 +198,6 @@ const App: React.FC = () => {
     setCurrentView('quiz');
   };
 
-  const handleSelectAnswer = (index: number) => {
-    const currentBlock = currentModuleData.find(b => b.id === quizState.currentBlockId);
-    if (!currentBlock) return;
-    const currentQuestion = currentBlock.questions[quizState.currentQuestionIndex];
-    const isCorrect = index === currentQuestion.correctAnswer;
-    setQuizState(prev => ({
-      ...prev,
-      selectedAnswer: index,
-      score: isCorrect ? prev.score + 1 : prev.score,
-      answersHistory: [...prev.answersHistory, isCorrect]
-    }));
-  };
-
-  const handleNextQuestion = () => {
-    const currentBlock = currentModuleData.find(b => b.id === quizState.currentBlockId);
-    if (!currentBlock) return;
-    if (quizState.currentQuestionIndex + 1 < currentBlock.questions.length) {
-      setQuizState(prev => ({
-        ...prev,
-        currentQuestionIndex: prev.currentQuestionIndex + 1,
-        selectedAnswer: null,
-        showHint: false
-      }));
-    } else {
-      setQuizState(prev => ({ ...prev, isFinished: true }));
-      setCurrentView('result');
-    }
-  };
-
-  const handleLogout = async () => {
-    setSessionLoading(true);
-    try {
-      await supabase.auth.signOut();
-    } catch (err) {
-      console.error("Logout error:", err);
-      // Force UI to login if signout fails
-      setCurrentView('login');
-      setSessionLoading(false);
-    }
-  };
-
   if (sessionLoading) {
     return (
        <div className="min-h-screen bg-[#050505] flex items-center justify-center relative overflow-hidden">
@@ -230,8 +208,8 @@ const App: React.FC = () => {
               <div className="absolute inset-0 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <div className="text-cyan-500 font-mono text-sm tracking-[0.3em] font-bold animate-pulse uppercase">Inicializace systému</div>
-              <div className="text-[10px] text-gray-600 font-mono tracking-widest uppercase">Verifying Encrypted Session</div>
+              <div className="text-cyan-500 font-mono text-sm tracking-[0.3em] font-bold animate-pulse uppercase">Zabezpečené spojení</div>
+              <div className="text-[10px] text-gray-600 font-mono tracking-widest uppercase">Validating Credentials</div>
             </div>
           </div>
        </div>
@@ -250,7 +228,23 @@ const App: React.FC = () => {
     case 'quiz':
       const qBlock = currentModuleData.find(b => b.id === quizState.currentBlockId);
       if (qBlock) {
-        content = <QuizScreen block={qBlock} currentQuestionIndex={quizState.currentQuestionIndex} question={qBlock.questions[quizState.currentQuestionIndex]} selectedAnswer={quizState.selectedAnswer} showHint={quizState.showHint} onSelectAnswer={handleSelectAnswer} onToggleHint={() => setQuizState(prev => ({ ...prev, showHint: !prev.showHint }))} onNextQuestion={handleNextQuestion} onBackToMenu={() => setCurrentView('quizzes')} />;
+        content = <QuizScreen block={qBlock} currentQuestionIndex={quizState.currentQuestionIndex} question={qBlock.questions[quizState.currentQuestionIndex]} selectedAnswer={quizState.selectedAnswer} showHint={quizState.showHint} onSelectAnswer={(idx) => {
+            const currentQuestion = qBlock.questions[quizState.currentQuestionIndex];
+            const isCorrect = idx === currentQuestion.correctAnswer;
+            setQuizState(prev => ({
+              ...prev,
+              selectedAnswer: idx,
+              score: isCorrect ? prev.score + 1 : prev.score,
+              answersHistory: [...prev.answersHistory, isCorrect]
+            }));
+        }} onToggleHint={() => setQuizState(prev => ({ ...prev, showHint: !prev.showHint }))} onNextQuestion={() => {
+            if (quizState.currentQuestionIndex + 1 < qBlock.questions.length) {
+              setQuizState(prev => ({ ...prev, currentQuestionIndex: prev.currentQuestionIndex + 1, selectedAnswer: null, showHint: false }));
+            } else {
+              setQuizState(prev => ({ ...prev, isFinished: true }));
+              setCurrentView('result');
+            }
+        }} onBackToMenu={() => setCurrentView('quizzes')} />;
       }
       break;
     case 'result':
