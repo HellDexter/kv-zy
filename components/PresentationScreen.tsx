@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Block } from '../types';
 import * as Icons from 'lucide-react';
-import { ArrowLeft, FileText, ExternalLink, Download, Ban, MonitorPlay } from 'lucide-react';
+import { ArrowLeft, FileText, ExternalLink, Download, Ban, MonitorPlay, AlertTriangle } from 'lucide-react';
 
 interface Props {
   blocks: Block[];
@@ -44,10 +44,10 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack, theme = 'cyan' })
                   href={resourceUrl} 
                   target="_blank" 
                   rel="noreferrer"
-                  className={`flex items-center gap-2 text-xs font-bold tracking-widest uppercase bg-${colorClass}-950/50 hover:bg-${colorClass}-900/50 text-${colorClass}-400 px-4 py-2 rounded-full border border-${colorClass}-500/30 transition-all font-mono shadow-[0_0_15px_rgba(0,0,0,0.2)]`}
+                  className={`flex items-center gap-2 text-xs font-bold tracking-widest uppercase bg-${colorClass}-500 text-black px-6 py-2 rounded-full hover:bg-${colorClass}-400 transition-all font-mono shadow-[0_0_20px_rgba(6,182,212,0.3)]`}
                 >
                   <ExternalLink className="w-4 h-4" />
-                  <span className="hidden sm:inline">Otevřít v novém okně</span>
+                  <span>Otevřít v novém okně</span>
                 </a>
               ) : (
                 <a 
@@ -65,19 +65,38 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack, theme = 'cyan' })
         {/* Viewer Container */}
         <div className="flex-grow relative animate-fade-in-up" style={{ animationDelay: '100ms' }}>
            <div className={`absolute inset-0 bg-gradient-to-b from-${colorClass}-500/20 to-transparent rounded-xl blur-sm opacity-50`}></div>
-           <div className="absolute inset-0 bg-[#0a0a0a] rounded-xl border border-white/10 overflow-hidden shadow-2xl">
+           <div className="absolute inset-0 bg-[#0a0a0a] rounded-xl border border-white/10 overflow-hidden shadow-2xl flex flex-col">
               <div className={`absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-${colorClass}-500/50 to-transparent z-20`}></div>
               
+              {/* Fallback Message Background (Visible if iframe is transparent or fails) */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 bg-[#050505]">
+                <div className={`w-16 h-16 rounded-full bg-${colorClass}-500/10 flex items-center justify-center mb-6 border border-${colorClass}-500/20`}>
+                  <AlertTriangle className={`w-8 h-8 text-${colorClass}-400`} />
+                </div>
+                <h3 className="text-white font-display text-xl mb-4 uppercase">Náhled se nepodařilo načíst?</h3>
+                <p className="text-gray-400 max-w-md mb-8 text-sm leading-relaxed">
+                  Z důvodu bezpečnostního nastavení prohlížeče nebo platformy Gamma může být náhled blokován. Použijte tlačítko níže pro zobrazení v plném režimu.
+                </p>
+                <a 
+                  href={resourceUrl} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className={`inline-flex items-center gap-3 bg-white text-black px-8 py-4 rounded-xl font-bold text-xs tracking-widest uppercase hover:bg-gray-100 transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)] font-display`}
+                >
+                  <MonitorPlay className="w-4 h-4" />
+                  Spustit prezentaci externě
+                </a>
+              </div>
+
+              {/* The actual iframe */}
               <iframe 
                 src={isGamma ? resourceUrl : `${resourceUrl}#toolbar=0&view=FitH`}
-                className="w-full h-full border-0"
+                className="w-full h-full border-0 relative z-10"
                 title={selectedBlock?.title || "Presentation Viewer"}
-                allow="fullscreen"
+                allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                referrerPolicy="no-referrer-when-downgrade"
               >
-                <div className="flex flex-col items-center justify-center h-full text-gray-400 p-8 text-center">
-                    <Ban className="w-12 h-12 mb-4 opacity-50" />
-                    <p>Váš prohlížeč nepodporuje zobrazení tohoto obsahu.</p>
-                </div>
               </iframe>
            </div>
         </div>
@@ -124,7 +143,7 @@ const PresentationScreen: React.FC<Props> = ({ blocks, onBack, theme = 'cyan' })
               style={{ animationDelay: `${200 + (index * 50)}ms` }}
             >
               <div className={`absolute inset-0 bg-gradient-to-r from-${colorClass}-500/0 via-${colorClass}-500/20 to-blue-600/0 rounded-2xl opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-500`}></div>
-              <div className={`relative h-full bg-[#0a0a0a]/60 backdrop-blur-xl border border-white/5 rounded-2xl p-8 overflow-hidden hover:bg-[#0a0a0a]/80 transition-all duration-300 group-hover:border-${colorClass}-500/30 hover:-translate-y-1`}>
+              <div className={`relative h-full bg-[#0a0a0a]/60 backdrop-blur-xl border border-white/5 rounded-2xl p-8 overflow-hidden hover:bg-[#0a0a0a]/90 transition-all duration-300 group-hover:border-${colorClass}-500/30 hover:-translate-y-1`}>
                 <div className={`absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-${colorClass}-500/30 to-transparent opacity-30 group-hover:opacity-80 transition-opacity`}></div>
                 <div className="flex justify-between items-start mb-6">
                     <div className={`w-12 h-12 rounded-xl bg-${colorClass}-950/20 border border-${colorClass}-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500`}>
