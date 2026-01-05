@@ -1,7 +1,20 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Check, Bot, X, ShieldAlert, ShieldCheck, Send, Paperclip, Image as ImageIcon, Trash2, Loader2 } from 'lucide-react';
+import { ArrowLeft, Check, Bot, X, ShieldAlert, ShieldCheck, Send, Paperclip, Image as ImageIcon, Trash2, Loader2, Key } from 'lucide-react';
 import { GoogleGenAI, Chat } from "@google/genai";
+
+// Definice rozhraní pro globální objekt aistudio podle pravidel
+// Fix: Use AIStudio interface name to match existing global definitions and avoid type mismatch errors.
+export interface AIStudio {
+  hasSelectedApiKey: () => Promise<boolean>;
+  openSelectKey: () => Promise<void>;
+}
+
+declare global {
+  interface Window {
+    aistudio: AIStudio;
+  }
+}
 
 interface Props {
   onBack: () => void;
@@ -89,7 +102,8 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
   const [loading, setLoading] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
   const [attachments, setAttachments] = useState<Attachment[]>([]);
-  const [isDragging, setIsDragging] = useState(false);
+  const [needsApiKey, setNeedsApiKey] = useState(false);
+  const [activeItem, setActiveItem] = useState<AuditItem | null>(null);
   
   const chatEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -107,6 +121,18 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
 
   const toggleCheck = (id: string) => {
     setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleOpenKeySelection = async () => {
+    try {
+      await window.aistudio.openSelectKey();
+      if (activeItem) {
+        setNeedsApiKey(false);
+        initChat(activeItem);
+      }
+    } catch (err) {
+      console.error("Key selection failed", err);
+    }
   };
 
   const fileToGenerativePart = async (file: File): Promise<Part> => {
@@ -128,14 +154,25 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
   };
 
   const initChat = async (item: AuditItem) => {
+    setActiveItem(item);
     setChatTitle(item.label);
     setChatHistory([]);
     setAttachments([]);
     setInputMessage("");
     setShowChat(true);
     setLoading(true);
+    setNeedsApiKey(false);
+
+    // Kontrola, zda máme klíč
+    const hasKey = await window.aistudio.hasSelectedApiKey();
+    if (!hasKey) {
+      setNeedsApiKey(true);
+      setLoading(false);
+      return;
+    }
 
     try {
+      // Create a fresh GoogleGenAI instance for the chat session
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       
       const systemInstruction = `
@@ -162,9 +199,13 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
       if (result.text) {
           setChatHistory([{ role: 'model', text: result.text }]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("AI Init Error:", error);
-      setChatHistory([{ role: 'model', text: "Omlouvám se, ale spojení s AI expertem selhalo. Zkuste to prosím znovu za chvíli." }]);
+      if (error.message?.includes("Requested entity was not found") || error.message?.includes("API key")) {
+        setNeedsApiKey(true);
+      } else {
+        setChatHistory([{ role: 'model', text: "Omlouvám se, ale spojení s AI expertem selhalo. Zkontrolujte prosím své internetové připojení a zkuste to znovu." }]);
+      }
     } finally {
       setLoading(false);
     }
@@ -198,9 +239,13 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
       if (result.text) {
         setChatHistory(prev => [...prev, { role: 'model', text: result.text }]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Send Error:", error);
-      setChatHistory(prev => [...prev, { role: 'model', text: "Došlo k chybě. Zkuste to prosím znovu." }]);
+      if (error.message?.includes("Requested entity was not found")) {
+        setNeedsApiKey(true);
+      } else {
+        setChatHistory(prev => [...prev, { role: 'model', text: "Došlo k chybě při odesílání zprávy. Zkuste to prosím znovu." }]);
+      }
     } finally {
       setLoading(false);
     }
@@ -320,67 +365,97 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                         <X className="w-5 h-5" />
                     </button>
                 </div>
-                <div className="flex-grow overflow-y-auto p-4 space-y-4 md:space-y-6 bg-[#050505]">
-                    {chatHistory.map((msg, idx) => (
-                        <div key={idx} className={`flex gap-3 md:gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                            <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-1 ${msg.role === 'model' ? 'bg-pink-500/20 text-pink-400' : 'bg-white/10 text-white'}`}>
-                                {msg.role === 'model' ? <Bot className="w-5 h-5" /> : <div className="w-2 h-2 bg-white rounded-full"></div>}
+                <div className="flex-grow overflow-y-auto p-4 space-y-4 md:space-y-6 bg-[#050505] flex flex-col">
+                    {needsApiKey ? (
+                        <div className="flex-grow flex flex-col items-center justify-center p-8 text-center animate-fade-in-up">
+                            <div className="w-16 h-16 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(236,72,153,0.1)]">
+                                <Key className="w-8 h-8 text-pink-400" />
                             </div>
-                            <div className="flex flex-col gap-2 max-w-[85%]">
-                              {msg.images?.map((img, imgIdx) => (
-                                <img key={imgIdx} src={img} className="max-w-[120px] rounded-lg border border-white/10 object-cover" />
-                              ))}
-                              <div className={`rounded-2xl p-3 md:p-4 text-xs md:text-sm leading-relaxed shadow-sm ${msg.role === 'model' ? 'bg-[#1a1a1a] text-gray-200 border border-white/5 rounded-tl-none' : 'bg-pink-600 text-white rounded-tr-none'}`}>
-                                  <div dangerouslySetInnerHTML={{ __html: msg.text.replace(/\n/g, '<br/>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}></div>
-                              </div>
-                            </div>
+                            <h3 className="text-lg font-display text-white mb-3 uppercase">Vyžadována aktivace AI</h3>
+                            <p className="text-sm text-gray-400 mb-8 max-w-sm leading-relaxed">
+                                Pro používání AI asistenta je nutné vybrat váš vlastní API klíč z placeného projektu Google Cloud.
+                            </p>
+                            <button 
+                                onClick={handleOpenKeySelection}
+                                className="bg-pink-600 hover:bg-pink-500 text-white px-8 py-3 rounded-xl font-bold text-xs tracking-widest uppercase transition-all shadow-[0_0_20px_rgba(236,72,153,0.3)] font-display flex items-center gap-3"
+                            >
+                                <Bot className="w-4 h-4" /> Aktivovat AI asistenta
+                            </button>
+                            <a 
+                                href="https://ai.google.dev/gemini-api/docs/billing" 
+                                target="_blank" 
+                                rel="noreferrer"
+                                className="mt-6 text-[10px] text-gray-500 hover:text-pink-400 underline transition-colors font-mono"
+                            >
+                                Dokumentace o placených klíčích
+                            </a>
                         </div>
-                    ))}
-                    {loading && (
-                        <div className="flex gap-4">
-                            <div className="w-8 h-8 rounded-full bg-pink-500/20 flex-shrink-0 flex items-center justify-center mt-1">
-                                <Bot className="w-5 h-5 text-pink-400" />
-                            </div>
-                            <div className="bg-[#1a1a1a] rounded-2xl rounded-tl-none p-4 border border-white/5 flex gap-2 items-center">
-                                <span className="w-1.5 h-1.5 bg-pink-500 rounded-full animate-bounce"></span>
-                                <span className="w-1.5 h-1.5 bg-pink-500 rounded-full animate-bounce" style={{animationDelay: '100ms'}}></span>
-                                <span className="w-1.5 h-1.5 bg-pink-500 rounded-full animate-bounce" style={{animationDelay: '200ms'}}></span>
-                            </div>
-                        </div>
+                    ) : (
+                        <>
+                            {chatHistory.map((msg, idx) => (
+                                <div key={idx} className={`flex gap-3 md:gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                                    <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-1 ${msg.role === 'model' ? 'bg-pink-500/20 text-pink-400' : 'bg-white/10 text-white'}`}>
+                                        {msg.role === 'model' ? <Bot className="w-5 h-5" /> : <div className="w-2 h-2 bg-white rounded-full"></div>}
+                                    </div>
+                                    <div className="flex flex-col gap-2 max-w-[85%]">
+                                    {msg.images?.map((img, imgIdx) => (
+                                        <img key={imgIdx} src={img} className="max-w-[120px] rounded-lg border border-white/10 object-cover" />
+                                    ))}
+                                    <div className={`rounded-2xl p-3 md:p-4 text-xs md:text-sm leading-relaxed shadow-sm ${msg.role === 'model' ? 'bg-[#1a1a1a] text-gray-200 border border-white/5 rounded-tl-none' : 'bg-pink-600 text-white rounded-tr-none'}`}>
+                                        <div dangerouslySetInnerHTML={{ __html: msg.text.replace(/\n/g, '<br/>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}></div>
+                                    </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {loading && (
+                                <div className="flex gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-pink-500/20 flex-shrink-0 flex items-center justify-center mt-1">
+                                        <Bot className="w-5 h-5 text-pink-400" />
+                                    </div>
+                                    <div className="bg-[#1a1a1a] rounded-2xl rounded-tl-none p-4 border border-white/5 flex gap-2 items-center">
+                                        <span className="w-1.5 h-1.5 bg-pink-500 rounded-full animate-bounce"></span>
+                                        <span className="w-1.5 h-1.5 bg-pink-500 rounded-full animate-bounce" style={{animationDelay: '100ms'}}></span>
+                                        <span className="w-1.5 h-1.5 bg-pink-500 rounded-full animate-bounce" style={{animationDelay: '200ms'}}></span>
+                                    </div>
+                                </div>
+                            )}
+                        </>
                     )}
                     <div ref={chatEndRef} />
                 </div>
-                <div className="p-3 md:p-4 border-t border-white/10 bg-[#1a1a1a] flex-shrink-0">
-                    {attachments.length > 0 && (
-                      <div className="flex gap-3 mb-3 overflow-x-auto pb-2">
-                        {attachments.map((att, idx) => (
-                          <div key={idx} className="relative group flex-shrink-0">
-                            <img src={att.preview} className="w-16 h-16 rounded-lg object-cover border border-white/20" />
-                            <button onClick={() => setAttachments(p => p.filter((_, i) => i !== idx))} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5 shadow-md">
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <form onSubmit={handleSendMessage} className="flex gap-2 md:gap-3 items-end">
-                        <button type="button" onClick={() => fileInputRef.current?.click()} className="p-3 text-gray-400 hover:text-pink-400 hover:bg-white/5 rounded-xl transition-colors">
-                          <Paperclip className="w-5 h-5" />
-                        </button>
-                        <input type="file" ref={fileInputRef} className="hidden" accept="image/*" multiple onChange={handleFileSelect} />
-                        <textarea
-                          value={inputMessage}
-                          onChange={(e) => setInputMessage(e.target.value)}
-                          onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
-                          placeholder="Zpráva..."
-                          className="flex-grow bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-pink-500/50 resize-none max-h-32 min-h-[44px]"
-                          rows={1}
-                        />
-                        <button type="submit" disabled={loading || (!inputMessage.trim() && attachments.length === 0)} className="p-3 bg-pink-600 text-white rounded-xl hover:bg-pink-500 disabled:opacity-50 transition-all">
-                          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
-                        </button>
-                    </form>
-                </div>
+                {!needsApiKey && (
+                  <div className="p-3 md:p-4 border-t border-white/10 bg-[#1a1a1a] flex-shrink-0">
+                      {attachments.length > 0 && (
+                        <div className="flex gap-3 mb-3 overflow-x-auto pb-2">
+                          {attachments.map((att, idx) => (
+                            <div key={idx} className="relative group flex-shrink-0">
+                              <img src={att.preview} className="w-16 h-16 rounded-lg object-cover border border-white/20" />
+                              <button onClick={() => setAttachments(p => p.filter((_, i) => i !== idx))} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5 shadow-md">
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <form onSubmit={handleSendMessage} className="flex gap-2 md:gap-3 items-end">
+                          <button type="button" onClick={() => fileInputRef.current?.click()} className="p-3 text-gray-400 hover:text-pink-400 hover:bg-white/5 rounded-xl transition-colors">
+                            <Paperclip className="w-5 h-5" />
+                          </button>
+                          <input type="file" ref={fileInputRef} className="hidden" accept="image/*" multiple onChange={handleFileSelect} />
+                          <textarea
+                            value={inputMessage}
+                            onChange={(e) => setInputMessage(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
+                            placeholder="Zpráva..."
+                            className="flex-grow bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-pink-500/50 resize-none max-h-32 min-h-[44px]"
+                            rows={1}
+                          />
+                          <button type="submit" disabled={loading || (!inputMessage.trim() && attachments.length === 0)} className="p-3 bg-pink-600 text-white rounded-xl hover:bg-pink-500 disabled:opacity-50 transition-all">
+                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+                          </button>
+                      </form>
+                  </div>
+                )}
             </div>
         </div>
       )}
