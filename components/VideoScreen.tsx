@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Video } from '../types';
-import { ArrowLeft, Play, X, Video as VideoIcon, ChevronRight, ChevronLeft } from 'lucide-react';
+import { ArrowLeft, Play, X, Video as VideoIcon, ChevronRight, ChevronLeft, Info } from 'lucide-react';
 
 interface Props {
   videos: Video[];
@@ -18,7 +18,7 @@ const VideoScreen: React.FC<Props> = ({ videos, onBack, theme = 'emerald' }) => 
   return (
     <div className="w-full min-h-screen relative z-10 bg-[#050505]">
       
-      {/* Dynamic Background */}
+      {/* Dynamic Background Ambience */}
       <div className={`fixed inset-0 bg-gradient-to-b from-${colorClass}-950/10 via-black to-black pointer-events-none -z-10`}></div>
 
       <div className="max-w-7xl mx-auto px-6 pt-10">
@@ -33,88 +33,111 @@ const VideoScreen: React.FC<Props> = ({ videos, onBack, theme = 'emerald' }) => 
         </button>
 
         <header className="mb-12 animate-fade-in-up">
-          <h1 className="text-3xl md:text-5xl font-display text-white mb-4 tracking-tight uppercase">
-            Video <span className={`text-transparent bg-clip-text bg-gradient-to-r ${isPurple ? 'from-purple-400 to-pink-500' : 'from-emerald-400 to-cyan-500'}`}>Lekce</span>
+          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border border-${colorClass}-500/30 bg-${colorClass}-500/5 text-${colorClass}-400 text-[10px] uppercase tracking-widest mb-6 backdrop-blur-sm font-mono`}>
+            <VideoIcon className="w-3 h-3" />
+            Video tutoriály
+          </div>
+          <h1 className="text-3xl md:text-5xl font-display text-white mb-4 tracking-tight uppercase leading-tight">
+            Výuková <span className={`text-transparent bg-clip-text bg-gradient-to-r ${isPurple ? 'from-purple-400 to-pink-500' : 'from-emerald-400 to-cyan-500'}`}>Knihovna</span>
           </h1>
-          <p className="text-gray-500 max-w-2xl text-base md:text-lg font-light">
-            Vyberte si ze seznamu záznamů a prohlubte své znalosti.
+          <p className="text-gray-500 max-w-2xl text-base md:text-lg font-light leading-relaxed">
+            Vyberte si ze seznamu záznamů lekcí a prohlubte své znalosti v digitální bezpečnosti.
           </p>
         </header>
       </div>
 
-      {/* Netflix Row */}
+      {/* Netflix-style horizontal row */}
       <div className="w-full py-10 relative group/row overflow-visible">
-        <div className="flex gap-4 md:gap-6 overflow-x-auto px-6 md:px-20 no-scrollbar snap-x pb-20 pt-10">
+        {/* Horizontal Scroll Area */}
+        <div className="flex gap-5 md:gap-8 overflow-x-auto px-6 md:px-20 no-scrollbar snap-x pb-24 pt-10 scroll-smooth">
           {videos.map((video, index) => (
             <div
               key={video.id}
-              className="flex-shrink-0 w-[280px] md:w-[400px] snap-center perspective-1000 group/item"
-              style={{ animationDelay: `${index * 100}ms` }}
+              className="flex-shrink-0 w-[260px] md:w-[380px] snap-center perspective-1000 group/item"
+              style={{ animationDelay: `${index * 80}ms` }}
             >
               <button
                 onClick={() => setSelectedVideo(video)}
-                className="relative w-full aspect-video rounded-2xl overflow-hidden transition-all duration-500 ease-out transform group-hover/item:scale-110 group-hover/item:z-50 group-hover/item:-translate-y-4 border border-white/5 group-hover/item:border-white/30 shadow-2xl"
+                className="relative w-full aspect-video rounded-2xl overflow-hidden transition-all duration-500 ease-out transform group-hover/item:scale-110 group-hover/item:z-50 group-hover/item:-translate-y-4 border border-white/5 group-hover/item:border-white/40 shadow-2xl bg-black"
               >
-                {/* Image */}
-                <div className="absolute inset-0 bg-black">
-                  <img 
-                    src={`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`} 
-                    alt={video.title} 
-                    className="w-full h-full object-cover opacity-60 group-hover/item:opacity-90 transition-opacity"
-                    onError={(e) => { (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`; }}
-                  />
-                </div>
+                {/* Thumbnail Image */}
+                <img 
+                  src={`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`} 
+                  alt={video.title} 
+                  className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover/item:opacity-100 transition-opacity"
+                  onError={(e) => { (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`; }}
+                />
 
-                {/* Info Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80"></div>
+                {/* Overlays */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/20 opacity-80 transition-opacity group-hover/item:opacity-60"></div>
                 
-                <div className="absolute inset-0 p-5 flex flex-col justify-end">
-                    <div className="translate-y-4 group-hover/item:translate-y-0 transition-transform duration-300">
-                        <div className={`text-[9px] font-bold font-mono text-${colorClass}-400 mb-1 uppercase tracking-widest`}>Kapitola {index + 1}</div>
-                        <h3 className="text-base md:text-lg font-bold text-white mb-2 font-display uppercase leading-tight line-clamp-1">{video.title}</h3>
-                        <p className="text-[11px] text-gray-400 font-light line-clamp-2 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300">
-                          {video.description}
-                        </p>
-                        
-                        <div className="flex items-center gap-3 mt-4 opacity-0 group-hover/item:opacity-100 transition-all duration-300 translate-y-2 group-hover/item:translate-y-0">
-                           <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center">
-                              <Play className="w-4 h-4 fill-current ml-0.5" />
-                           </div>
-                           <span className="text-[10px] font-bold text-white uppercase tracking-tighter">Přehrát nyní</span>
-                        </div>
+                {/* Content info visible on hover */}
+                <div className="absolute inset-0 p-5 flex flex-col justify-end translate-y-6 group-hover/item:translate-y-0 transition-all duration-300">
+                    <div className={`text-[9px] font-bold font-mono text-${colorClass}-400 mb-1 uppercase tracking-[0.2em]`}>Kapitola {(index + 1).toString().padStart(2, '0')}</div>
+                    <h3 className="text-base md:text-lg font-bold text-white mb-2 font-display uppercase leading-tight line-clamp-1 group-hover/item:line-clamp-none">{video.title}</h3>
+                    
+                    <p className="text-[11px] text-gray-300 font-light line-clamp-2 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 mb-4">
+                      {video.description}
+                    </p>
+                    
+                    <div className="flex items-center gap-3 opacity-0 group-hover/item:opacity-100 transition-all duration-300 transform translate-y-4 group-hover/item:translate-y-0">
+                       <div className="w-9 h-9 rounded-full bg-white text-black flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
+                          <Play className="w-4 h-4 fill-current ml-0.5" />
+                       </div>
+                       <div className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-white/20 transition-all">
+                          <Info className="w-4 h-4" />
+                       </div>
                     </div>
                 </div>
 
-                {/* Hover Glow Effect */}
-                <div className={`absolute inset-0 opacity-0 group-hover/item:opacity-100 transition-opacity duration-500 pointer-events-none`}
-                     style={{ boxShadow: `inset 0 0 40px ${glowColor}` }}></div>
+                {/* Constant small label for unhovered state */}
+                <div className="absolute bottom-4 left-4 right-4 group-hover/item:opacity-0 transition-opacity">
+                    <h3 className="text-[10px] md:text-xs font-bold text-white uppercase truncate font-display tracking-wider border-l-2 border-white/30 pl-2">{video.title}</h3>
+                </div>
+
+                {/* Glow ring around hovered item */}
+                <div className={`absolute inset-0 opacity-0 group-hover/item:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl`}
+                     style={{ boxShadow: `inset 0 0 30px ${glowColor}` }}></div>
               </button>
             </div>
           ))}
         </div>
         
-        {/* Navigation Hints */}
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 backdrop-blur-md rounded-full border border-white/10 opacity-0 group-row:opacity-100 transition-opacity hidden md:block">
-           <ChevronLeft className="w-6 h-6 text-white" />
+        {/* Navigation arrows for larger viewports */}
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none hidden md:block group-hover/row:opacity-100 opacity-0 transition-opacity">
+           <div className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white pointer-events-auto cursor-pointer hover:bg-black/80 transition-all">
+              <ChevronLeft className="w-6 h-6" />
+           </div>
         </div>
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 backdrop-blur-md rounded-full border border-white/10 opacity-0 group-row:opacity-100 transition-opacity hidden md:block">
-           <ChevronRight className="w-6 h-6 text-white" />
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none hidden md:block group-hover/row:opacity-100 opacity-0 transition-opacity">
+           <div className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white pointer-events-auto cursor-pointer hover:bg-black/80 transition-all">
+              <ChevronRight className="w-6 h-6" />
+           </div>
         </div>
       </div>
 
-      {/* Modal */}
+      <div className="max-w-7xl mx-auto px-6 py-10 mb-20">
+          <div className="bg-[#0a0a0a]/40 border border-white/5 rounded-3xl p-8 md:p-10 backdrop-blur-sm animate-fade-in-up">
+              <h3 className="text-xl md:text-2xl font-display text-white mb-4 uppercase tracking-wider">O vzdělávací řadě</h3>
+              <p className="text-gray-400 text-base md:text-lg font-light leading-relaxed max-w-3xl">
+                 Tato série videí pokrývá nejdůležitější aspekty bezpečnosti běžného občana v digitálním světě. Doporučujeme sledovat videa postupně. Po každém videu si můžete ověřit své znalosti v příslušném testovacím bloku.
+              </p>
+          </div>
+      </div>
+
+      {/* Video Fullscreen Modal */}
       {selectedVideo && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-10">
-            <div className="absolute inset-0 bg-black/95 backdrop-blur-2xl animate-fade-in" onClick={() => setSelectedVideo(null)}></div>
-            <div className="relative w-full max-w-5xl aspect-video bg-black rounded-none md:rounded-3xl overflow-hidden border border-white/10 shadow-3xl animate-fade-in-up">
+            <div className="absolute inset-0 bg-black/95 backdrop-blur-3xl animate-fade-in" onClick={() => setSelectedVideo(null)}></div>
+            <div className="relative w-full max-w-6xl aspect-video bg-black rounded-none md:rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] animate-fade-in-up">
                 <button 
                     onClick={() => setSelectedVideo(null)}
-                    className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-white/20 transition-all border border-white/10"
+                    className="absolute top-4 right-4 md:top-6 md:right-6 z-10 w-10 h-10 md:w-12 md:h-12 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-white/20 transition-all border border-white/10 backdrop-blur-md"
                 >
-                    <X className="w-5 h-5" />
+                    <X className="w-5 h-5 md:w-6 md:h-6" />
                 </button>
                 <iframe 
-                    src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}?autoplay=1&rel=0`}
+                    src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
                     className="w-full h-full"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
