@@ -15,6 +15,7 @@ import { supabase } from './supabaseClient';
 
 type View = 'login' | 'dashboard' | 'cyber_menu' | 'ai_menu' | 'quizzes' | 'presentations' | 'practical_exercises' | 'quiz' | 'result';
 type Module = 'cyber' | 'ai';
+type AuthStatus = 'initializing' | 'authenticated' | 'unauthenticated' | 'syncing';
 
 const GridBeams: React.FC = () => {
   const [beams, setBeams] = useState<{ id: number; type: 'h' | 'v'; pos: number; delay: number; duration: number; color: string }[]>([]);
@@ -58,14 +59,11 @@ const GridBeams: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  const [authStatus, setAuthStatus] = useState<AuthStatus>('initializing');
   const [currentView, setCurrentView] = useState<View>('login');
   const [activeModule, setActiveModule] = useState<Module>('cyber');
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [sessionLoading, setSessionLoading] = useState(true);
-  
-  // Ref for the current view to avoid stale closures in auth listener
-  const viewRef = useRef<View>('login');
-  useEffect(() => { viewRef.current = currentView; }, [currentView]);
+  const userIdRef = useRef<string | null>(null);
 
   const [quizState, setQuizState] = useState<QuizState>({
     currentBlockId: null,
@@ -79,15 +77,11 @@ const App: React.FC = () => {
 
   const fetchProfile = useCallback(async (userId: string): Promise<UserProfile | null> => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
       if (error) throw error;
       return data as UserProfile;
     } catch (error) {
-      console.error('Fetch profile error:', error);
+      console.error('Profile fetch failed:', error);
       return null;
     }
   }, []);
@@ -95,95 +89,67 @@ const App: React.FC = () => {
   useEffect(() => {
     let mounted = true;
 
-    // Failsafe timeout
-    const globalTimeout = setTimeout(() => {
-      if (mounted && sessionLoading) {
-        setSessionLoading(false);
-      }
-    }, 10000);
-
-    // Setup listener ONCE
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!mounted) return;
-
-      console.log(`Auth System Event: ${event}`);
-
+    const initializeAuth = async () => {
       try {
-        if (session?.user) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user && mounted) {
           const profile = await fetchProfile(session.user.id);
-          
-          if (mounted) {
-            if (profile) {
-              setUserProfile(profile);
-              // ONLY redirect to dashboard if we are currently on the login screen
-              // This prevents resetting the view when user is already navigating menus
-              if (viewRef.current === 'login') {
-                setCurrentView('dashboard');
-              }
-            } else {
-              console.warn("Session active but profile missing. Signing out.");
-              await supabase.auth.signOut();
-              setCurrentView('login');
-            }
+          if (profile) {
+            userIdRef.current = session.user.id;
+            setUserProfile(profile);
+            setCurrentView('dashboard');
+            setAuthStatus('authenticated');
+          } else {
+            await supabase.auth.signOut();
+            setAuthStatus('unauthenticated');
           }
-        } else {
-          // No session
-          if (mounted) {
-            setUserProfile(null);
-            setCurrentView('login');
-          }
+        } else if (mounted) {
+          setAuthStatus('unauthenticated');
         }
       } catch (err) {
-        console.error("Auth Transition Error:", err);
-      } finally {
-        if (mounted) {
-          setSessionLoading(false);
+        if (mounted) setAuthStatus('unauthenticated');
+      }
+    };
+
+    initializeAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+      if (session?.user) {
+        if (session.user.id !== userIdRef.current) {
+          setAuthStatus('syncing');
+          const profile = await fetchProfile(session.user.id);
+          if (mounted) {
+            userIdRef.current = session.user.id;
+            setUserProfile(profile);
+            setCurrentView('dashboard');
+            setAuthStatus('authenticated');
+          }
         }
+      } else {
+        userIdRef.current = null;
+        setUserProfile(null);
+        setCurrentView('login');
+        setAuthStatus('unauthenticated');
       }
     });
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
-      clearTimeout(globalTimeout);
     };
-    // Empty dependency array ensures this effect only runs once on mount
   }, [fetchProfile]);
 
-  const handleDashboardNavigate = (module: Module) => {
-    if (module === 'cyber') {
-      if (userProfile?.access_cyber || userProfile?.is_admin) {
-        setActiveModule('cyber');
-        setCurrentView('cyber_menu');
-      } else {
-        alert("Nemáte přístup k modulu Kyberbezpečnost.");
-      }
-    } else if (module === 'ai') {
-      if (userProfile?.access_ai || userProfile?.is_admin) {
-        setActiveModule('ai');
-        setCurrentView('ai_menu');
-      } else {
-         alert("Nemáte přístup k modulu AI.");
-      }
-    }
-  };
-
   const handleLogout = async () => {
-    setSessionLoading(true);
+    setAuthStatus('initializing'); 
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-    } catch (err) {
-      console.error("Logout error:", err);
-      // Even if error occurs, force local state reset
+      await supabase.auth.signOut();
+    } finally {
       setUserProfile(null);
       setCurrentView('login');
-    } finally {
-      setSessionLoading(false);
+      setAuthStatus('unauthenticated');
     }
   };
-
-  const currentModuleData = activeModule === 'cyber' ? courseData : aiCourseData;
 
   const startBlock = (blockId: number) => {
     setQuizState({
@@ -198,28 +164,32 @@ const App: React.FC = () => {
     setCurrentView('quiz');
   };
 
-  if (sessionLoading) {
+  if (authStatus === 'initializing' || authStatus === 'syncing') {
     return (
        <div className="min-h-screen bg-[#050505] flex items-center justify-center relative overflow-hidden">
           <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none"></div>
-          <div className="flex flex-col items-center gap-6 relative z-10">
+          <div className="flex flex-col items-center gap-6 z-10">
             <div className="relative w-16 h-16">
               <div className="absolute inset-0 border-2 border-cyan-500/10 rounded-full"></div>
               <div className="absolute inset-0 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <div className="text-cyan-500 font-mono text-sm tracking-[0.3em] font-bold animate-pulse uppercase">Zabezpečené spojení</div>
-              <div className="text-[10px] text-gray-600 font-mono tracking-widest uppercase">Validating Credentials</div>
+              <div className="text-cyan-500 font-mono text-sm tracking-[0.3em] font-bold animate-pulse uppercase">
+                {authStatus === 'initializing' ? 'Navazování spojení' : 'Synchronizace profilu'}
+              </div>
+              <div className="text-[10px] text-gray-600 font-mono tracking-widest uppercase">Encrypted Handshake</div>
             </div>
           </div>
        </div>
     );
   }
 
+  const currentModuleData = activeModule === 'cyber' ? courseData : aiCourseData;
+
   let content;
   switch (currentView) {
     case 'login': content = <LoginScreen onLoginSuccess={() => {}} />; break;
-    case 'dashboard': content = <Dashboard onNavigate={handleDashboardNavigate} userProfile={userProfile} onLogout={handleLogout} />; break;
+    case 'dashboard': content = <Dashboard onNavigate={(m) => { setActiveModule(m); setCurrentView(m === 'cyber' ? 'cyber_menu' : 'ai_menu'); }} userProfile={userProfile} onLogout={handleLogout} />; break;
     case 'cyber_menu': content = <CyberMenu onNavigate={(v) => setCurrentView(v)} onBack={() => setCurrentView('dashboard')} />; break;
     case 'ai_menu': content = <AiMenu onNavigate={(v) => setCurrentView(v)} onBack={() => setCurrentView('dashboard')} />; break;
     case 'quizzes': content = <WelcomeScreen blocks={currentModuleData} onStartBlock={startBlock} onBack={() => setCurrentView(activeModule === 'cyber' ? 'cyber_menu' : 'ai_menu')} theme={activeModule === 'cyber' ? 'emerald' : 'purple'} />; break;
@@ -228,7 +198,8 @@ const App: React.FC = () => {
     case 'quiz':
       const qBlock = currentModuleData.find(b => b.id === quizState.currentBlockId);
       if (qBlock) {
-        content = <QuizScreen block={qBlock} currentQuestionIndex={quizState.currentQuestionIndex} question={qBlock.questions[quizState.currentQuestionIndex]} selectedAnswer={quizState.selectedAnswer} showHint={quizState.showHint} onSelectAnswer={(idx) => {
+        content = <QuizScreen block={qBlock} currentQuestionIndex={quizState.currentQuestionIndex} question={qBlock.questions[quizState.currentQuestionIndex]} selectedAnswer={quizState.selectedAnswer} showHint={quizState.showHint} 
+        onSelectAnswer={(idx) => {
             const currentQuestion = qBlock.questions[quizState.currentQuestionIndex];
             const isCorrect = idx === currentQuestion.correctAnswer;
             setQuizState(prev => ({
@@ -237,14 +208,17 @@ const App: React.FC = () => {
               score: isCorrect ? prev.score + 1 : prev.score,
               answersHistory: [...prev.answersHistory, isCorrect]
             }));
-        }} onToggleHint={() => setQuizState(prev => ({ ...prev, showHint: !prev.showHint }))} onNextQuestion={() => {
+        }} 
+        onToggleHint={() => setQuizState(prev => ({ ...prev, showHint: !prev.showHint }))} 
+        onNextQuestion={() => {
             if (quizState.currentQuestionIndex + 1 < qBlock.questions.length) {
               setQuizState(prev => ({ ...prev, currentQuestionIndex: prev.currentQuestionIndex + 1, selectedAnswer: null, showHint: false }));
             } else {
               setQuizState(prev => ({ ...prev, isFinished: true }));
               setCurrentView('result');
             }
-        }} onBackToMenu={() => setCurrentView('quizzes')} />;
+        }} 
+        onBackToMenu={() => setCurrentView('quizzes')} />;
       }
       break;
     case 'result':

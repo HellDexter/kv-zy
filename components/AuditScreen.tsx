@@ -20,7 +20,7 @@ interface AuditSection {
 
 const AUDIT_DATA: AuditSection[] = [
   {
-    title: "Section 1: Počítač (Windows/macOS)",
+    title: "Sekce 1: Počítač (Windows/macOS)",
     items: [
       { id: "pc_updates", label: "Automatické aktualizace jsou zapnuté", aiPrompt: "Nastavení automatických aktualizací systému." },
       { id: "pc_firewall", label: "Firewall je aktivní", aiPrompt: "Kontrola a zapnutí Firewallu." },
@@ -31,7 +31,7 @@ const AUDIT_DATA: AuditSection[] = [
     ]
   },
   {
-    title: "Section 2: Telefon (Android/iPhone)",
+    title: "Sekce 2: Telefon (Android/iPhone)",
     items: [
       { id: "mob_biometrics", label: "Biometrická ochrana je zapnutá (otisk/Face ID)", aiPrompt: "Nastavení biometrie (Face ID/Touch ID)." },
       { id: "mob_updates", label: "Automatické aktualizace jsou povolené", aiPrompt: "Nastavení aktualizací iOS/Android." },
@@ -41,7 +41,7 @@ const AUDIT_DATA: AuditSection[] = [
     ]
   },
   {
-    title: "Section 3: Domácí síť",
+    title: "Sekce 3: Domácí síť",
     items: [
       { id: "net_password", label: "Změnil jsem výchozí heslo routeru", aiPrompt: "Změna administrátorského hesla routeru." },
       { id: "net_wpa", label: "Wi-Fi používá WPA2 nebo WPA3 šifrování", aiPrompt: "Nastavení šifrování WPA2/WPA3." },
@@ -52,7 +52,7 @@ const AUDIT_DATA: AuditSection[] = [
     ]
   },
   {
-    title: "Section 4: Zálohy",
+    title: "Sekce 4: Zálohy",
     items: [
       { id: "back_local", label: "Mám lokální zálohu na externím disku", aiPrompt: "Vytvoření lokální zálohy dat." },
       { id: "back_cloud", label: "Mám cloudovou zálohu důležitých dat", aiPrompt: "Výběr a nastavení cloudové zálohy." },
@@ -65,7 +65,7 @@ const AUDIT_DATA: AuditSection[] = [
 interface Message {
   role: 'user' | 'model';
   text: string;
-  images?: string[]; // Array of base64 strings for display
+  images?: string[];
 }
 
 interface Attachment {
@@ -73,7 +73,6 @@ interface Attachment {
   preview: string;
 }
 
-// Define the part interface expected by the SDK
 interface Part {
   text?: string;
   inlineData?: {
@@ -104,19 +103,17 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [chatHistory, showChat, loading, attachments]);
+  }, [chatHistory, showChat, loading]);
 
   const toggleCheck = (id: string) => {
     setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  // Helper to convert File to Base64 Part
   const fileToGenerativePart = async (file: File): Promise<Part> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
-        // Extract raw base64 data (remove data:image/jpeg;base64, prefix)
         const base64Data = base64String.split(',')[1];
         resolve({
           inlineData: {
@@ -139,67 +136,35 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
     setLoading(true);
 
     try {
-      // PRIORITY: Use the hardcoded key provided by user to ensure Vercel compatibility
-      // The environment variable check is secondary
-      const hardcodedKey = "AIzaSyBYgQJYyKsnOZpzmvweBR9hj00NzAn56Dk";
-      let apiKey = hardcodedKey;
-      
-      if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-         // Fallback to env if present and different, but prefer hardcoded for this fix
-      }
-
-      const ai = new GoogleGenAI({ apiKey: apiKey });
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       
       const systemInstruction = `
         Jsi trpělivý bezpečnostní průvodce (AI agent). Tvým úkolem je provést uživatele nastavením bodu: "${item.label}".
-        
         PŘÍSNÁ PRAVIDLA KOMUNIKACE:
-        1. NEGENERUJ CELÝ NÁVOD NAJEDNOU. Musíš postupovat krok za krokem.
-        2. KROK 1 (Iniciace): Pozdrav uživatele a zeptej se ho na zařízení/OS (např. "Máte Windows nebo Mac?", "Jaký máte router?"), pokud to není zřejmé.
-        3. KROK 2 (Instrukce): Jakmile znáš kontext, napiš PRVNÍ krok co má uživatel udělat.
-        4. Čekej na potvrzení uživatele, že krok zvládl, nebo na jeho dotaz.
-        5. Pokud uživatel pošle obrázek (screenshot), analyzuj ho a řekni mu přesně, kam má kliknout.
-        6. Buď stručný, nápomocný a lidský.
+        1. NEGENERUJ CELÝ NÁVOD NAJEDNOU. Postupuj krok za krokem.
+        2. KROK 1: Pozdrav uživatele a zeptej se na zařízení/OS (např. "Máte Windows nebo Mac?").
+        3. KROK 2: Jakmile znáš kontext, napiš PRVNÍ krok.
+        4. Čekej na potvrzení uživatele, než napíšeš další.
+        5. Analyzuj screenshoty, pokud je uživatel pošle.
+        6. Buď stručný a nápomocný.
       `;
 
-      // Use gemini-2.0-flash-exp as it's the current stable experimental model compatible with most keys
-      // gemini-2.5-flash caused 403, gemini-1.5-flash caused 404
       const chat = ai.chats.create({
-        model: "gemini-2.0-flash-exp", 
+        model: 'gemini-3-flash-preview',
         config: {
           systemInstruction: systemInstruction,
         }
       });
 
       chatSessionRef.current = chat;
-
-      // Trigger the first response (Greeting + Context Question)
       const result = await chat.sendMessage({ message: "Jsem připraven. Pozdrav mě a zeptej se na potřebné informace pro tento úkol." });
-      const responseText = result.text;
-
-      // Safe access to text
-      if (responseText) {
-          setChatHistory([{ role: 'model', text: responseText }]);
-      } else {
-          setChatHistory([{ role: 'model', text: "Zdravím! S čím vám mohu pomoci ohledně tohoto nastavení?" }]);
+      
+      if (result.text) {
+          setChatHistory([{ role: 'model', text: result.text }]);
       }
-
     } catch (error) {
-      console.error("AI Init Error FULL DETAILS:", error);
-      let errorMessage = "Omlouvám se, ale nepodařilo se navázat spojení s AI expertem.";
-      
-      if (error instanceof Error) {
-        // Provide more specific feedback based on common errors
-        if (error.message.includes("404")) {
-             errorMessage += " (Model nebyl nalezen - 404). Zkuste to později.";
-        } else if (error.message.includes("403")) {
-             errorMessage += " (Přístup zamítnut - 403. Klíč nemá oprávnění k modelu).";
-        } else if (error.message.includes("API Key")) {
-             errorMessage += " (Chyba API klíče).";
-        }
-      }
-      
-      setChatHistory([{ role: 'model', text: errorMessage }]);
+      console.error("AI Init Error:", error);
+      setChatHistory([{ role: 'model', text: "Omlouvám se, ale spojení s AI expertem selhalo. Zkuste to prosím znovu za chvíli." }]);
     } finally {
       setLoading(false);
     }
@@ -212,98 +177,48 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
     const currentMessage = inputMessage;
     const currentAttachments = [...attachments];
     
-    // Optimistic update
-    const userMessageDisplay: Message = {
+    setChatHistory(prev => [...prev, {
       role: 'user',
       text: currentMessage,
       images: currentAttachments.map(a => a.preview)
-    };
-
-    setChatHistory(prev => [...prev, userMessageDisplay]);
+    }]);
+    
     setInputMessage("");
     setAttachments([]);
     setLoading(true);
 
     try {
-      // Prepare parts for API
       const parts: Part[] = [];
-      
-      // Add text if exists
-      if (currentMessage.trim()) {
-        parts.push({ text: currentMessage });
-      }
-
-      // Add images if exist
+      if (currentMessage.trim()) parts.push({ text: currentMessage });
       for (const att of currentAttachments) {
-        const part = await fileToGenerativePart(att.file);
-        parts.push(part);
+        parts.push(await fileToGenerativePart(att.file));
       }
       
-      // Send to Gemini
-      const result = await chatSessionRef.current.sendMessage({
-         message: parts
-      });
-
-      const responseText = result.text;
-      if (responseText) {
-        setChatHistory(prev => [...prev, { role: 'model', text: responseText }]);
-      } else {
-        setChatHistory(prev => [...prev, { role: 'model', text: "Omlouvám se, nerozuměl jsem. Můžete to zkusit znovu?" }]);
+      const result = await chatSessionRef.current.sendMessage({ message: parts });
+      if (result.text) {
+        setChatHistory(prev => [...prev, { role: 'model', text: result.text }]);
       }
-
     } catch (error) {
       console.error("Send Error:", error);
-      setChatHistory(prev => [...prev, { role: 'model', text: "Došlo k chybě při zpracování odpovědi. Zkuste to prosím znovu." }]);
+      setChatHistory(prev => [...prev, { role: 'model', text: "Došlo k chybě. Zkuste to prosím znovu." }]);
     } finally {
       setLoading(false);
     }
   };
 
-  // File Handling
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      processFiles(Array.from(e.target.files));
+      const validFiles = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
+      setAttachments(prev => [...prev, ...validFiles.map(file => ({
+        file,
+        preview: URL.createObjectURL(file)
+      }))]);
     }
-    // Reset input
     if (fileInputRef.current) fileInputRef.current.value = '';
-  };
-
-  const processFiles = (files: File[]) => {
-    const validFiles = files.filter(file => file.type.startsWith('image/'));
-    const newAttachments = validFiles.map(file => ({
-      file,
-      preview: URL.createObjectURL(file)
-    }));
-    setAttachments(prev => [...prev, ...newAttachments]);
-  };
-
-  const removeAttachment = (index: number) => {
-    setAttachments(prev => prev.filter((_, i) => i !== index));
-  };
-
-  // Drag & Drop
-  const onDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const onDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    if (e.dataTransfer.files) {
-      processFiles(Array.from(e.dataTransfer.files));
-    }
   };
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 md:py-8 relative z-10 min-h-screen pb-24">
-      
-      {/* Header & Progress */}
       <div className="mb-6 md:mb-8 animate-fade-in-up">
         <button 
           onClick={onBack}
@@ -339,7 +254,6 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
             </div>
         </div>
 
-        {/* Warning Banner */}
         <div className={`p-4 rounded-xl border ${percentage < 80 ? 'bg-rose-950/30 border-rose-500/30 text-rose-200' : 'bg-emerald-950/30 border-emerald-500/30 text-emerald-200'} transition-colors duration-500 flex flex-col md:flex-row items-start gap-3`}>
             {percentage < 80 ? <ShieldAlert className="w-6 h-6 flex-shrink-0 mt-0.5" /> : <ShieldCheck className="w-6 h-6 flex-shrink-0 mt-0.5" />}
             <div>
@@ -348,14 +262,13 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                 </h3>
                 <p className="text-xs md:text-sm opacity-90 leading-relaxed">
                     {percentage < 80 
-                        ? "Pokud jste zaškrtli méně než 80 % bodů, máte kritické bezpečnostní mezery. Začněte s nejdůležitějšími: aktualizace, šifrování a zálohy."
-                        : "Skvělá práce! Vaše zařízení a data jsou dobře chráněna. Nezapomínejte na pravidelnou údržbu."}
+                        ? "Máte kritické mezery. Začněte s nejdůležitějšími body: aktualizace, šifrování a zálohy."
+                        : "Skvělá práce! Vaše zařízení jsou dobře chráněna. Nezapomínejte na pravidelné kontroly."}
                 </p>
             </div>
         </div>
       </div>
 
-      {/* Checklist Sections */}
       <div className="space-y-4 md:space-y-6">
         {AUDIT_DATA.map((section, sIndex) => (
             <div key={sIndex} className="bg-[#0a0a0a]/80 border border-white/10 rounded-xl md:rounded-2xl p-4 md:p-6 animate-fade-in-up" style={{ animationDelay: `${sIndex * 100}ms` }}>
@@ -369,14 +282,12 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                                 >
                                     {checkedItems[item.id] && <Check className="w-4 h-4" />}
                                 </button>
-                                
                                 <div className="flex-grow">
                                     <p className={`text-sm transition-colors ${checkedItems[item.id] ? 'text-gray-500 line-through' : 'text-gray-200'}`}>
                                         {item.label}
                                     </p>
                                 </div>
                             </div>
-
                             <button 
                                 onClick={() => initChat(item)}
                                 className="mt-2 sm:mt-0 ml-0 w-full sm:w-auto flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-pink-400 hover:text-white bg-pink-500/10 hover:bg-pink-500/20 px-3 py-2 md:py-1.5 rounded-full transition-all border border-pink-500/20 hover:border-pink-500/40 whitespace-nowrap justify-center sm:justify-start font-mono"
@@ -391,83 +302,42 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
         ))}
       </div>
 
-      {/* AI Chat Modal */}
       {showChat && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-6">
-            {/* Backdrop */}
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowChat(false)}></div>
-            
-            {/* Chat Container */}
-            <div 
-              className={`relative bg-[#111] border-0 md:border border-white/10 w-full md:max-w-2xl h-full md:h-[80vh] md:rounded-2xl shadow-2xl flex flex-col animate-fade-in-up overflow-hidden ${isDragging ? 'border-pink-500 shadow-[0_0_30px_rgba(236,72,153,0.3)]' : ''}`}
-              onDragOver={onDragOver}
-              onDragLeave={onDragLeave}
-              onDrop={onDrop}
-            >
-                
-                {/* Drag Overlay with instruction */}
-                {isDragging && (
-                  <div className="absolute inset-0 bg-pink-500/20 z-50 flex items-center justify-center backdrop-blur-sm pointer-events-none">
-                    <div className="bg-[#111] p-6 rounded-xl border border-pink-500 text-pink-400 font-bold flex flex-col items-center gap-3 shadow-2xl scale-110 transition-transform">
-                       <div className="p-3 bg-pink-500/20 rounded-full">
-                         <ImageIcon className="w-8 h-8" />
-                       </div>
-                       <span>Pusťte soubor pro vložení do chatu</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Chat Header */}
-                <div className="p-4 border-b border-white/10 flex items-center justify-between bg-[#1a1a1a] flex-shrink-0 safe-top-padding">
+            <div className="relative bg-[#111] border-0 md:border border-white/10 w-full md:max-w-2xl h-full md:h-[80vh] md:rounded-2xl shadow-2xl flex flex-col animate-fade-in-up overflow-hidden">
+                <div className="p-4 border-b border-white/10 flex items-center justify-between bg-[#1a1a1a] flex-shrink-0">
                     <div className="flex items-center gap-3 overflow-hidden">
                         <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center shadow-lg shadow-pink-500/20 flex-shrink-0">
                             <Bot className="w-5 h-5 md:w-6 md:h-6 text-white" />
                         </div>
                         <div className="min-w-0">
-                            <h3 className="text-xs md:text-sm font-bold text-white flex items-center gap-2 font-display uppercase">
-                              Bezpečnostní Průvodce
-                              <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded text-gray-400 font-mono hidden sm:inline-block">AI</span>
-                            </h3>
+                            <h3 className="text-xs md:text-sm font-bold text-white flex items-center gap-2 font-display uppercase truncate">Bezpečnostní Průvodce</h3>
                             <p className="text-[10px] md:text-xs text-gray-400 truncate">{chatTitle}</p>
                         </div>
                     </div>
-                    <button onClick={() => setShowChat(false)} className="text-gray-400 hover:text-white p-2 hover:bg-white/10 rounded-lg transition-colors flex-shrink-0">
+                    <button onClick={() => setShowChat(false)} className="text-gray-400 hover:text-white p-2 hover:bg-white/10 rounded-lg transition-colors">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
-
-                {/* Chat Messages */}
                 <div className="flex-grow overflow-y-auto p-4 space-y-4 md:space-y-6 bg-[#050505]">
                     {chatHistory.map((msg, idx) => (
                         <div key={idx} className={`flex gap-3 md:gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                             <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-1 ${msg.role === 'model' ? 'bg-pink-500/20 text-pink-400' : 'bg-white/10 text-white'}`}>
                                 {msg.role === 'model' ? <Bot className="w-5 h-5" /> : <div className="w-2 h-2 bg-white rounded-full"></div>}
                             </div>
-                            
                             <div className="flex flex-col gap-2 max-w-[85%]">
-                              {/* Render Images if any */}
-                              {msg.images && msg.images.length > 0 && (
-                                <div className={`flex flex-wrap gap-2 ${msg.role === 'user' ? 'justify-end' : ''}`}>
-                                  {msg.images.map((img, imgIdx) => (
-                                    <img 
-                                      key={imgIdx} 
-                                      src={img} 
-                                      alt="Uploaded content" 
-                                      className="max-w-[120px] md:max-w-[150px] max-h-[150px] rounded-lg border border-white/10 object-cover" 
-                                    />
-                                  ))}
-                                </div>
-                              )}
-
+                              {msg.images?.map((img, imgIdx) => (
+                                <img key={imgIdx} src={img} className="max-w-[120px] rounded-lg border border-white/10 object-cover" />
+                              ))}
                               <div className={`rounded-2xl p-3 md:p-4 text-xs md:text-sm leading-relaxed shadow-sm ${msg.role === 'model' ? 'bg-[#1a1a1a] text-gray-200 border border-white/5 rounded-tl-none' : 'bg-pink-600 text-white rounded-tr-none'}`}>
-                                  <div className="markdown-body" dangerouslySetInnerHTML={{ __html: msg.text.replace(/\n/g, '<br/>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}></div>
+                                  <div dangerouslySetInnerHTML={{ __html: msg.text.replace(/\n/g, '<br/>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}></div>
                               </div>
                             </div>
                         </div>
                     ))}
-                    
                     {loading && (
-                        <div className="flex gap-4 animate-fade-in-up">
+                        <div className="flex gap-4">
                             <div className="w-8 h-8 rounded-full bg-pink-500/20 flex-shrink-0 flex items-center justify-center mt-1">
                                 <Bot className="w-5 h-5 text-pink-400" />
                             </div>
@@ -480,75 +350,40 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                     )}
                     <div ref={chatEndRef} />
                 </div>
-
-                {/* Input Area */}
-                <div className="p-3 md:p-4 border-t border-white/10 bg-[#1a1a1a] flex-shrink-0 safe-bottom-padding">
-                    
-                    {/* Attachments Preview */}
+                <div className="p-3 md:p-4 border-t border-white/10 bg-[#1a1a1a] flex-shrink-0">
                     {attachments.length > 0 && (
                       <div className="flex gap-3 mb-3 overflow-x-auto pb-2">
                         {attachments.map((att, idx) => (
                           <div key={idx} className="relative group flex-shrink-0">
-                            <img src={att.preview} alt="preview" className="w-16 h-16 rounded-lg object-cover border border-white/20" />
-                            <button 
-                              onClick={() => removeAttachment(idx)}
-                              className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
-                            >
+                            <img src={att.preview} className="w-16 h-16 rounded-lg object-cover border border-white/20" />
+                            <button onClick={() => setAttachments(p => p.filter((_, i) => i !== idx))} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5 shadow-md">
                               <X className="w-3 h-3" />
                             </button>
                           </div>
                         ))}
                       </div>
                     )}
-
                     <form onSubmit={handleSendMessage} className="flex gap-2 md:gap-3 items-end">
-                        <button
-                          type="button"
-                          onClick={() => fileInputRef.current?.click()}
-                          className="p-3 text-gray-400 hover:text-pink-400 hover:bg-white/5 rounded-xl transition-colors"
-                          title="Nahrát obrázek (screenshot)"
-                        >
+                        <button type="button" onClick={() => fileInputRef.current?.click()} className="p-3 text-gray-400 hover:text-pink-400 hover:bg-white/5 rounded-xl transition-colors">
                           <Paperclip className="w-5 h-5" />
                         </button>
-                        <input 
-                          type="file" 
-                          ref={fileInputRef} 
-                          className="hidden" 
-                          accept="image/*" 
-                          multiple 
-                          onChange={handleFileSelect}
-                        />
-
+                        <input type="file" ref={fileInputRef} className="hidden" accept="image/*" multiple onChange={handleFileSelect} />
                         <textarea
                           value={inputMessage}
                           onChange={(e) => setInputMessage(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                              e.preventDefault();
-                              handleSendMessage();
-                            }
-                          }}
+                          onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
                           placeholder="Zpráva..."
-                          className={`flex-grow bg-[#0a0a0a] border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-pink-500/50 resize-none max-h-32 min-h-[44px] transition-colors ${isDragging ? 'border-pink-500 bg-pink-500/10' : 'border-white/10'}`}
+                          className="flex-grow bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-pink-500/50 resize-none max-h-32 min-h-[44px]"
                           rows={1}
                         />
-                        
-                        <button 
-                          type="submit"
-                          disabled={loading || (!inputMessage.trim() && attachments.length === 0)}
-                          className="p-3 bg-pink-600 text-white rounded-xl hover:bg-pink-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[0_0_15px_rgba(236,72,153,0.3)]"
-                        >
+                        <button type="submit" disabled={loading || (!inputMessage.trim() && attachments.length === 0)} className="p-3 bg-pink-600 text-white rounded-xl hover:bg-pink-500 disabled:opacity-50 transition-all">
                           {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
                         </button>
                     </form>
-                    <p className="text-[10px] text-gray-500 text-center mt-2 hidden md:block">
-                       AI může dělat chyby. Citlivá data na screenshotech začerněte.
-                    </p>
                 </div>
             </div>
         </div>
       )}
-
     </div>
   );
 };
