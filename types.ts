@@ -16,6 +16,13 @@ export interface Block {
   gammaUrl?: string; // Optional URL for Gamma.app presentation
 }
 
+export interface Video {
+  id: number;
+  title: string;
+  description: string;
+  youtubeId: string;
+}
+
 export interface QuizState {
   currentBlockId: number | null;
   currentQuestionIndex: number;

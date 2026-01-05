@@ -1,5 +1,35 @@
 
-import { Block } from './types';
+import { Block, Video } from './types';
+
+export const cyberVideos: Video[] = [
+  {
+    id: 1,
+    title: "Kybernetická bezpečnost - Úvod",
+    description: "Základní principy ochrany digitální identity a proč je důležité se vzdělávat.",
+    youtubeId: "PE8nf8Tmf78"
+  },
+  {
+    id: 2,
+    title: "Jak funguje Phishing?",
+    description: "Detailní pohled na nejčastější metodu útoku a jak ji včas rozpoznat.",
+    youtubeId: "Y7zNlEMDmI8"
+  }
+];
+
+export const aiVideos: Video[] = [
+  {
+    id: 1,
+    title: "Co je to Generativní AI?",
+    description: "Vysvětlení principů LLM a budoucnosti práce s umělou inteligencí.",
+    youtubeId: "hfUIWp0xpg0"
+  },
+  {
+    id: 2,
+    title: "ChatGPT: Tipy a triky",
+    description: "Jak efektivně využívat ChatGPT pro každodenní produktivitu.",
+    youtubeId: "L_Guz73e6fw"
+  }
+];
 
 export const courseData: Block[] = [
   {
@@ -287,7 +317,7 @@ export const courseData: Block[] = [
         { id: 4, question: "Jak se bránit falešnému hlasu?", options: ["Věřit mu", "Zavěsit a zavolat na staré číslo", "Poslat peníze", "Koupit antivirus"], correctAnswer: 1, hint: "Vždy ověřte jiným komunikačním kanálem." },
         { id: 5, question: "Pomáhá AI v obraně?", options: ["Ne", "Ano, detekuje útoky v reálném čase", "Jen u Applu", "Zpomaluje PC"], correctAnswer: 1, hint: "AI analýzuje miliony logů a najde anomálie." },
         { id: 6, question: "Co jsou syntetické identity?", options: ["Roboti", "Lidé vytvoření AI pro podvody", "Hra", "Plastové karty"], correctAnswer: 1, hint: "Profily na sítích, které vypadají reálně, ale neexistují." },
-        { id: 7, question: "Co je Prompt Injection?", options: ["Vakcína", "Útok textem na AI model", "Rychlé psaní", "Tisk"], correctAnswer: 1, hint: "Snaží se donutit AI ignorovat její pravidla." },
+        { id: 7, question: "Co je Prompt Injection?", options: ["Vakcína", "Útok textem na AI model pro obejití pravidel", "Rychlé psaní", "Tisk"], correctAnswer: 1, hint: "Snaží se donutit AI ignorovat její pravidla." },
         { id: 8, question: "Může AI psát malware?", options: ["Ne", "Ano, zrychluje vývoj škodlivého kódu", "Jen u Windows", "Samo od sebe"], correctAnswer: 1, hint: "Zkracuje čas mezi nálezem chyby a jejím zneužitím." },
         { id: 9, question: "Co je nejdůležitější obranou?", options: ["Kupovat HW", "Zdravá skepse a ověřování", "Nepoužívat web", "Bát se"], correctAnswer: 1, hint: "Technologie selže, kritické myšlení ne." },
         { id: 10, question: "Co je Liar's Dividend?", options: ["Zisk z akcií", "Popírání pravdy tvrzením, že je to Deepfake", "Pokuta", "Bonus"], correctAnswer: 1, hint: "Eroze důvěry, kdy nikdo nevěří ani reálným záznamům." }
