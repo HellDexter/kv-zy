@@ -63,6 +63,8 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('login');
   const [activeModule, setActiveModule] = useState<Module>('cyber');
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  
+  const syncingRef = useRef<boolean>(false);
   const userIdRef = useRef<string | null>(null);
 
   const [quizState, setQuizState] = useState<QuizState>({
@@ -75,69 +77,85 @@ const App: React.FC = () => {
     answersHistory: []
   });
 
-  const fetchProfile = useCallback(async (userId: string): Promise<UserProfile | null> => {
-    try {
-      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
-      if (error) throw error;
-      return data as UserProfile;
-    } catch (error) {
-      console.error('Profile fetch failed:', error);
-      return null;
-    }
-  }, []);
-
-  const handleProfileSync = useCallback(async (userId: string) => {
-    if (userId === userIdRef.current && userProfile) {
-      setAuthStatus('authenticated');
-      return;
-    }
-
+  const syncProfile = useCallback(async (userId: string) => {
+    // Lock - pokud už synchronizace běží, nepouštíme ji znova
+    if (syncingRef.current) return;
+    
+    syncingRef.current = true;
     setAuthStatus('syncing');
+
     try {
-      const profile = await fetchProfile(userId);
-      if (profile) {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data) {
         userIdRef.current = userId;
-        setUserProfile(profile);
-        setCurrentView('dashboard');
+        setUserProfile(data as UserProfile);
         setAuthStatus('authenticated');
+        // Přepneme na dashboard pouze pokud jsme na login obrazovce
+        setCurrentView(prev => prev === 'login' ? 'dashboard' : prev);
       } else {
-        // Profil nenalezen - odhlásíme uživatele
+        console.error("Profile not found for authenticated user");
         await supabase.auth.signOut();
-        userIdRef.current = null;
-        setUserProfile(null);
         setAuthStatus('unauthenticated');
+        setCurrentView('login');
       }
     } catch (err) {
-      console.error("Sync error:", err);
+      console.error("Profile sync failed:", err);
       setAuthStatus('unauthenticated');
+      setCurrentView('login');
     } finally {
-      // Pojištění proti zaseknutí v 'syncing' stavu
-      setAuthStatus(prev => prev === 'syncing' ? 'unauthenticated' : prev);
+      syncingRef.current = false;
     }
-  }, [fetchProfile, userProfile]);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
 
-    // Posluchač pro změny přihlášení - Supabase jej spustí i při startu aplikace pro inicializaci
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const initAuth = async () => {
+      // 1. Získáme session hned při startu (řeší F5 refresh)
+      const { data: { session } } = await supabase.auth.getSession();
+      
       if (!mounted) return;
 
       if (session?.user) {
-        await handleProfileSync(session.user.id);
+        await syncProfile(session.user.id);
       } else {
-        userIdRef.current = null;
-        setUserProfile(null);
-        setCurrentView('login');
         setAuthStatus('unauthenticated');
+        setCurrentView('login');
       }
-    });
+
+      // 2. Nastavíme listener pro budoucí změny (login/logout/token refresh)
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (!mounted) return;
+
+        if (session?.user) {
+          if (userIdRef.current !== session.user.id) {
+            await syncProfile(session.user.id);
+          }
+        } else {
+          userIdRef.current = null;
+          setUserProfile(null);
+          setAuthStatus('unauthenticated');
+          setCurrentView('login');
+        }
+      });
+
+      return subscription;
+    };
+
+    const authPromise = initAuth();
 
     return () => {
       mounted = false;
-      subscription.unsubscribe();
+      authPromise.then(sub => sub?.unsubscribe());
     };
-  }, [handleProfileSync]);
+  }, [syncProfile]);
 
   const handleLogout = async () => {
     try {
@@ -148,8 +166,8 @@ const App: React.FC = () => {
     } finally {
       userIdRef.current = null;
       setUserProfile(null);
-      setCurrentView('login');
       setAuthStatus('unauthenticated');
+      setCurrentView('login');
     }
   };
 
