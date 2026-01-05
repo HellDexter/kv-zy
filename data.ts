@@ -5,13 +5,12 @@ export const cyberVideos: Video[] = [
   { id: 1, title: "Kybernetická bezpečnost - Úvod", description: "Základní principy ochrany digitální identity.", youtubeId: "PE8nf8Tmf78" },
   { id: 2, title: "Jak si nenechat vyluxovat účet", description: "Praktické rady pro ochranu bankovnictví.", youtubeId: "wkfXUF0-F7Q" },
   { id: 3, title: "Hrozby na internetu", description: "Přehled aktuálních hrozeb a kyberkriminality.", youtubeId: "T6FRDPBApaE" },
-  { id: 4, title: "Jak funguje Phishing?", description: "Detailní pohled na podvodné e-maily a SMS.", youtubeId: "Y7zNlEMDmI8" },
-  { id: 5, title: "Sociální inženýrství", description: "Jak útočníci manipulují s lidskou psychikou.", youtubeId: "gsw5jBeuaL8" },
-  { id: 6, title: "Silná a bezpečná hesla", description: "Návod na tvorbu a správu hesel.", youtubeId: "4rNCgLfqfQw" },
-  { id: 7, title: "Dvoufaktorové ověření (2FA)", description: "Nejdůležitější vrstva vaší digitální obrany.", youtubeId: "P0Pmiqe9rQg" },
-  { id: 8, title: "Veřejné Wi-Fi sítě", description: "Rizika bezplatného internetu v kavárnách.", youtubeId: "UuLCdnZihI4" },
-  { id: 9, title: "Zabezpečení mobilního telefonu", description: "Nastavení soukromí ve vašem smartphonu.", youtubeId: "iNmS1ahVWUs" },
-  { id: 10, title: "Pravidla zálohování", description: "Jak nepřijít o svá data při útoku.", youtubeId: "dGJTQgrEc2Y" }
+  { id: 4, title: "Sociální inženýrství", description: "Jak útočníci manipulují s lidskou psychikou.", youtubeId: "gsw5jBeuaL8" },
+  { id: 5, title: "Silná a bezpečná hesla", description: "Návod na tvorbu a správu hesel.", youtubeId: "4rNCgLfqfQw" },
+  { id: 6, title: "Dvoufaktorové ověření (2FA)", description: "Nejdůležitější vrstva vaší digitální obrany.", youtubeId: "P0Pmiqe9rQg" },
+  { id: 7, title: "Veřejné Wi-Fi sítě", description: "Rizika bezplatného internetu v kavárnách.", youtubeId: "UuLCdnZihI4" },
+  { id: 8, title: "Zabezpečení mobilního telefonu", description: "Nastavení soukromí ve vašem smartphonu.", youtubeId: "iNmS1ahVWUs" },
+  { id: 9, title: "Pravidla zálohování", description: "Jak nepřijít o svá data při útoku.", youtubeId: "dGJTQgrEc2Y" }
 ];
 
 export const aiVideos: Video[] = [
