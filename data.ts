@@ -5,13 +5,25 @@ export const cyberVideos: Video[] = [
   {
     id: 1,
     title: "Kybernetická bezpečnost - Úvod",
-    description: "Základní principy ochrany digitální identity a proč je důležité se vzdělávat.",
+    description: "Základní principy ochrany digitální identity a proč je důležité se vzdělávat v dnešní době.",
     youtubeId: "PE8nf8Tmf78"
   },
   {
     id: 2,
+    title: "Jak si nenechat vyluxovat účet",
+    description: "Praktické rady, jak chránit své bankovnictví před moderními metodami podvodníků.",
+    youtubeId: "wkfXUF0-F7Q"
+  },
+  {
+    id: 3,
+    title: "Hrozby na internetu a kyberkriminalita",
+    description: "Přehled aktuálních hrozeb, na které může narazit každý občan při běžném surfování.",
+    youtubeId: "T6FRDPBApaE"
+  },
+  {
+    id: 4,
     title: "Jak funguje Phishing?",
-    description: "Detailní pohled na nejčastější metodu útoku a jak ji včas rozpoznat.",
+    description: "Detailní pohled na nejčastější metodu útoku a jak ji včas rozpoznat v e-mailu či SMS.",
     youtubeId: "Y7zNlEMDmI8"
   }
 ];
@@ -339,7 +351,7 @@ export const aiCourseData: Block[] = [
       { id: 4, question: "Rozumí AI model realitě a významu slov?", options: ["Ano, plně", "Ne, pouze reprodukuje statistické vzorce z dat", "Rozumí jen česky", "Víc než člověk"], correctAnswer: 1, hint: "AI model je pokročilý statistický prediktor, nikoliv vědomí." },
       { id: 5, question: "Jaký je rozdíl mezi modelem a aplikací?", options: ["Není žádný", "Model je technologie (mozek), aplikace je rozhraní pro uživatele", "Model je hardware", "Aplikace je zdarma"], correctAnswer: 1, hint: "Příklad: GPT-4o je model, ChatGPT je aplikace." },
       { id: 6, question: "Z čeho se AI model učí?", options: ["Z baterií", "Z obrovských objemů dat (internet, knihy, články)", "Jen ze školních učebnic", "Samo od sebe v noci"], correctAnswer: 1, hint: "Učí se na stovkách gigabajtů až terabajtů textu." },
-      { id: 7, question: "Co AI umí nejlépe?", options: ["Vařit kávu", "Shrnování, vysvětlování a generování textů", "Zaručit pravdu", "Předvídat budoucnost"], correctAnswer: 1, hint: "AI je skvělý asistent pro práci s informacemi." },
+      { id: 7, question: "Co AI umí nejlépe?", options: ["Vařit kávu", "Shrnování, vysvětlování a generování textů", "Zaručit pravdu", "Předvídat budoucnost"], correctAnswer: 1, hint: "AI is skvělý asistent pro práci s informacemi." },
       { id: 8, question: "Může AI udělat faktickou chybu?", options: ["Nikdy", "Ano, může se mýlit, i když působí sebejistě", "Jen u matematiky", "Jen když nemá proud"], correctAnswer: 1, hint: "AI negarantuje přesnost, pouze pravděpodobnost." },
       { id: 9, question: "Co AI neumí?", options: ["Psát maily", "Chápat kontext lidsky a cítit emoce", "Vysvětlit pojem", "Učit se"], correctAnswer: 1, hint: "AI postrádá lidskou intuici a kulturní nuance." },
       { id: 10, question: "Kdo nese konečnou odpovědnost za výstup z AI?", options: ["Programátor", "Uživatel (člověk)", "Model", "Firma OpenAI"], correctAnswer: 1, hint: "AI je nástroj, člověk musí výsledek vždy zkontrolovat." }
@@ -376,7 +388,7 @@ export const aiCourseData: Block[] = [
       { id: 3, question: "Který model Gemini je nejvýkonnější pro analýzy?", options: ["Nano", "2.0 Pro", "Flash", "Basic"], correctAnswer: 1, hint: "Pro verze je určena pro komplexní úkoly a delší texty." },
       { id: 4, question: "Co je Gemini Nano?", options: ["Druh procesoru", "Model běžící lokálně přímo v telefonu", "Webová stránka", "Placená verze"], correctAnswer: 1, hint: "Funguje i offline na vybraných mobilních zařízeních." },
       { id: 5, question: "Jak pomáhá Gemini v Gmailu?", options: ["Maže spamy", "Návrh e-mailu, přeformulování nebo dokončení zprávy", "Změní barvu mailu", "Posílá maily sám"], correctAnswer: 1, hint: "Ušetří čas při psaní rutinních nebo složitých odpovědí." },
-      { id: 6, question: "Provádí Gemini v Tabulkách automatické výpočty?", options: ["Ano", "Ne, má poradenskou roli (návrh struktur, popis dat)", "Vždy", "Jen u financí"], correctAnswer: 1, hint: "Pomáhá s organizací dat, ale matematiku nechte na vzorcích." },
+      { id: 6, question: "Provádí Gemini v Tabulkách Google NEUMÍ podle prezentace?", options: ["Popis obsahu", "Vytvářet automatické vzorce a provádět výpočty", "Navrhnout kategorii", "Organizovat data"], correctAnswer: 1, hint: "AI v tabulkách má poradenskou a organizační roli, neprovádí výpočty." },
       { id: 7, question: "Co znamená 'multimodalita' u Gemini?", options: ["Více barev", "Práce s textem, obrázky i dokumenty najednou", "Rychlejší internet", "Více uživatelů"], correctAnswer: 1, hint: "Můžete se ptát textem na obsah nahraného obrázku." },
       { id: 8, question: "V čem se Gemini liší od ChatGPT?", options: ["Nic", "Zaměření na ekosystém Google a jiný styl odpovědí", "Je jen v angličtině", "Je dražší"], correctAnswer: 1, hint: "Gemini dává strukturovanější a často stručnější odpovědi." },
       { id: 9, question: "Garantuje Gemini 100% přesnost v dokumentech?", options: ["Ano", "Ne, výstupy je třeba vždy ověřit", "Jen u PDF", "Garantuje Google"], correctAnswer: 1, hint: "I Gemini může při zpracování dlouhých textů něco vynechat." },
@@ -495,25 +507,6 @@ export const aiCourseData: Block[] = [
       { id: 8, question: "Jak se vyhnout halucinacím podle prezentace?", options: ["Neklást otázky", "Vždy ověřovat všechny informace mimo AI systém", "Být vtipný", "Nepoužívat AI"], correctAnswer: 1, hint: "Používejte AI pouze jako výchozí bod, ne jako konečný zdroj pravdy." },
       { id: 9, question: "Co je Liar's Dividend?", options: ["Odměna", "Popírání pravdy tvrzením, že jde o AI generovaný fejk", "Pokuta", "Zisk"], correctAnswer: 1, hint: "Eroze důvěry, kdy viníci popírají realitu s tím, že jde o Deepfake." },
       { id: 10, question: "Co je prioritou před jakýmkoli přínosem AI?", options: ["Rychlost", "Ochrana dat a soukromí", "Design", "Cena"], correctAnswer: 1, hint: "Bezpečnost nesmí být obětována pohodlí." }
-    ]
-  },
-  {
-    id: 10,
-    title: "Blok 10: NotebookLM: AI asistent pro práci s dokumenty",
-    description: "Maximální využití zdrojů, aktivní učení a personalizovaný expert.",
-    icon: "Zap",
-    gammaUrl: "https://gamma.app/embed/oht0u0yzkamdh6u", 
-    questions: [
-      { id: 1, question: "Kolik zdrojů lze nahrát do jednoho notebooku v NotebookLM?", options: ["5", "Až 50", "Neomezeně", "Pouze 1"], correctAnswer: 1, hint: "Umožňuje to analyzovat velmi rozsáhlé studijní materiály najednou." },
-      { id: 2, question: "Transformuje NotebookLM pasivní čtení?", options: ["Ne", "Ano, na interaktivní učební zkušenost", "Jen u PDF", "Zpomaluje čtení"], correctAnswer: 1, hint: "Díky generování otázek a vysvětlování pojmů." },
-      { id: 3, question: "Které typy otázek NotebookLM generuje?", options: ["Jen náhodné", "Kontrolní, Konceptuální, Aplikační a Kritické", "Žádné", "Jen pravda/nepravda"], correctAnswer: 1, hint: "Různé typy otázek pomáhají hlubšímu pochopení látky." },
-      { id: 4, question: "Jsou vaše data v NotebookLM použita k tréninku AI modelů Google?", options: ["Ano", "Ne, data zůstávají soukromá a nepoužívají se k tréninku", "V noci ano", "Jen u neplacených"], correctAnswer: 1, hint: "Zásadní informace pro ochranu firemních a osobních dat." },
-      { id: 5, question: "Může AI v NotebookLM porovnávat dva dokumenty?", options: ["Ne", "Ano, umí informace propojovat a hledat rozdíly", "Jen maily", "Jen obrázky"], correctAnswer: 1, hint: "Ideální pro srovnání verzí smluv nebo vědeckých studií." },
-      { id: 6, question: "Co je 'Export poznámek' v NotebookLM?", options: ["Smazání", "Uložení nebo sdílení vytvořených materiálů do preferovaného formátu", "Tisk", "Odeslání do banky"], correctAnswer: 1, hint: "Své výpisky si můžete vzít s sebou kamkoliv." },
-      { id: 7, question: "Jak NotebookLM pomáhá s nejasnými pojmy?", options: ["Maže je", "Poskytne kontextová vysvětlení přímo z nahraných dokumentů", "Hledá je na Google", "Ignoruje je"], correctAnswer: 1, hint: "Stačí termín označit a AI ho vysvětlí v rámci kontextu vašich dat." },
-      { id: 8, question: "Je NotebookLM dostupný zdarma pro uživatele s Google účtem?", options: ["Ne", "Ano, je zdarma dostupný", "Jen pro školy", "Jen v USA"], correctAnswer: 1, hint: "Aktuálně jde o bezplatný nástroj pro všechny majitele Google účtu." },
-      { id: 9, question: "K čemu slouží interaktivní studijní nástroje v NotebookLM?", options: ["K hraní pokeru", "Kvízy s vysvětleními, Flashcards a Reports", "K placení", "Ke kreslení"], correctAnswer: 1, hint: "Pomůcka pro efektivní učení a zopakování klíčových pojmů." },
-      { id: 10, question: "Může NotebookLM nahradit lidskou expertízu?", options: ["Ano", "Ne, je to partner pro zjednodušení práce, ne konečná autorita", "Jen u studentů", "Nikdy v ničem"], correctAnswer: 1, hint: "AI partner, který transformuje způsob, jakým se učíme, ale vyžaduje dohled." }
     ]
   }
 ];
