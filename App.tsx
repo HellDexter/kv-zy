@@ -86,46 +86,45 @@ const App: React.FC = () => {
     }
   }, []);
 
+  const handleProfileSync = useCallback(async (userId: string) => {
+    if (userId === userIdRef.current && userProfile) {
+      setAuthStatus('authenticated');
+      return;
+    }
+
+    setAuthStatus('syncing');
+    try {
+      const profile = await fetchProfile(userId);
+      if (profile) {
+        userIdRef.current = userId;
+        setUserProfile(profile);
+        setCurrentView('dashboard');
+        setAuthStatus('authenticated');
+      } else {
+        // Profil nenalezen - odhlásíme uživatele
+        await supabase.auth.signOut();
+        userIdRef.current = null;
+        setUserProfile(null);
+        setAuthStatus('unauthenticated');
+      }
+    } catch (err) {
+      console.error("Sync error:", err);
+      setAuthStatus('unauthenticated');
+    } finally {
+      // Pojištění proti zaseknutí v 'syncing' stavu
+      setAuthStatus(prev => prev === 'syncing' ? 'unauthenticated' : prev);
+    }
+  }, [fetchProfile, userProfile]);
+
   useEffect(() => {
     let mounted = true;
 
-    const initializeAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user && mounted) {
-          const profile = await fetchProfile(session.user.id);
-          if (profile) {
-            userIdRef.current = session.user.id;
-            setUserProfile(profile);
-            setCurrentView('dashboard');
-            setAuthStatus('authenticated');
-          } else {
-            await supabase.auth.signOut();
-            setAuthStatus('unauthenticated');
-          }
-        } else if (mounted) {
-          setAuthStatus('unauthenticated');
-        }
-      } catch (err) {
-        if (mounted) setAuthStatus('unauthenticated');
-      }
-    };
-
-    initializeAuth();
-
+    // Posluchač pro změny přihlášení - Supabase jej spustí i při startu aplikace pro inicializaci
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!mounted) return;
+
       if (session?.user) {
-        if (session.user.id !== userIdRef.current) {
-          setAuthStatus('syncing');
-          const profile = await fetchProfile(session.user.id);
-          if (mounted) {
-            userIdRef.current = session.user.id;
-            setUserProfile(profile);
-            setCurrentView('dashboard');
-            setAuthStatus('authenticated');
-          }
-        }
+        await handleProfileSync(session.user.id);
       } else {
         userIdRef.current = null;
         setUserProfile(null);
@@ -138,13 +137,16 @@ const App: React.FC = () => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [fetchProfile]);
+  }, [handleProfileSync]);
 
   const handleLogout = async () => {
-    setAuthStatus('initializing'); 
     try {
+      setAuthStatus('initializing');
       await supabase.auth.signOut();
+    } catch (err) {
+      console.error("Logout error:", err);
     } finally {
+      userIdRef.current = null;
       setUserProfile(null);
       setCurrentView('login');
       setAuthStatus('unauthenticated');
