@@ -51,76 +51,16 @@ export const courseData: Block[] = [
     icon: "ShieldAlert",
     gammaUrl: "https://gamma.app/embed/2iu9jifo4h854di",
     questions: [
-      {
-        id: 1,
-        question: "Jaká je základní myšlenka moderních kybernetických útoků?",
-        options: ["Útočník prolamuje technologii, ne lidi.", "Útočník neprolamuje zabezpečení, prolamuje člověka.", "Útoky cílí pouze na servery velkých firem.", "Hlavním cílem je zničit hardware."],
-        correctAnswer: 1,
-        hint: "Technologie jsou dnes silné, proto útočníci cílí na nejslabší článek – lidské emoce a chyby."
-      },
-      {
-        id: 2,
-        question: "Co znamená zkratka CIA v kontextu kyberbezpečnosti?",
-        options: ["Central Intelligence Agency", "Computer Internet Access", "Confidentiality, Integrity, Availability (Důvěrnost, Integrita, Dostupnost)", "Control, Inspect, Audit"],
-        correctAnswer: 2,
-        hint: "Jedná se o tři pilíře bezpečnosti. Pokud selže jeden, dojde k incidentu."
-      },
-      {
-        id: 3,
-        question: "Co znamená porušení 'Integrity' dat?",
-        options: ["Data unikla na veřejnost.", "Data byla neoprávněně změněna nebo upravena (např. číslo účtu na faktuře).", "Služba je nedostupná.", "Heslo bylo prozrazeno."],
-        correctAnswer: 1,
-        hint: "Představte si, že někdo přepíše obsah dokumentu bez vašeho vědomí."
-      },
-      {
-        id: 4,
-        question: "Kolik procent útoků přibližně začíná lidskou chybou (např. kliknutím)?",
-        options: ["Asi 10 %", "Kolem 50 %", "Až 90 %", "Méně než 1 %"],
-        correctAnswer: 2,
-        hint: "Většina útoků vyžaduje aktivní zapojení oběti, jako je otevření přílohy."
-      },
-      {
-        id: 5,
-        question: "Jaké emoce útočníci nejčastěji zneužívají?",
-        options: ["Radost a klid", "Strach, urgentnost (spěch), zvědavost a autoritu", "Nudu a lhostejnost", "Lásku k technologiím"],
-        correctAnswer: 1,
-        hint: "Útočník vás chce dostat pod tlak, abyste přestali racionálně myslet."
-      },
-      {
-        id: 6,
-        question: "Co je to Phishing?",
-        options: ["Lov ryb na internetu", "Falešné e-maily vydávající se za důvěryhodné instituce", "Druh antiviru", "Legální marketingová strategie"],
-        correctAnswer: 1,
-        hint: "Cílem je 'ułowit' vaše hesla nebo údaje o kartě pomocí podvodné zprávy."
-      },
-      {
-        id: 7,
-        question: "Co je to Vishing?",
-        options: ["Video hovor", "Podvodný telefonát (Voice Phishing)", "Virtuální rybaření", "Vir v počítači"],
-        correctAnswer: 1,
-        hint: "Pachatel vám volá a vydává se například za bankéře nebo policistu."
-      },
-      {
-        id: 8,
-        question: "Co je to Ransomware?",
-        options: ["Software na čištění PC", "Škodlivý kód, který zašifruje data a žádá výkupné", "Ochrana proti phishingu", "Program pro stahování hudby"],
-        correctAnswer: 1,
-        hint: "Útočník vaše data 'unese' a chce zaplatit za jejich vrácení."
-      },
-      {
-        id: 9,
-        question: "Co je typickým znakem útoku na 'důvěrnost' (Confidentiality)?",
-        options: ["Únik hesel z databáze", "Změna obsahu webu", "Výpadek e-mailové služby", "Zpomalení počítače"],
-        correctAnswer: 0,
-        hint: "Data vidí někdo, kdo k nim nemá mít přístup."
-      },
-      {
-        id: 10,
-        question: "Proč útočníci cílí na běžné uživatele?",
-        options: ["Protože nemají co dělat", "Protože běžní uživatelé nemají data", "Protože nástroje pro útoky jsou levné a automatizované", "Je to omyl, cílí jen na vlády"],
-        correctAnswer: 2,
-        hint: "Každý má cenná data (identitu, finance) a útoky lze provádět hromadně."
-      }
+      { id: 1, question: "Jaká je základní myšlenka moderních kybernetických útoků?", options: ["Útočník prolamuje technologii, ne lidi.", "Útočník neprolamuje zabezpečení, prolamuje člověka.", "Útoky cílí pouze na servery velkých firem.", "Hlavním cílem je zničit hardware."], correctAnswer: 1, hint: "Technologie jsou dnes silné, proto útočníci cílí na nejslabší článek – lidské emoce a chyby." },
+      { id: 2, question: "Co znamená zkratka CIA v kontextu kyberbezpečnosti?", options: ["Central Intelligence Agency", "Computer Internet Access", "Confidentiality, Integrity, Availability (Důvěrnost, Integrita, Dostupnost)", "Control, Inspect, Audit"], correctAnswer: 2, hint: "Jedná se o tři pilíře bezpečnosti. Pokud selže jeden, dojde k incidentu." },
+      { id: 3, question: "Co znamená porušení 'Integrity' dat?", options: ["Data unikla na veřejnost.", "Data byla neoprávněně změněna nebo upravena (např. číslo účtu na faktuře).", "Služba je nedostupná.", "Heslo bylo prozrazeno."], correctAnswer: 1, hint: "Představte si, že někdo přepíše obsah dokumentu bez vašeho vědomí." },
+      { id: 4, question: "Kolik procent útoků přibližně začíná lidskou chybou (např. kliknutím)?", options: ["Asi 10 %", "Kolem 50 %", "Až 90 %", "Méně než 1 %"], correctAnswer: 2, hint: "Většina útoků vyžaduje aktivní zapojení oběti, jako je otevření přílohy." },
+      { id: 5, question: "Jaké emoce útočníci nejčastěji zneužívají?", options: ["Radost a klid", "Strach, urgentnost (spěch), zvědavost a autoritu", "Nudu a lhostejnost", "Lásku k technologiím"], correctAnswer: 1, hint: "Útočník vás chce dostat pod tlak, abyste přestali racionálně myslet." },
+      { id: 6, question: "Co je to Phishing?", options: ["Lov ryb na internetu", "Falešné e-maily vydávající se za důvěryhodné instituce", "Druh antiviru", "Legální marketingová strategie"], correctAnswer: 1, hint: "Cílem je 'ułowit' vaše hesla nebo údaje o kartě pomocí podvodné zprávy." },
+      { id: 7, question: "Co je to Vishing?", options: ["Video hovor", "Podvodný telefonát (Voice Phishing)", "Virtuální rybaření", "Vir v počítači"], correctAnswer: 1, hint: "Pachatel vám volá a vydává se například za bankéře nebo policistu." },
+      { id: 8, question: "Co je to Ransomware?", options: ["Software na čištění PC", "Škodlivý kód, který zašifruje data a žádá výkupné", "Ochrana proti phishingu", "Program pro stahování hudby"], correctAnswer: 1, hint: "Útočník vaše data 'unese' a chce zaplatit za jejich vrácení." },
+      { id: 9, question: "Co je typickým znakem útoku na 'důvěrnost' (Confidentiality)?", options: ["Únik hesel z databáze", "Změna obsahu webu", "Výpadek e-mailové služby", "Zpomalení počítače"], correctAnswer: 0, hint: "Data vidí někdo, kdo k nim nemá mít přístup." },
+      { id: 10, question: "Proč útočníci cílí na běžné uživatele?", options: ["Protože nemají co dělat", "Protože běžní uživatelé nemají data", "Protože nástroje pro útoky jsou levné a automatizované", "Je to omyl, cílí jen na vlády"], correctAnswer: 2, hint: "Každý má cenná data (identitu, finance) a útoky lze provádět hromadně." }
     ]
   },
   {
@@ -130,76 +70,16 @@ export const courseData: Block[] = [
     icon: "Globe",
     gammaUrl: "https://gamma.app/embed/gtqi1rkuvdn8gp9",
     questions: [
-      {
-        id: 1,
-        question: "Znamená zelený zámeček (HTTPS) v prohlížeči, že je web bezpečný a poctivý?",
-        options: ["Ano, vždy.", "Ne, znamená pouze to, že komunikace je šifrovaná.", "Ano, garantuje to Google.", "Znamená to, že web neobsahuje viry."],
-        correctAnswer: 1,
-        hint: "I podvodná stránka může mít certifikát zdarma a mít zámeček."
-      },
-      {
-        id: 2,
-        question: "Která z těchto domén je s největší pravděpodobností podvodná (pokud hledáte ČSOB)?",
-        options: ["www.csob.cz", "ib.csob.cz", "csob-overeni.cz/login", "platby.csob.cz"],
-        correctAnswer: 2,
-        hint: "Oficiální subdomény jsou před hlavní doménou. 'csob-overeni.cz' je úplně jiná doména."
-      },
-      {
-        id: 3,
-        question: "Co je to DNS?",
-        options: ["Doručovací služba", "Systém překládající názvy webů (např. banka.cz) na IP adresy", "Druh antiviru", "Digitální Notářský Systém"],
-        correctAnswer: 1,
-        hint: "Funguje jako telefonní seznam internetu."
-      },
-      {
-        id: 4,
-        question: "Proč útočníci používají ve falešných odkazech zkracovače nebo překlepy?",
-        options: ["Aby ušetřili místo", "Aby vás zmátli a vy jste si nevšimli, že nejste na oficiálním webu", "Je to levnější", "Aby se web rychleji načetl"],
-        correctAnswer: 1,
-        hint: "Doufají, že přehlédnete rozdíl mezi 'banka.cz' a 'banka-login.com'."
-      },
-      {
-        id: 5,
-        question: "Jaké je hlavní pravidlo pro silné heslo?",
-        options: ["Jméno a rok narození", "Krátké, aby se dalo zapamatovat", "Dlouhé (14+ znaků), unikátní a složité", "Stejné pro všechny účty"],
-        correctAnswer: 2,
-        hint: "Délka je důležitější než složitost, ale unikátnost je klíčová."
-      },
-      {
-        id: 6,
-        question: "Co je úkolem správce hesel (Password Manager)?",
-        options: ["Pamatovat si všechna vaše hesla a generovat nová silná", "Automaticky měnit hesla každý týden", "Posílat hesla e-mailem", "Jen kontrolovat viry"],
-        correctAnswer: 0,
-        hint: "Vy si pamatujete jen jedno 'master' heslo, on zbytek."
-      },
-      {
-        id: 7,
-        question: "Co je to 2FA (Dvoufaktorové ověřování)?",
-        options: ["Přihlášení dvěma hesly", "Přihlášení heslem + druhým faktorem (např. aplikace v mobilu)", "Přihlášení na dvou počítačích", "Dvojitá kontrola pravopisu"],
-        correctAnswer: 1,
-        hint: "Zvyšuje bezpečnost tím, že útočníkovi nestačí ukrást jen heslo."
-      },
-      {
-        id: 8,
-        question: "Co NENÍ znakem phishingového e-mailu?",
-        options: ["Naléhavá výzva k akci (do 24 hodin)", "Podezřelá adresa odesílatele", "Osobní oslovení a perfektní znalost vaší historie", "Gramatické chyby a špatná čeština"],
-        correctAnswer: 2,
-        hint: "Phishing je většinou masový a neosobní. Pokud zná detaily, může jít o cílený spear-phishing (vzácnější)."
-      },
-      {
-        id: 9,
-        question: "Je bezpečné ukládat hesla přímo do prohlížeči bez ochrany?",
-        options: ["Ano, je to pohodlné", "Ne, malware je může snadno vykrást", "Ano, prohlížeč je trezor", "Záleží na značce počítače"],
-        correctAnswer: 1,
-        hint: "Prohlížeče často ukládají hesla slabě zabezpečená."
-      },
-      {
-        id: 10,
-        question: "K čemu slouží rozšíření 'uBlock Origin'?",
-        options: ["K blokování reklam a škodlivých skriptů", "K přehrávání videí", "K tvorbě hesel", "K těžbě kryptoměn"],
-        correctAnswer: 0,
-        hint: "Blokováním reklam snižujete riziko, že kliknete na podvodný banner."
-      }
+      { id: 1, question: "Znamená zelený zámeček (HTTPS) v prohlížeči, že je web bezpečný a poctivý?", options: ["Ano, vždy.", "Ne, znamená pouze to, že komunikace je šifrovaná.", "Ano, garantuje to Google.", "Znamená to, že web neobsahuje viry."], correctAnswer: 1, hint: "I podvodná stránka může mít certifikát zdarma a mít zámeček." },
+      { id: 2, question: "Která z těchto domén je s největší pravděpodobností podvodná (pokud hledáte ČSOB)?", options: ["www.csob.cz", "ib.csob.cz", "csob-overeni.cz/login", "platby.csob.cz"], correctAnswer: 2, hint: "Oficiální subdomény jsou před hlavní doménou. 'csob-overeni.cz' je úplně jiná doména." },
+      { id: 3, question: "Co je to DNS?", options: ["Doručovací služba", "Systém překládající názvy webů (např. banka.cz) na IP adresy", "Druh antiviru", "Digitální Notářský Systém"], correctAnswer: 1, hint: "Funguje jako telefonní seznam internetu." },
+      { id: 4, question: "Proč útočníci používají ve falešných odkazech zkracovače nebo překlepy?", options: ["Aby ušetřili místo", "Aby vás zmátli a vy jste si nevšimli, že nejste na oficiálním webu", "Je to levnější", "Aby se web rychleji načetl"], correctAnswer: 1, hint: "Doufají, že přehlédnete rozdíl mezi 'banka.cz' a 'banka-login.com'." },
+      { id: 5, question: "Jaké je hlavní pravidlo pro silné heslo?", options: ["Jméno a rok narození", "Krátké, aby se dalo zapamatovat", "Dlouhé (14+ znaků), unikátní a složité", "Stejné pro všechny účty"], correctAnswer: 2, hint: "Délka je důležitější než složitost, ale unikátnost je klíčová." },
+      { id: 6, question: "Co je úkolem správce hesel (Password Manager)?", options: ["Pamatovat si všechna vaše hesla a generovat nová silná", "Automaticky měnit hesla každý týden", "Posílat hesla e-mailem", "Jen kontrolovat viry"], correctAnswer: 0, hint: "Vy si pamatujete jen jedno 'master' heslo, on zbytek." },
+      { id: 7, question: "Co je to 2FA (Dvoufaktorové ověřování)?", options: ["Přihlášení dvěma hesly", "Přihlášení heslem + druhým faktorem (např. aplikace v mobilu)", "Přihlášení na dvou počítačích", "Dvojitá kontrola pravopisu"], correctAnswer: 1, hint: "Zvyšuje bezpečnost tím, že útočníkovi nestačí ukrást jen heslo." },
+      { id: 8, question: "Co NENÍ znakem phishingového e-mailu?", options: ["Naléhavá výzva k akci (do 24 hodin)", "Podezřelá adresa odesílatele", "Osobní oslovení a perfektní znalost vaší historie", "Gramatické chyby a špatná čeština"], correctAnswer: 2, hint: "Phishing je většinou masový a neosobní. Pokud zná detaily, může jít o cílený spear-phishing (vzácnější)." },
+      { id: 9, question: "Je bezpečné ukládat hesla přímo do prohlížeči bez ochrany?", options: ["Ano, je to pohodlné", "Ne, malware je může snadno vykrást", "Ano, prohlížeč je trezor", "Záleží na značce počítače"], correctAnswer: 1, hint: "Prohlížeče často ukládají hesla slabě zabezpečená." },
+      { id: 10, question: "K čemu slouží rozšíření 'uBlock Origin'?", options: ["K blokování reklam a škodlivých skriptů", "K přehrávání videí", "K tvorbě hesel", "K těžbě kryptoměn"], correctAnswer: 0, hint: "Blokováním reklam snižujete riziko, že kliknete na podvodný banner." }
     ]
   },
   {
@@ -390,7 +270,7 @@ export const aiCourseData: Block[] = [
       { id: 5, question: "Jak pomáhá Gemini v Gmailu?", options: ["Maže spamy", "Návrh e-mailu, přeformulování nebo dokončení zprávy", "Změní barvu mailu", "Posílá maily sám"], correctAnswer: 1, hint: "Ušetří čas při psaní rutinních nebo složitých odpovědí." },
       { id: 6, question: "Provádí Gemini v Tabulkách Google NEUMÍ podle prezentace?", options: ["Popis obsahu", "Vytvářet automatické vzorce a provádět výpočty", "Navrhnout kategorii", "Organizovat data"], correctAnswer: 1, hint: "AI v tabulkách má poradenskou a organizační roli, neprovádí výpočty." },
       { id: 7, question: "Co znamená 'multimodalita' u Gemini?", options: ["Více barev", "Práce s textem, obrázky i dokumenty najednou", "Rychlejší internet", "Více uživatelů"], correctAnswer: 1, hint: "Můžete se ptát textem na obsah nahraného obrázku." },
-      { id: 8, question: "V čem se Gemini liší od ChatGPT?", options: ["Nic", "Zaměření na ekosystém Google a jiný styl odpovědí", "Je jen v angličtině", "Je dražší"], correctAnswer: 1, hint: "Gemini dává strukturovanější a často stručnější odpovědi." },
+      { id: 8, question: "V čem se Gemini liší od ChatGPT?", options: ["Nothing", "Zaměření na ekosystém Google a jiný styl odpovědí", "Je jen v angličtině", "Je dražší"], correctAnswer: 1, hint: "Gemini dává strukturovanější a často stručnější odpovědi." },
       { id: 9, question: "Garantuje Gemini 100% přesnost v dokumentech?", options: ["Ano", "Ne, výstupy je třeba vždy ověřit", "Jen u PDF", "Garantuje Google"], correctAnswer: 1, hint: "I Gemini může při zpracování dlouhých textů něco vynechat." },
       { id: 10, question: "Kde najdete historii v Gemini?", options: ["V pravém rohu", "V levém panelu konverzací", "V nastavení účtu", "Nikde"], correctAnswer: 1, hint: "Stejně jako u ostatních nástrojů je historie v bočním menu." }
     ]
@@ -448,7 +328,7 @@ export const aiCourseData: Block[] = [
       { id: 6, question: "Co Gemini v Tabulkách Google NEUMÍ podle prezentace?", options: ["Popis obsahu", "Vytvářet automatické vzorce a provádět výpočty", "Navrhnout kategorii", "Organizovat data"], correctAnswer: 1, hint: "AI v tabulkách má poradenskou a organizační roli, neprovádí výpočty." },
       { id: 7, question: "Může AI v Outlooku navrhnout odpověď na mail?", options: ["Ne", "Ano, na základě kontextu původní zprávy", "Jen smazat mail", "Jen přeložit"], correctAnswer: 1, hint: "Funkce 'Návrh odpovědi' šetří čas u běžné agendy." },
       { id: 8, question: "Garantuje Copilot právní správnost dokumentů?", options: ["Ano", "Ne, vyžadují lidský dohled a kontrolu", "Garantuje Microsoft", "Jen u smluv"], correctAnswer: 1, hint: "AI není právník, za obsah ručíte vy." },
-      { id: 9, question: "K čemu je dobré 'Shrnutí přílohy' u Copilota?", options: ["Ušetří místo na disku", "Ušetří čas čtením dlouhých dokumentů v mailu", "Smaže přílohu", "Nic"], correctAnswer: 1, hint: "Rychle zjistíte, co je v dokumentu důležité." },
+      { id: 9, question: "K čemu je dobré 'Shrnutí přílohy' u Copilota?", options: ["Ušetří místo na disku", "Ušetří čas čtením dlouhých dokumentů v mailu", "Smaže přílohu", "Nothing"], correctAnswer: 1, hint: "Rychle zjistíte, co je v dokumentu důležité." },
       { id: 10, question: "Musí být uživatel u práce s AI v Office pozorný?", options: ["Ne", "Ano, AI je nástroj, který vyžaduje kontrolu a rozhodování", "Jen u her", "Jen začátečník"], correctAnswer: 1, hint: "AI může chybovat nebo vynechat nuance." }
     ]
   },
@@ -479,15 +359,15 @@ export const aiCourseData: Block[] = [
     gammaUrl: "https://gamma.app/embed/4vdh5433b53x9ri", 
     questions: [
       { id: 1, question: "Co je Perplexity?", options: ["Prohlížeč", "AI vyhledávač s citacemi zdrojů", "Sociální síť", "E-shop"], correctAnswer: 1, hint: "Kombinuje vyhledávání s inteligencí LLM." },
-      { id: 2, question: "V čem je Perplexity jiný než ChatGPT?", options: ["Není jiný", "Aktivně vyhledává čerstvé info a uvádí zdroje u každého tvrzení", "Je dražší", "Je pomalejší"], correctAnswer: 1, hint: "Vždy víte, odkud informace pochází." },
+      { id: 2, question: "V čem je Perplexity jiný než ChatGPT?", options: ["Nothing", "Aktivně vyhledává čerstvé info a uvádí zdroje u každého tvrzení", "Je dražší", "Je pomalejší"], correctAnswer: 1, hint: "Vždy víte, odkud informace pochází." },
       { id: 3, question: "Co je režim 'Quick'?", options: ["Smazání historie", "Základní režim vyhledávání pro rychlé odpovědi", "Placená verze", "Druh písma"], correctAnswer: 1, hint: "Vhodný pro běžné dotazy a základní přehled o tématu." },
-      { id: 4, question: "Co nabízí režim 'Pro'?", options: ["Barvy", "Hlubší analýzu a vyhledávání ve více zdrojích", "Nic navíc", "Jen hudbu"], correctAnswer: 1, hint: "Pro komplexní dotazy vyžadující podrobnější odpovědi." },
-      { id: 5, question: "Jak správně formulovat dotaz v Perplexity?", options: ["Krátce", "Konkrétně, s časovým obdobím a typem informací", "Vtipně", "Vůbec"], correctAnswer: 1, hint: "Místo 'marketing' napište 'nejpoužívanější nástroje pro email marketing v roce 2024'." },
+      { id: 4, question: "Co nabízí režim 'Pro'?", options: ["Barvy", "Hlubší analýzu a vyhledávání ve více zdrojích", "Nothing navíc", "Jen hudbu"], correctAnswer: 1, hint: "Pro komplexní dotazy vyžadující podrobnější odpovědi." },
+      { id: 5, question: "Jak správně formulovat dotaz v Perplexity?", options: ["Krátce", "Konkrétně, s časovým obdobím a typem informací", "Vtipně", "Nothing"], correctAnswer: 1, hint: "Místo 'marketing' napište 'nejpoužívanější nástroje pro email marketing v roce 2024'." },
       { id: 6, question: "Garantuje Perplexity pravdivost zdrojů?", options: ["Ano", "Ne, pouze cituje nalezené články (mohou být i zavádějící)", "Vždy", "U placené verze"], correctAnswer: 1, hint: "Vždy kontrolujte autoritu původního zdroje." },
       { id: 7, question: "Lze originální články v Perplexity přímo otevřít?", options: ["Ne", "Ano, jedním kliknutím na číselnou citaci", "Jen v noci", "Jen u Seznamu"], correctAnswer: 1, hint: "Umožňuje to rychlou kontrolu kontextu." },
       { id: 8, question: "Co Perplexity nedělá podle prezentace?", options: ["Nehledá na webu", "Neověřuje pravdivost zdrojů (cituje, ale nekontroluje)", "Neodpovídá česky", "Nepíše texty"], correctAnswer: 1, hint: "Systém cituje články, ale neví, zda autor článku nelže." },
       { id: 9, question: "Je registrace v Perplexity povinná?", options: ["Ano", "Ne (možnost používat bez registrace)", "Jen pro muže", "V Česku ano"], correctAnswer: 1, hint: "Základní vyhledávání funguje i bez účtu." },
-      { id: 10, question: "K čemu je Perplexity ideální?", options: ["K hraní her", "K rychlému pochopení tématu a srovnání technologií", "K vaření", "K nákupu bot"], correctAnswer: 1, hint: "Skvělý asistent pro faktické rešerše." }
+      { id: 10, question: "K čemu je Perplexity ideální?", options: ["K hraní her", "K rychlému pochopení tématu a srovnání technologií", "K vaření", "K nákupu bot"], correctAnswer: 1, hint: "Skvělý asistent for faktické rešerše." }
     ]
   },
   {
@@ -505,7 +385,7 @@ export const aiCourseData: Block[] = [
       { id: 6, question: "Může AI rozhodovat o lidech (např. o náboru)?", options: ["Ano, je objektivní", "Ne, rozhodnutí musí vždy provést kvalifikovaná osoba", "Jen u IT", "V Americe ano"], correctAnswer: 1, hint: "AI nesmí autonomně rozhodovat o náboru, hodnocení nebo mzdách." },
       { id: 7, question: "Co je to 'Prompt Injection'?", options: ["Vakcína", "Útok textem na AI model pro obejití pravidel", "Rychlé psaní", "Tisk"], correctAnswer: 1, hint: "Pokus o manipulaci s chováním AI." },
       { id: 8, question: "Jak se vyhnout halucinacím podle prezentace?", options: ["Neklást otázky", "Vždy ověřovat všechny informace mimo AI systém", "Být vtipný", "Nepoužívat AI"], correctAnswer: 1, hint: "Používejte AI pouze jako výchozí bod, ne jako konečný zdroj pravdy." },
-      { id: 9, question: "Co je Liar's Dividend?", options: ["Odměna", "Popírání pravdy tvrzením, že jde o AI generovaný fejk", "Pokuta", "Zisk"], correctAnswer: 1, hint: "Eroze důvěry, kdy viníci popírají realitu s tím, že jde o Deepfake." },
+      { id: 9, question: "Co je Liar's Dividend?", options: ["Odměna", "Popírání pravdy tvrzením, že jde o AI generovaný fejk", "Popírání", "Zisk"], correctAnswer: 1, hint: "Eroze důvěry, kdy viníci popírají realitu s tím, že jde o Deepfake." },
       { id: 10, question: "Co je prioritou před jakýmkoli přínosem AI?", options: ["Rychlost", "Ochrana dat a soukromí", "Design", "Cena"], correctAnswer: 1, hint: "Bezpečnost nesmí být obětována pohodlí." }
     ]
   }
