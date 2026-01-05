@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Video } from '../types';
 import { ArrowLeft, Play, X, Video as VideoIcon, ChevronRight, ChevronLeft, Info } from 'lucide-react';
 
@@ -11,9 +11,38 @@ interface Props {
 
 const VideoScreen: React.FC<Props> = ({ videos, onBack, theme = 'emerald' }) => {
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isPurple = theme === 'purple';
   const colorClass = isPurple ? 'purple' : 'emerald';
   const glowColor = isPurple ? 'rgba(168, 85, 247, 0.4)' : 'rgba(16, 185, 129, 0.4)';
+
+  // Handle horizontal scroll with mouse wheel
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (el) {
+      const onWheel = (e: WheelEvent) => {
+        if (e.deltaY === 0) return;
+        e.preventDefault();
+        el.scrollTo({
+          left: el.scrollLeft + e.deltaY * 2,
+          behavior: 'smooth'
+        });
+      };
+      el.addEventListener('wheel', onWheel, { passive: false });
+      return () => el.removeEventListener('wheel', onWheel);
+    }
+  }, []);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const { current } = scrollContainerRef;
+      const scrollAmount = current.clientWidth * 0.8;
+      current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   return (
     <div className="w-full min-h-screen relative z-10 bg-[#050505]">
@@ -48,12 +77,34 @@ const VideoScreen: React.FC<Props> = ({ videos, onBack, theme = 'emerald' }) => 
 
       {/* Netflix-style horizontal row */}
       <div className="w-full py-10 relative group/row overflow-visible">
+        
+        {/* Navigation arrows for larger viewports */}
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 hidden md:block group-hover/row:opacity-100 opacity-0 transition-opacity">
+           <button 
+             onClick={() => scroll('left')}
+             className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white cursor-pointer hover:bg-black/80 transition-all hover:scale-110 active:scale-95"
+           >
+              <ChevronLeft className="w-6 h-6" />
+           </button>
+        </div>
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 z-20 hidden md:block group-hover/row:opacity-100 opacity-0 transition-opacity">
+           <button 
+             onClick={() => scroll('right')}
+             className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white cursor-pointer hover:bg-black/80 transition-all hover:scale-110 active:scale-95"
+           >
+              <ChevronRight className="w-6 h-6" />
+           </button>
+        </div>
+
         {/* Horizontal Scroll Area */}
-        <div className="flex gap-5 md:gap-8 overflow-x-auto px-6 md:px-20 no-scrollbar snap-x pb-24 pt-10 scroll-smooth">
+        <div 
+          ref={scrollContainerRef}
+          className="flex gap-5 md:gap-8 overflow-x-auto px-6 md:px-20 no-scrollbar snap-x pb-24 pt-10 scroll-smooth relative"
+        >
           {videos.map((video, index) => (
             <div
               key={video.id}
-              className="flex-shrink-0 w-[260px] md:w-[380px] snap-center perspective-1000 group/item"
+              className="flex-shrink-0 w-[280px] md:w-[400px] snap-center perspective-1000 group/item"
               style={{ animationDelay: `${index * 80}ms` }}
             >
               <button
@@ -101,18 +152,6 @@ const VideoScreen: React.FC<Props> = ({ videos, onBack, theme = 'emerald' }) => 
               </button>
             </div>
           ))}
-        </div>
-        
-        {/* Navigation arrows for larger viewports */}
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none hidden md:block group-hover/row:opacity-100 opacity-0 transition-opacity">
-           <div className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white pointer-events-auto cursor-pointer hover:bg-black/80 transition-all">
-              <ChevronLeft className="w-6 h-6" />
-           </div>
-        </div>
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none hidden md:block group-hover/row:opacity-100 opacity-0 transition-opacity">
-           <div className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white pointer-events-auto cursor-pointer hover:bg-black/80 transition-all">
-              <ChevronRight className="w-6 h-6" />
-           </div>
         </div>
       </div>
 
