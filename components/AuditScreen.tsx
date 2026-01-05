@@ -3,18 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Check, Bot, X, ShieldAlert, ShieldCheck, Send, Paperclip, Image as ImageIcon, Trash2, Loader2, Key } from 'lucide-react';
 import { GoogleGenAI, Chat } from "@google/genai";
 
-// Definice rozhraní pro globální objekt aistudio podle pravidel
-// Fix: Use AIStudio interface name to match existing global definitions and avoid type mismatch errors.
-export interface AIStudio {
-  hasSelectedApiKey: () => Promise<boolean>;
-  openSelectKey: () => Promise<void>;
-}
-
-declare global {
-  interface Window {
-    aistudio: AIStudio;
-  }
-}
+// Removed redundant AIStudio interface and declare global that conflicted with global definition.
+// The environment provides window.aistudio with its own types.
 
 interface Props {
   onBack: () => void;
@@ -125,7 +115,9 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
 
   const handleOpenKeySelection = async () => {
     try {
+      // @ts-ignore - window.aistudio is provided by the environment
       await window.aistudio.openSelectKey();
+      // Assume success and proceed as per guidelines
       if (activeItem) {
         setNeedsApiKey(false);
         initChat(activeItem);
@@ -161,18 +153,18 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
     setInputMessage("");
     setShowChat(true);
     setLoading(true);
-    setNeedsApiKey(false);
-
-    // Kontrola, zda máme klíč
-    const hasKey = await window.aistudio.hasSelectedApiKey();
-    if (!hasKey) {
-      setNeedsApiKey(true);
-      setLoading(false);
-      return;
-    }
 
     try {
-      // Create a fresh GoogleGenAI instance for the chat session
+      // @ts-ignore - window.aistudio is provided by the environment
+      const hasKey = await window.aistudio.hasSelectedApiKey();
+      if (!hasKey) {
+        setNeedsApiKey(true);
+        setLoading(false);
+        return;
+      }
+
+      setNeedsApiKey(false);
+      // Create a new GoogleGenAI instance right before making an API call
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       
       const systemInstruction = `
@@ -183,7 +175,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
         3. KROK 2: Jakmile znáš kontext, napiš PRVNÍ krok.
         4. Čekej na potvrzení uživatele, než napíšeš další.
         5. Analyzuj screenshoty, pokud je uživatel pošle.
-        6. Buď stručný a nápomocný.
+        6. Buď stručný a nápomocný. Piš v češtině.
       `;
 
       const chat = ai.chats.create({
@@ -194,17 +186,17 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
       });
 
       chatSessionRef.current = chat;
-      const result = await chat.sendMessage({ message: "Jsem připraven. Pozdrav mě a zeptej se na potřebné informace pro tento úkol." });
+      const result = await chat.sendMessage({ message: "Ahoj, jsem tvůj bezpečnostní asistent. Jsem připraven ti pomoci s tímto úkolem. Jaké zařízení nebo operační systém používáš?" });
       
       if (result.text) {
           setChatHistory([{ role: 'model', text: result.text }]);
       }
     } catch (error: any) {
       console.error("AI Init Error:", error);
-      if (error.message?.includes("Requested entity was not found") || error.message?.includes("API key")) {
+      if (error.message?.includes("API key") || error.message?.includes("not found") || error.message?.includes("403")) {
         setNeedsApiKey(true);
       } else {
-        setChatHistory([{ role: 'model', text: "Omlouvám se, ale spojení s AI expertem selhalo. Zkontrolujte prosím své internetové připojení a zkuste to znovu." }]);
+        setChatHistory([{ role: 'model', text: "Omlouvám se, ale spojení s AI asistentem se nepodařilo navázat. Zkuste to prosím za okamžik." }]);
       }
     } finally {
       setLoading(false);
@@ -235,16 +227,17 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
         parts.push(await fileToGenerativePart(att.file));
       }
       
+      // Using the session created with the current API key
       const result = await chatSessionRef.current.sendMessage({ message: parts });
       if (result.text) {
         setChatHistory(prev => [...prev, { role: 'model', text: result.text }]);
       }
     } catch (error: any) {
       console.error("Send Error:", error);
-      if (error.message?.includes("Requested entity was not found")) {
+      if (error.message?.includes("not found")) {
         setNeedsApiKey(true);
       } else {
-        setChatHistory(prev => [...prev, { role: 'model', text: "Došlo k chybě při odesílání zprávy. Zkuste to prosím znovu." }]);
+        setChatHistory(prev => [...prev, { role: 'model', text: "Došlo k chybě při komunikaci. Zkuste zprávu odeslat znovu." }]);
       }
     } finally {
       setLoading(false);
@@ -371,24 +364,16 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                             <div className="w-16 h-16 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(236,72,153,0.1)]">
                                 <Key className="w-8 h-8 text-pink-400" />
                             </div>
-                            <h3 className="text-lg font-display text-white mb-3 uppercase">Vyžadována aktivace AI</h3>
+                            <h3 className="text-lg font-display text-white mb-3 uppercase">Aktivace AI asistenta</h3>
                             <p className="text-sm text-gray-400 mb-8 max-w-sm leading-relaxed">
-                                Pro používání AI asistenta je nutné vybrat váš vlastní API klíč z placeného projektu Google Cloud.
+                                Pro interaktivní návody je nutné potvrdit použití vašeho API klíče.
                             </p>
                             <button 
                                 onClick={handleOpenKeySelection}
                                 className="bg-pink-600 hover:bg-pink-500 text-white px-8 py-3 rounded-xl font-bold text-xs tracking-widest uppercase transition-all shadow-[0_0_20px_rgba(236,72,153,0.3)] font-display flex items-center gap-3"
                             >
-                                <Bot className="w-4 h-4" /> Aktivovat AI asistenta
+                                <Bot className="w-4 h-4" /> Spustit asistenta
                             </button>
-                            <a 
-                                href="https://ai.google.dev/gemini-api/docs/billing" 
-                                target="_blank" 
-                                rel="noreferrer"
-                                className="mt-6 text-[10px] text-gray-500 hover:text-pink-400 underline transition-colors font-mono"
-                            >
-                                Dokumentace o placených klíčích
-                            </a>
                         </div>
                     ) : (
                         <>
@@ -446,7 +431,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                             value={inputMessage}
                             onChange={(e) => setInputMessage(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
-                            placeholder="Zpráva..."
+                            placeholder="Zadejte dotaz..."
                             className="flex-grow bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-pink-500/50 resize-none max-h-32 min-h-[44px]"
                             rows={1}
                           />
