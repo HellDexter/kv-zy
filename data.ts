@@ -138,30 +138,110 @@ export const courseData: Block[] = [
 export const aiCourseData: Block[] = [
   { id: 1, title: "Blok 1: AI Pracuje pro Vás", description: "Základy a LLM modely.", icon: "Cpu", questions: [
     { id: 1, question: "Základ textových AI?", options: ["HW", "LLM", "Web", "Disk"], correctAnswer: 1, hint: "Large Language Models." },
-    { id: 2, question: "Co je token?", options: ["Mince", "Jednotka textu", "Heslo", "Ikona"], correctAnswer: 1, hint: "Slova se dělí na tokeny." }
+    { id: 2, question: "Co je token?", options: ["Mince", "Jednotka textu", "Heslo", "Ikona"], correctAnswer: 1, hint: "Jednotka zpracování." },
+    { id: 3, question: "Kdy vznikl rozmach LLM?", options: ["1990", "2010", "2022", "2000"], correctAnswer: 2, hint: "Vydání ChatGPT." },
+    { id: 4, question: "Co znamená GPT?", options: ["Global PC Tool", "Generative Pre-trained Transformer", "Great Power Tool", "Nic"], correctAnswer: 1, hint: "Architektura modelu." },
+    { id: 5, question: "Učí se AI z vašich dat?", options: ["Nikdy", "Záleží na nastavení", "Vždy", "Jen placená"], correctAnswer: 1, hint: "Privacy settings." },
+    { id: 6, question: "Co je halucinace?", options: ["Spánek", "Vymýšlení faktů", "Rychlost", "Barvy"], correctAnswer: 1, hint: "Faktická chyba." },
+    { id: 7, question: "Parametry modelu?", options: ["Váha PC", "Počet spojení v síti", "Cena", "Paměť"], correctAnswer: 1, hint: "Kapacita učení." },
+    { id: 8, question: "Multimodalita?", options: ["Rychlost", "Text, obraz i zvuk", "Dva PC", "Mnoho jazyků"], correctAnswer: 1, hint: "Více typů vstupu." },
+    { id: 9, question: "Co je 'Temperature'?", options: ["Teplota PC", "Míra kreativity", "Rychlost", "Hlasitost"], correctAnswer: 1, hint: "Náhodnost výstupu." },
+    { id: 10, question: "Kontextové okno?", options: ["Velikost monitoru", "Množství textu, co si AI pamatuje", "Doba odezvy", "Okno prohlížeče"], correctAnswer: 1, hint: "Paměť v chatu." }
   ]},
   { id: 2, title: "Blok 2: ChatGPT", description: "Rozhraní a historie.", icon: "MessageSquare", questions: [
-    { id: 1, question: "Co je ChatGPT?", options: ["OS", "Webové LLM", "PC", "Hra"], correctAnswer: 1, hint: "Rozhraní pro konverzaci." }
+    { id: 1, question: "Kdo vlastní ChatGPT?", options: ["Google", "OpenAI", "Microsoft", "Apple"], correctAnswer: 1, hint: "Sam Altman." },
+    { id: 2, question: "Co je GPT-4o?", options: ["Starý model", "Vlajkový multimodální model", "Jen na obrázky", "Mobilní hra"], correctAnswer: 1, hint: "Omni model." },
+    { id: 3, question: "Custom GPTs?", options: ["Vlastní verze asistenta", "Nové PC", "Hry", "Obrázky"], correctAnswer: 0, hint: "Specializované verze." },
+    { id: 4, question: "Dostupnost zdarma?", options: ["Ne", "Ano, s omezením", "Jen v USA", "Jen pro firmy"], correctAnswer: 1, hint: "Limitované GPT-4o." },
+    { id: 5, question: "Dall-E v chatu?", options: ["Ne", "Ano, generování obrazu", "Jen text", "Jen zvuk"], correctAnswer: 1, hint: "Integrace obrazu." },
+    { id: 6, question: "Advanced Voice Mode?", options: ["Křik", "Přirozený rozhovor s emocemi", "Jen čtení textu", "Nahrávání"], correctAnswer: 1, hint: "Skutečný rozhovor." },
+    { id: 7, question: "History & Training?", options: ["Vždy smazáno", "Lze vypnout v nastavení", "Vždy veřejné", "Záloha"], correctAnswer: 1, hint: "Soukromí." },
+    { id: 8, question: "OpenAI App?", options: ["Není", "iOS i Android", "Jen web", "Jen Windows"], correctAnswer: 1, hint: "Mobilní přístup." },
+    { id: 9, question: "Data Analysis?", options: ["Počítadlo", "Analýza tabulek a grafů", "Kalkulačka", "Hra"], correctAnswer: 1, hint: "Práce se soubory." },
+    { id: 10, question: "Kdy byl spuštěn?", options: ["2020", "2022", "2024", "2018"], correctAnswer: 1, hint: "Listopad 2022." }
   ]},
   { id: 3, title: "Blok 3: Gemini", description: "Ekosystém Google.", icon: "Layout", questions: [
-    { id: 1, question: "Kdo vyvinul Gemini?", options: ["OpenAI", "Google", "MS", "Apple"], correctAnswer: 1, hint: "Google." }
+    { id: 1, question: "Kdo vyvinul Gemini?", options: ["Meta", "Google", "OpenAI", "Tesla"], correctAnswer: 1, hint: "DeepMind." },
+    { id: 2, question: "Integrace s Google Workspace?", options: ["Ne", "Ano (Maily, Dokumenty)", "Jen YouTube", "Není"], correctAnswer: 1, hint: "Ekosystém." },
+    { id: 3, question: "Gemini Advanced?", options: ["Základní verze", "Placená verze s 1.5 Pro", "Verze pro děti", "Zastaralá"], correctAnswer: 1, hint: "Výkonnější model." },
+    { id: 4, question: "Google Photos integrace?", options: ["Ne", "Ano, chytré hledání", "Jen text", "Videa"], correctAnswer: 1, hint: "Hledání ve fotkách." },
+    { id: 5, question: "Zdrojování informací?", options: ["Lže", "Propojení s Google vyhledáváním", "Jen offline", "Knihy"], correctAnswer: 1, hint: "Aktuální data." },
+    { id: 6, question: "Gemini v Androidu?", options: ["Jako Google Asistent", "Není", "Jen maily", "Hudba"], correctAnswer: 0, hint: "Náhrada asistenta." },
+    { id: 7, question: "Model Flash?", options: ["Pomalý", "Rychlý a efektivní", "Drahý", "Starý"], correctAnswer: 1, hint: "Optimalizace rychlosti." },
+    { id: 8, question: "Mnoho jazyků?", options: ["Jen AJ", "Globální podpora vč. ČJ", "Jen Asie", "Jen Evropa"], correctAnswer: 1, hint: "Čeština funguje." },
+    { id: 9, question: "Původní název?", options: ["Alpha", "Bard", "Gamma", "Zeta"], correctAnswer: 1, hint: "Bard." },
+    { id: 10, question: "Co je Gemini Pro?", options: ["Nejslabší", "Vyvážený model pro běžné úlohy", "Jen na kód", "Hardware"], correctAnswer: 1, hint: "Zlatý střed." }
   ]},
   { id: 4, title: "Blok 4: Prompty", description: "Struktura zadání.", icon: "Command", questions: [
-    { id: 1, question: "Co je prompt?", options: ["Vir", "Instrukce", "Výstup", "Značka"], correctAnswer: 1, hint: "Zadání." }
+    { id: 1, question: "Co je prompt?", options: ["Hardware", "Zadání pro AI", "Výsledek", "Chyba"], correctAnswer: 1, hint: "Instrukce." },
+    { id: 2, question: "Metoda R-O-C-E?", options: ["Útěk", "Role-Objektiv-Context-Expektace", "Běh", "Jídlo"], correctAnswer: 1, hint: "Struktura promptu." },
+    { id: 3, question: "Few-shot prompting?", options: ["Jeden pokus", "Dávání příkladů v promptu", "Rychlost", "Krátký text"], correctAnswer: 1, hint: "Ukázky řešení." },
+    { id: 4, question: "Zero-shot?", options: ["Bez zadání", "Bez příkladů", "Bez výsledku", "Smazání"], correctAnswer: 1, hint: "Přímý dotaz." },
+    { id: 5, question: "Role prompting?", options: ["Děti", "Zadání identity (Jsi expert)", "Hra", "Maska"], correctAnswer: 1, hint: "Nastavení experta." },
+    { id: 6, question: "Chain of Thought?", options: ["Zákaz", "Krok za krokem", "Rychlost", "Zmatek"], correctAnswer: 1, hint: "Postupné uvažování." },
+    { id: 7, question: "Iterace?", options: ["Zánik", "Postupné vylepšování chatu", "Opakování stejného", "Chyba"], correctAnswer: 1, hint: "Zpřesňování." },
+    { id: 8, question: "System Prompt?", options: ["Monitor", "Globální instrukce chování", "Restart", "Bios"], correctAnswer: 1, hint: "Základní nastavení." },
+    { id: 9, question: "Prompt Engineering?", options: ["Oprava PC", "Umění psát zadání", "Stavba stroje", "Sítě"], correctAnswer: 1, hint: "Nová dovednost." },
+    { id: 10, question: "Délka promptu?", options: ["Musí být krátký", "Může být velmi detailní", "Jedno slovo", "Jen v AJ"], correctAnswer: 1, hint: "Detailnost pomáhá." }
   ]},
   { id: 5, title: "Blok 5: Praktické texty", description: "Maily a shrnutí.", icon: "FileText", questions: [
-    { id: 1, question: "AI a maily?", options: ["Sama", "Návrh a úprava", "Spam", "Banka"], correctAnswer: 1, hint: "Pomocník." }
+    { id: 1, question: "Shrnutí dlouhého textu?", options: ["Nelze", "Hlavní body v odrážkách", "Smazání", "Přepis všeho"], correctAnswer: 1, hint: "Summarizace." },
+    { id: 2, question: "Změna tónu mailu?", options: ["Nelze", "Z neformálního na profesionální", "Jen v AJ", "Barvy"], correctAnswer: 1, hint: "Stylistika." },
+    { id: 3, question: "Překlad dokumentu?", options: ["Jen Google Překladač", "AI zachová kontext a styl", "Není bezpečné", "Obrázky"], correctAnswer: 1, hint: "Kvalitní lokalizace." },
+    { id: 4, question: "Kreativní psaní?", options: ["AI nemá fantazii", "Pomoc s nápady a strukturou", "Jen kopírování", "Nuda"], correctAnswer: 1, hint: "Generování nápadů." },
+    { id: 5, question: "Oprava gramatiky?", options: ["Jen Word", "AI najde i stylistické chyby", "Nepřesné", "Zpomalení"], correctAnswer: 1, hint: "Korektura." },
+    { id: 6, question: "Generování osnovy?", options: ["Nelze", "Struktura článku/přednášky", "Jen text", "Videa"], correctAnswer: 1, hint: "Plánování." },
+    { id: 7, question: "Tvorba otázek?", options: ["Učitel", "Test z poskytnutého textu", "Nuda", "Hra"], correctAnswer: 1, hint: "Edukační využití." },
+    { id: 8, question: "Dopisování textu?", options: ["Smazání", "Pokračování v mém stylu", "Cenzura", "Konec"], correctAnswer: 1, hint: "Predikce." },
+    { id: 9, question: "Slogan pro firmu?", options: ["Grafika", "Generování mnoha variant", "Nákup", "Sleva"], correctAnswer: 1, hint: "Brainstorming." },
+    { id: 10, question: "Filtrování SPAMu?", options: ["Nijak", "Analýza tónu a podezřelých znaků", "Antivir", "Nic"], correctAnswer: 1, hint: "Bezpečnost." }
   ]},
   { id: 6, title: "Blok 6: Kancelář", description: "Office a Workspace.", icon: "Briefcase", questions: [
-    { id: 1, question: "MS AI?", options: ["Cortana", "Copilot", "Siri", "Alexa"], correctAnswer: 1, hint: "Copilot." }
+    { id: 1, question: "Co je Copilot?", options: ["Letadlo", "AI asistent v MS Office", "Programátor", "Hra"], correctAnswer: 1, hint: "Microsoft AI." },
+    { id: 2, question: "AI v Excelu?", options: ["Počítadlo", "Analýza dat a tvorba vzorců", "Jen barvy", "Není"], correctAnswer: 1, hint: "Data analysis." },
+    { id: 3, question: "PowerPoint a AI?", options: ["Jen promítání", "Tvorba prezentace z textu", "Hudba", "Video"], correctAnswer: 1, hint: "Generování slidů." },
+    { id: 4, question: "Meeting shrnutí?", options: ["Záznam", "Zápis z Teams/Meet", "Křik", "Video"], correctAnswer: 1, hint: "Meeting notes." },
+    { id: 5, question: "Návrh odpovědi v Outlooku?", options: ["Smazání", "Chytré předpřipravené maily", "Jen odeslat", "Nuda"], correctAnswer: 1, hint: "Efektivita." },
+    { id: 6, question: "Google Duet AI?", options: ["Tanec", "Původní název AI v Workspace", "Kód", "Hra"], correctAnswer: 1, hint: "Workspace AI." },
+    { id: 7, question: "AI v Google Docs?", options: ["Psaní za vás (Help me write)", "Jen čtení", "Není", "Zpomalení"], correctAnswer: 0, hint: "Asistent psaní." },
+    { id: 8, question: "Automatizace tabulek?", options: ["Nijak", "Chytré doplňování (Smart Fill)", "Jen ručně", "Smazat"], correctAnswer: 1, hint: "Google Sheets." },
+    { id: 9, question: "Bezpečnost firemních dat?", options: ["Vše uniká", "Enterprise verze data netrénují", "Jen offline", "Není"], correctAnswer: 1, hint: "Podniková ochrana." },
+    { id: 10, question: "AI v PDF?", options: ["Obrázek", "Shrnutí a hledání v PDF", "Jen čtení", "Nuda"], correctAnswer: 1, hint: "Acrobat AI." }
   ]},
   { id: 7, title: "Blok 7: NotebookLM", description: "Analýza dokumentů.", icon: "BookOpen", questions: [
-    { id: 1, question: "Funkce?", options: ["Hry", "Analýza vašich dat", "Kód", "Fotky"], correctAnswer: 1, hint: "Vlastní zdroje." }
+    { id: 1, question: "Hlavní výhoda?", options: ["Hry", "Práce s vašimi zdroji", "Web", "Obrázky"], correctAnswer: 1, hint: "Vlastní data." },
+    { id: 2, question: "Audio Overview?", options: ["Hudba", "Podcast z vašich dokumentů", "Křik", "Rádio"], correctAnswer: 1, hint: "Syntetický rozhovor." },
+    { id: 3, question: "Zdrojování u NotebookLM?", options: ["Vymýšlí si", "Odkazuje na přesné věty v PDF", "Lže", "Nijak"], correctAnswer: 1, hint: "Citace." },
+    { id: 4, question: "Kapacita zdrojů?", options: ["Jen 1", "Až 50 dokumentů", "Neomezeně", "Jen 5"], correctAnswer: 1, hint: "Škálovatelnost." },
+    { id: 5, question: "Kdo to vyvíjí?", options: ["Meta", "Google", "MS", "Apple"], correctAnswer: 1, hint: "Google Labs." },
+    { id: 6, question: "Podporované formáty?", options: ["Jen papír", "PDF, Google Docs, Text", "Jen obrázky", "Videa"], correctAnswer: 1, hint: "Textové zdroje." },
+    { id: 7, question: "Je to placené?", options: ["Ano", "Aktuálně zdarma v rámci testování", "Jen v USA", "Drahé"], correctAnswer: 1, hint: "Google Labs projekt." },
+    { id: 8, question: "Studijní průvodce?", options: ["Učitel", "Tvorba otázek a osnovy z vašich poznámek", "Hra", "Nic"], correctAnswer: 1, hint: "Student helper." },
+    { id: 9, question: "Soukromí u NotebookLM?", options: ["Veřejné", "Data jsou soukromá pro váš projekt", "Vše vidí Google", "Sdílené"], correctAnswer: 1, hint: "Privátní kontext." },
+    { id: 10, question: "Hledání souvislostí?", options: ["Nefunguje", "AI propojuje informace z různých PDF", "Jen v jednom", "Nuda"], correctAnswer: 1, hint: "Cross-document analysis." }
   ]},
   { id: 8, title: "Blok 8: Perplexity", description: "AI Vyhledávač.", icon: "Search", questions: [
-    { id: 1, question: "Co je?", options: ["Prohlížeč", "Vyhledávač s citacemi", "Sít", "Shop"], correctAnswer: 1, hint: "Vždy cituje." }
+    { id: 1, question: "Co je Perplexity?", options: ["Prohlížeč", "Odpovídací vyhledávač s citacemi", "Sít", "Hra"], correctAnswer: 1, hint: "Answer engine." },
+    { id: 2, question: "Důvěryhodnost?", options: ["Vždy lže", "Ověřuje informace na internetu", "Jen knihy", "Nijak"], correctAnswer: 1, hint: "Real-time search." },
+    { id: 3, question: "Režim Focus?", options: ["Rozmazání", "Výběr zdroje (YouTube, Reddit, Scholar)", "Rychlost", "Ticho"], correctAnswer: 1, hint: "Cílené vyhledávání." },
+    { id: 4, question: "Citace?", options: ["Nejsou", "Klikatelné odkazy na zdroje", "Jen jména", "Nuda"], correctAnswer: 1, hint: "Transparentnost." },
+    { id: 5, question: "Perplexity Pro?", options: ["Není", "Umožňuje volbu modelu (GPT-4/Claude)", "Jen barvy", "Rychlost"], correctAnswer: 1, hint: "Vlastní volba modelu." },
+    { id: 6, question: "Pages?", options: ["Knihy", "Tvorba webových stránek z rešerše", "Jen text", "Hra"], correctAnswer: 1, hint: "Content creation." },
+    { id: 7, question: "Nahrazuje Google?", options: ["Ne", "Pro hledání odpovědí je efektivnější", "Ano, úplně", "Zpomaluje"], correctAnswer: 1, hint: "Nová éra vyhledávání." },
+    { id: 8, question: "Obrazy v Perplexity?", options: ["Jen text", "Hledá i relevantní obrázky", "Nefunguje", "Video"], correctAnswer: 1, hint: "Multimediální výsledky." },
+    { id: 9, question: "Ukládání rešerší?", options: ["Smazání", "Kolekce (Collections)", "Jen v mailu", "Nic"], correctAnswer: 1, hint: "Organizace." },
+    { id: 10, question: "Aktuálnost?", options: ["Stará data", "Prohledává internet v reálném čase", "Jen 2021", "Nijak"], correctAnswer: 1, hint: "Live data." }
   ]},
   { id: 9, title: "Blok 9: Bezpečnost", description: "GDPR a data.", icon: "ShieldCheck", questions: [
-    { id: 1, question: "Halucinace?", options: ["Sen", "Nepravda", "Vypnutí", "Internet"], correctAnswer: 1, hint: "Faktická chyba." }
+    { id: 1, question: "Základní riziko?", options: ["Nuda", "Únik citlivých dat do tréninku", "Cena", "Vzhled"], correctAnswer: 1, hint: "Data privacy." },
+    { id: 2, question: "GDPR a AI?", options: ["Neplatí", "Právo na vysvětlení a smazání", "Jen v EU", "Nijak"], correctAnswer: 1, hint: "Regulace." },
+    { id: 3, question: "Shadow AI?", options: ["Tma", "Neschválené používání AI v práci", "Hacking", "Hra"], correctAnswer: 1, hint: "Firemní bezpečnost." },
+    { id: 4, question: "Copyright?", options: ["Vše je vaše", "Nejasné vlastnictví AI děl", "Jasné", "Sleva"], correctAnswer: 1, hint: "Autorská práva." },
+    { id: 5, question: "AI Act?", options: ["Hra", "Nová regulace AI v EU", "Vir", "PC"], correctAnswer: 1, hint: "Zákon o AI." },
+    { id: 6, question: "Injekce promptu?", options: ["Lék", "Pokus o manipulaci modelu", "Psaní", "Nic"], correctAnswer: 1, hint: "Security attack." },
+    { id: 7, question: "Ověřování výstupu?", options: ["Vždy věřit", "Kritické myšlení a verifikace", "Nijak", "Strach"], correctAnswer: 1, hint: "Skepticismus." },
+    { id: 8, question: "Bias (Předpojatost)?", options: ["Rychlost", "Stereotypy v odpovědích AI", "Cena", "Barvy"], correctAnswer: 1, hint: "Trénovací data." },
+    { id: 9, question: "Osobní údaje v chatu?", options: ["Bezpečné", "Nikdy nevkládat (jména, hesla)", "Vždy", "Jen placená"], correctAnswer: 1, hint: "Bezpečnostní hygiena." },
+    { id: 10, question: "Budoucnost?", options: ["Konec světa", "Kooperace člověka a stroje", "Jen stroje", "Nic"], correctAnswer: 1, hint: "Augmentace." }
   ]}
 ];
