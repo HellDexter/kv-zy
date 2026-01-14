@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Shield, Bot, Lock, ArrowRight, LogOut, UserCircle } from 'lucide-react';
+import { Shield, Bot, Lock, ArrowRight, LogOut, UserCircle, AlertTriangle } from 'lucide-react';
 import { UserProfile } from '../types';
 
 interface Props {
@@ -59,6 +59,21 @@ const Dashboard: React.FC<Props> = ({ onNavigate, userProfile, onLogout }) => {
          </button>
       </div>
 
+      {/* Maintenance Notice */}
+      <div className="w-full max-w-4xl mb-12 animate-fade-in-up" style={{ animationDelay: '50ms' }}>
+        <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-4 md:p-5 flex items-center gap-4 md:gap-6 backdrop-blur-md shadow-[0_0_30px_rgba(245,158,11,0.05)]">
+          <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center flex-shrink-0 border border-amber-500/20 animate-pulse">
+            <AlertTriangle className="w-6 h-6 text-amber-500" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-amber-500 text-[10px] font-mono font-bold uppercase tracking-[0.2em] mb-1">Systémové upozornění</span>
+            <p className="text-gray-400 text-xs md:text-sm font-light leading-relaxed">
+              <span className="text-white font-medium">Na platformě aktuálně probíhají vývojové práce.</span> Některé funkce, testy nebo vzdělávací materiály mohou být dočasně nedostupné nebo v procesu aktualizace. Děkujeme za pochopení.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <header className="text-center mb-16 animate-fade-in-up w-full">
         <h1 className="text-4xl md:text-7xl font-display text-white mb-6 tracking-tight uppercase leading-none">
           Hlavní <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">rozcestník</span>
@@ -74,7 +89,7 @@ const Dashboard: React.FC<Props> = ({ onNavigate, userProfile, onLogout }) => {
         <button
           onClick={handleCyberClick}
           className={`group relative min-h-[320px] animate-fade-in-up text-left ${!hasCyberAccess ? 'cursor-not-allowed opacity-60 ' + (shakeCyber ? 'animate-shake' : '') : ''}`}
-          style={{ animationDelay: '100ms' }}
+          style={{ animationDelay: '150ms' }}
         >
           <div className={`absolute inset-0 bg-gradient-to-br ${hasCyberAccess ? 'from-cyan-500/10 via-transparent to-blue-600/5' : 'from-gray-500/5 to-transparent'} rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500`}></div>
           
@@ -111,7 +126,7 @@ const Dashboard: React.FC<Props> = ({ onNavigate, userProfile, onLogout }) => {
         <button
           onClick={handleAiClick}
           className={`group relative min-h-[320px] animate-fade-in-up text-left ${!hasAiAccess ? 'cursor-not-allowed opacity-60 ' + (shakeAi ? 'animate-shake' : '') : ''}`}
-          style={{ animationDelay: '200ms' }}
+          style={{ animationDelay: '250ms' }}
         >
           <div className={`absolute inset-0 bg-gradient-to-br ${hasAiAccess ? 'from-purple-500/10 via-transparent to-pink-600/5' : 'from-gray-500/5 to-transparent'} rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500`}></div>
 
