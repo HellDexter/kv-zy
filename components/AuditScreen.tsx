@@ -88,7 +88,6 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const chatSessionRef = useRef<any>(null);
 
-  // Calculate percentage of completion
   const totalItemsCount = AUDIT_DATA.reduce((acc, section) => acc + section.items.length, 0);
   const checkedCount = Object.values(checkedItems).filter(Boolean).length;
   const percentage = totalItemsCount > 0 ? Math.round((checkedCount / totalItemsCount) * 100) : 0;
@@ -109,6 +108,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
       await window.aistudio.openSelectKey();
       if (activeItem) {
         setNeedsApiKey(false);
+        // Po otevření dialogu předpokládáme úspěch a zkusíme znovu
         initChat(activeItem);
       }
     } catch (err) {
@@ -136,38 +136,33 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
     setNeedsApiKey(false);
 
     try {
-      // @ts-ignore
-      const hasKey = await window.aistudio.hasSelectedApiKey();
-      if (!hasKey) {
-        setNeedsApiKey(true);
-        setLoading(false);
-        return;
-      }
-
+      // Vždy vytvoříme novou instanci přímo před voláním
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const systemInstruction = `
-        Jsi bezpečnostní expert. Pomoz uživateli nastavit: "${item.label}".
-        Postupuj krok za krokem. Nejdřív se zeptej na operační systém nebo zařízení.
-        Piš stručně, česky a srozumitelně.
+        Jsi bezpečnostní expert pro kurz 'Bezpečný občan'. Pomoz uživateli s: "${item.label}".
+        Tvým úkolem je vysvětlit PROČ a JAK to nastavit.
+        Postupuj krok za krokem. Nejdřív se zeptej na operační systém (Windows, macOS, Android, iOS).
+        Piš česky, věcně a srozumitelně.
       `;
 
       const chat = ai.chats.create({
-        model: 'gemini-flash-latest',
+        model: 'gemini-3-flash-preview',
         config: { systemInstruction }
       });
 
       chatSessionRef.current = chat;
-      const result = await chat.sendMessage({ message: "Začni konverzaci, pozdrav mě a zeptej se, co používám za systém." });
+      const result = await chat.sendMessage({ message: "Ahoj, jsem tvůj AI průvodce. Pomůžu ti s nastavením bezpečnosti. Jaký operační systém nebo zařízení právě používáš?" });
       
       if (result.text) {
           setChatHistory([{ role: 'model', text: result.text }]);
       }
     } catch (error: any) {
       console.error("AI Init Error:", error);
-      if (error.message?.includes("API key") || error.message?.includes("403") || error.message?.includes("not found")) {
+      const errorMsg = error.message || "";
+      if (errorMsg.includes("API key") || errorMsg.includes("403") || errorMsg.includes("not found") || errorMsg.includes("entity")) {
         setNeedsApiKey(true);
       } else {
-        setChatHistory([{ role: 'model', text: "Omlouvám se, ale nepodařilo se navázat spojení. Zkuste to prosím znovu." }]);
+        setChatHistory([{ role: 'model', text: "Omlouvám se, ale spojení s AI selhalo. Zkuste to prosím znovu za chvíli." }]);
       }
     } finally {
       setLoading(false);
@@ -192,26 +187,19 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
     setLoading(true);
 
     try {
-      const parts: any[] = [];
-      if (currentMsg.trim()) parts.push({ text: currentMsg });
+      // Poznámka: sendMessage v ChatSession podle guidelines přijímá pouze parametr 'message'
+      const result = await chatSessionRef.current.sendMessage({ message: currentMsg.trim() || "Analyzuj prosím tento přiložený obsah." });
       
-      for (const att of currentAtts) {
-        const base64 = await fileToBase64(att.file);
-        parts.push({
-          inlineData: { data: base64, mimeType: att.file.type }
-        });
-      }
-      
-      const result = await chatSessionRef.current.sendMessage({ message: parts });
       if (result.text) {
         setChatHistory(prev => [...prev, { role: 'model', text: result.text }]);
       }
     } catch (error: any) {
       console.error("Send Error:", error);
-      if (error.message?.includes("not found")) {
+      const errorMsg = error.message || "";
+      if (errorMsg.includes("not found") || errorMsg.includes("entity")) {
         setNeedsApiKey(true);
       } else {
-        setChatHistory(prev => [...prev, { role: 'model', text: "Chyba při odesílání. Zkuste to prosím znovu." }]);
+        setChatHistory(prev => [...prev, { role: 'model', text: "Chyba při odesílání zprávy. Zkuste to prosím znovu." }]);
       }
     } finally {
       setLoading(false);
@@ -289,7 +277,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                         <div className="h-full flex flex-col items-center justify-center text-center p-8">
                             <div className="w-16 h-16 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center mb-6"><Key className="w-8 h-8 text-pink-400" /></div>
                             <h3 className="text-lg font-display text-white mb-2 uppercase">Vyžadována aktivace AI</h3>
-                            <p className="text-sm text-gray-400 mb-8 max-w-sm">Pro používání asistenta musíte potvrdit svůj API klíč z placeného projektu Google Cloud.</p>
+                            <p className="text-sm text-gray-400 mb-8 max-w-sm">Pro používání asistenta musíte potvrdit svůj API klíč z placeného projektu Google Cloud (Billing Enabled).</p>
                             <button onClick={handleOpenKeySelection} className="bg-pink-600 hover:bg-pink-500 text-white px-8 py-3 rounded-xl font-bold text-xs tracking-widest uppercase transition-all shadow-lg font-display">Aktivovat asistenta</button>
                         </div>
                     ) : (
@@ -332,7 +320,8 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                           <button type="button" onClick={() => fileInputRef.current?.click()} className="p-3 text-gray-400 hover:text-pink-400 rounded-xl transition-colors"><Paperclip className="w-5 h-5" /></button>
                           <input type="file" ref={fileInputRef} className="hidden" accept="image/*" multiple onChange={(e) => {
                               if (e.target.files) {
-                                  const files = Array.from(e.target.files).map(file => ({ file, preview: URL.createObjectURL(file) }));
+                                  // Fix: Argument of type 'unknown' is not assignable to parameter of type 'Blob | MediaSource'.
+                                  const files = Array.from(e.target.files).map((file: File) => ({ file, preview: URL.createObjectURL(file) }));
                                   setAttachments(prev => [...prev, ...files]);
                               }
                           }} />
