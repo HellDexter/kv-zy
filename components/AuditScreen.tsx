@@ -85,21 +85,76 @@ const AUDIT_DATA: AuditSection[] = [
   },
   {
     title: "Sekce 3: Domácí síť a Wi-Fi",
-    description: "Router je brána do vašeho domova. Špatné nastavení ohrožuje všechna zařízení.",
+    description: "Router je brána do vašeho domova. Špatné nastavení ohrožuje všechna zařízení v síti.",
     items: [
       { 
         id: "net_password", 
         label: "Změna výchozího hesla routeru", 
-        why: "Unikátní heslo zabrání útočníkům ovládnout vaši síť zvenčí.",
-        risk: "Výchozí hesla (admin/admin) jsou veřejně dohledatelná. Útočník může sledovat váš provoz.",
-        aiPrompt: "Jak se dostanu do nastavení routeru a proč tam nesmí zůstat 'admin'?" 
+        why: "Výchozí hesla (admin/admin) jsou veřejně dohledatelná v manuálech.",
+        risk: "Útočník může ovládnout router a přesměrovat veškerý váš provoz na falešné weby.",
+        aiPrompt: "Jak změnit administrátorské heslo k routeru a proč je to důležité?" 
       },
       { 
         id: "net_wifi_pass", 
         label: "Silné heslo k Wi-Fi (16+ znaků)", 
-        why: "Dlouhé heslo je odolné proti automatickým útočným nástrojům.",
-        risk: "Slabé heslo umožní komukoliv v okolí domu krást vaši identitu nebo se připojit k vašim PC.",
-        aiPrompt: "Jak vytvořit silné heslo pro Wi-Fi, které se dobře pamatuje?" 
+        why: "Dlouhé heslo odolá automatizovaným útokům hrubou silou.",
+        risk: "Sousedé nebo útočníci před domem mohou sledovat vaši aktivitu a krást identitu.",
+        aiPrompt: "Jak vytvořit silné heslo k WiFi a jak ho bezpečně sdílet s návštěvou?" 
+      },
+      { 
+        id: "net_wps", 
+        label: "Vypnuté WPS", 
+        why: "Protokol WPS je technicky zastaralý a obsahuje kritickou chybu v návrhu.",
+        risk: "Útočník může prolomit vaše WiFi heslo během pár hodin pomocí jednoduchého programu.",
+        aiPrompt: "Co je to WPS a proč by mělo být v nastavení routeru vypnuté?" 
+      },
+      { 
+        id: "net_firmware", 
+        label: "Aktuální firmware routeru", 
+        why: "Výrobci vydávají opravy pro díry, které hackeři aktivně zneužívají.",
+        risk: "Zastaralý router může sloužit jako trvalý odposlech pro vše, co v síti děláte.",
+        aiPrompt: "Jak zkontrolovat a aktualizovat firmware na běžném domácím routeru?" 
+      },
+      { 
+        id: "net_guest", 
+        label: "Síť pro hosty (Guest Network)", 
+        why: "Odděluje návštěvy od vašich soukromých dat a chytrých zařízení.",
+        risk: "Návštěva s nakaženým telefonem může nevědomky infikovat váš počítač v téže síti.",
+        aiPrompt: "Jak nastavit Guest WiFi a k čemu je to dobré?" 
+      }
+    ]
+  },
+  {
+    title: "Sekce 4: Zálohování a obnova",
+    description: "Záloha je jedinou 100% jistotou, že o svá data nepřijdete při útoku nebo havárii.",
+    items: [
+      { 
+        id: "back_local", 
+        label: "Lokální záloha na externím disku", 
+        why: "Máte fyzickou kontrolu nad daty a jejich obnova je velmi rychlá.",
+        risk: "Při selhání vnitřního disku počítače přijdete o všechna data, pokud nejsou jinde.",
+        aiPrompt: "Jak správně zálohovat na externí disk a jak ho uchovávat?" 
+      },
+      { 
+        id: "back_cloud", 
+        label: "Cloudová záloha (OneDrive/iCloud/Disk)", 
+        why: "Data jsou chráněna i v případě požáru nebo krádeže celého domova.",
+        risk: "Pokud shoří dům i s diskem, přijdete o celoživotní vzpomínky bez cloudu.",
+        aiPrompt: "Který cloud je nejvhodnější pro zálohu fotek a dokumentů?" 
+      },
+      { 
+        id: "back_auto", 
+        label: "Automatizace záloh", 
+        why: "Lidé jsou zapomnětliví. Automatický systém běží bez vašeho zásahu.",
+        risk: "Manuální záloha stará půl roku je při útoku ransomwarem téměř k ničemu.",
+        aiPrompt: "Jak nastavit Time Machine na Macu nebo Zálohování ve Windows?" 
+      },
+      { 
+        id: "back_test", 
+        label: "Test obnovy ze zálohy", 
+        why: "Záloha, která nejde obnovit, není záloha, ale jen zabrané místo.",
+        risk: "Zjistit, že je záloha poškozená až v momentě, kdy ji potřebujete, je tragédie.",
+        aiPrompt: "Jak si vyzkoušet, že moje zálohy skutečně fungují a data jdou přečíst?" 
       }
     ]
   }
@@ -158,7 +213,8 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
       }
 
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const systemInstruction = `Jsi Kyber-GURU, tvým úkolem je pomoci uživateli s: "${item.label}". 
+      const systemInstruction = `Jsi Kyber-GURU, tvým úkolem je pomoci uživateli s bezpečnostním auditem: "${item.label}". 
+      Informace čerpej z kontextu: Proč je to důležité: ${item.why}, Riziko: ${item.risk}. 
       Vysvětli to v bodech, česky a srozumitelně. Nejdřív uveď riziko a pak přesný návod pro běžného uživatele.`;
 
       const response = await ai.models.generateContent({
@@ -194,7 +250,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents,
-        config: { systemInstruction: `Jsi kybernetický poradce. Pomáháš laikovi s tématem: ${activeItem.label}` }
+        config: { systemInstruction: `Jsi kybernetický poradce. Pomáháš laikovi s tématem: ${activeItem.label}. Odpovídej věcně a s důrazem na bezpečnost.` }
       });
       if (response.text) setChatHistory(prev => [...prev, { role: 'model', text: response.text! }]);
     } catch (e) {
@@ -219,14 +275,14 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
               Audit <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-600">Zabezpečení</span>
             </h1>
             <p className="text-gray-400 text-sm md:text-base font-light max-w-lg leading-relaxed">
-              Ověřte si úroveň své digitální ochrany. Klikněte na jakýkoliv bod pro zobrazení rizik nebo se poraďte s <span className="text-pink-400 font-bold">AI poradcem</span>.
+              Kompletní kontrolní seznam pro bezpečný život online. Projděte si všechny sekce a ujistěte se, že vaše digitální stopa je chráněna.
             </p>
           </div>
           <div className="bg-black/40 border border-white/5 p-6 rounded-3xl text-center min-w-[180px] backdrop-blur-md">
             <div className="text-5xl font-bold text-white mb-1 font-mono tracking-tighter">{percentage}%</div>
             <div className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mb-3">Zabezpečeno</div>
             <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-               <div className={`h-full transition-all duration-1000 ${percentage === 100 ? 'bg-emerald-500' : 'bg-pink-600'}`} style={{ width: `${percentage}%` }}></div>
+               <div className={`h-full transition-all duration-1000 ${percentage === 100 ? 'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'bg-pink-600'}`} style={{ width: `${percentage}%` }}></div>
             </div>
           </div>
         </div>
@@ -246,7 +302,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                 <div 
                   key={item.id} 
                   onClick={() => toggleExpand(item.id)}
-                  className={`group relative overflow-hidden transition-all duration-300 border rounded-2xl cursor-pointer ${expandedItems[item.id] ? 'bg-[#1a1a1a] border-pink-500/50' : 'bg-[#0a0a0a]/60 border-white/5 hover:border-white/20'}`}
+                  className={`group relative overflow-hidden transition-all duration-300 border rounded-2xl cursor-pointer ${expandedItems[item.id] ? 'bg-[#1a1a1a] border-pink-500/50 ring-1 ring-pink-500/20' : 'bg-[#0a0a0a]/60 border-white/5 hover:border-white/20'}`}
                 >
                   <div className="p-5 md:p-6 flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4 flex-grow">
@@ -264,9 +320,9 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                     <div className="flex items-center gap-2">
                         <button 
                           onClick={(e) => startAiConsultant(item, e)}
-                          className="flex items-center gap-2 px-4 py-2 bg-pink-500/10 hover:bg-pink-500 text-pink-500 hover:text-white border border-pink-500/20 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all shadow-sm"
+                          className="flex items-center gap-2 px-4 py-2 bg-pink-500/10 hover:bg-pink-500 text-pink-500 hover:text-white border border-pink-500/20 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all shadow-sm group/btn"
                         >
-                          <Bot className="w-3 h-3" /> <span className="hidden sm:inline">AI Poradce</span>
+                          <Bot className="w-3 h-3 group-hover/btn:rotate-12 transition-transform" /> <span className="hidden sm:inline">AI Poradce</span>
                         </button>
                         <div className="text-gray-600 group-hover:text-pink-400 transition-colors px-2">
                            {expandedItems[item.id] ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
@@ -275,19 +331,19 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                   </div>
 
                   {expandedItems[item.id] && (
-                    <div className="px-6 pb-6 pt-2 animate-fade-in-up border-t border-white/5">
+                    <div className="px-6 pb-6 pt-2 animate-fade-in-up border-t border-white/5 bg-black/20">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                         <div className="p-5 bg-emerald-500/5 rounded-2xl border border-emerald-500/10">
                           <div className="flex items-center gap-2 text-emerald-400 text-[10px] font-bold uppercase mb-3 tracking-widest font-mono">
-                             <ShieldCheck className="w-4 h-4" /> Význam
+                             <ShieldCheck className="w-4 h-4" /> Význam a přínos
                           </div>
-                          <p className="text-gray-300 text-sm leading-relaxed">{item.why}</p>
+                          <p className="text-gray-300 text-sm leading-relaxed font-light">{item.why}</p>
                         </div>
                         <div className="p-5 bg-rose-500/5 rounded-2xl border border-rose-500/10">
                           <div className="flex items-center gap-2 text-rose-400 text-[10px] font-bold uppercase mb-3 tracking-widest font-mono">
-                             <AlertTriangle className="w-4 h-4" /> Riziko
+                             <AlertTriangle className="w-4 h-4" /> Kritické riziko
                           </div>
-                          <p className="text-gray-300 text-sm leading-relaxed">{item.risk}</p>
+                          <p className="text-gray-300 text-sm leading-relaxed font-light">{item.risk}</p>
                         </div>
                       </div>
                     </div>
@@ -358,7 +414,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                   </button>
                 </form>
                 <div className="mt-4 flex justify-center">
-                    <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-mono tracking-widest text-gray-600 uppercase">Procesováno modelem Gemini 3 Flash</div>
+                    <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-mono tracking-widest text-gray-600 uppercase">Model: Gemini 3 Flash Expert System</div>
                 </div>
              </div>
           </div>
