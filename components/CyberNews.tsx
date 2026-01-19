@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Newspaper, ExternalLink, Loader2, AlertTriangle, RefreshCw, Languages, Calendar, Globe, Sparkles, MapPin, Flag, Key } from 'lucide-react';
+import { ArrowLeft, Newspaper, ExternalLink, RefreshCw, Globe, Sparkles, MapPin, Flag, Key, Info, CheckCircle, ShieldAlert, Settings, CreditCard, AlertCircle, Languages } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 
 interface Props {
@@ -23,6 +23,7 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
   const [error, setError] = useState<string | null>(null);
   const [groundingUrls, setGroundingUrls] = useState<{title: string, uri: string}[]>([]);
   const [needsKey, setNeedsKey] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<string | null>(null);
 
   const checkKeyAndFetch = async () => {
     try {
@@ -30,14 +31,12 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
       const hasKey = await window.aistudio.hasSelectedApiKey();
       if (!hasKey) {
         setNeedsKey(true);
-        setIsLoading(false);
         return;
       }
       setNeedsKey(false);
       fetchNewsWithAI();
     } catch (err) {
-      console.error("Key check error:", err);
-      fetchNewsWithAI(); // Fallback to try anyway
+      setNeedsKey(true);
     }
   };
 
@@ -46,7 +45,8 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
       // @ts-ignore
       await window.aistudio.openSelectKey();
       setNeedsKey(false);
-      fetchNewsWithAI();
+      // Small delay to ensure the key is injected into process.env
+      setTimeout(fetchNewsWithAI, 1000);
     } catch (err) {
       console.error("Failed to open key dialog:", err);
     }
@@ -55,6 +55,7 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
   const fetchNewsWithAI = async () => {
     setIsLoading(true);
     setError(null);
+    setDebugInfo(null);
     setArticles([]);
     
     try {
@@ -65,10 +66,10 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
         contents: [{ 
           role: 'user', 
           parts: [{ 
-            text: "Najdi 6 nejvýznamnějších aktuálních zpráv ze světa kybernetické bezpečnosti za posledních 48 hodin. " +
-                  "Rozděl je na 'domestic' (Česká republika) a 'world' (zbytek světa). " +
-                  "Pro každou zprávu uveď: region, název v češtině, stručné shrnutí v češtině, název zdroje, URL adresu a kategorii. " +
-                  "Výstup vrať jako čistý JSON pole objektů."
+            text: "Najdi 6 nejvýznamnějších aktuálních zpráv o kybernetické bezpečnosti (ransomware, úniky dat, nové zákony) za posledních 48 hodin. " +
+                  "Rozděl je na 'domestic' (Česká republika) a 'world' (svět). " +
+                  "Pro každou zprávu uveď: region, název, krátké shrnutí, zdroj, URL a kategorii. " +
+                  "Odpověz POUZE ve formátu JSON pole objektů. Vše česky."
           }] 
         }],
         config: { 
@@ -89,21 +90,23 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
         setGroundingUrls(urls);
       }
 
-      // Extract JSON from potential markdown blocks
       const jsonMatch = text.match(/\[[\s\S]*\]/);
       if (jsonMatch) {
         const parsedArticles = JSON.parse(jsonMatch[0]);
         setArticles(parsedArticles);
       } else {
-        throw new Error("Model nevrátil data ve správném formátu. Zkuste to prosím znovu.");
+        throw new Error("Invalid format from model");
       }
 
     } catch (err: any) {
       console.error("News AI Error:", err);
-      if (err.message?.includes("Requested entity was not found")) {
-        setNeedsKey(true);
+      const msg = err.message || "";
+      if (msg.includes("403") || msg.includes("permission") || msg.includes("not found")) {
+        setError("Vyhledávání vyžaduje aktivní Billing");
+        setDebugInfo("Váš API klíč musí patřit k projektu se zapnutou platební kartou (Pay-as-you-go). V bezplatném tarifu Google funkci Search blokuje.");
       } else {
-        setError("Nepodařilo se načíst zprávy. Ujistěte se, že máte vybraný platný API klíč s povoleným vyhledáváním.");
+        setError("Chyba při propojování s internetem");
+        setDebugInfo(msg);
       }
     } finally {
       setIsLoading(false);
@@ -126,13 +129,12 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
       <header className="mb-12 animate-fade-in-up">
         <div className="flex items-center gap-3 mb-6">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/5 text-amber-400 text-[10px] uppercase tracking-widest font-mono">
-            <Sparkles className="w-3 h-3" /> Real-time Intelligence
+            <Sparkles className="w-3 h-3" /> Live Analysis Active
           </div>
           <button 
             onClick={fetchNewsWithAI}
             disabled={isLoading}
-            className="text-gray-500 hover:text-white transition-colors"
-            title="Aktualizovat feed"
+            className="text-gray-500 hover:text-white transition-colors p-2"
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
           </button>
@@ -142,25 +144,28 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
            Kyber <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-600">Zpravodaj</span>
         </h1>
         <p className="text-gray-400 font-light max-w-2xl leading-relaxed">
-           Inteligentní monitoring hrozeb využívající Google Search grounding pro maximální aktuálnost.
+           Prohledáváme světové databáze incidentů pomocí <strong>Gemini AI</strong>. Vyžaduje projekt s aktivním fakturačním účtem.
         </p>
       </header>
 
       {needsKey ? (
         <div className="bg-amber-500/5 border border-amber-500/20 rounded-[2.5rem] p-12 text-center animate-fade-in-up max-w-2xl mx-auto">
-           <Key className="w-12 h-12 text-amber-500 mx-auto mb-6" />
-           <h2 className="text-xl font-display text-white mb-4 uppercase">Vyžadována autorizace</h2>
-           <p className="text-gray-500 text-sm mb-8 leading-relaxed">
-              Pro funkci živého vyhledávání zpráv je nutné vybrat váš vlastní API klíč z placeného projektu (nebo s povoleným Search Grounding).
+           <div className="w-20 h-20 bg-amber-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-amber-500/20">
+              <Key className="w-10 h-10 text-amber-500" />
+           </div>
+           <h2 className="text-2xl font-display text-white mb-4 uppercase">Autorizace vyžadována</h2>
+           <p className="text-gray-500 text-sm mb-10 leading-relaxed">
+              Google Search Grounding (živé hledání) je pokročilá funkce. <br/>
+              Pro její spuštění musíte vybrat svůj <strong>placený API klíč</strong>.
            </p>
-           <div className="flex flex-col gap-4 items-center">
+           <div className="flex flex-col items-center gap-4">
               <button 
                 onClick={handleOpenKeyDialog} 
-                className="bg-white text-black px-10 py-4 rounded-full font-bold uppercase text-xs tracking-[0.2em] shadow-xl hover:bg-amber-50 transition-all flex items-center gap-3"
+                className="bg-white text-black px-12 py-5 rounded-2xl font-bold uppercase text-xs tracking-widest shadow-2xl hover:bg-amber-50 transition-all flex items-center gap-3"
               >
                 Vybrat API klíč <ArrowLeft className="w-4 h-4 rotate-180" />
               </button>
-              <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noreferrer" className="text-[10px] text-gray-600 uppercase underline tracking-widest">Více o nastavení klíče</a>
+              <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" className="text-[10px] text-gray-600 hover:text-amber-500 font-mono uppercase underline tracking-widest">Dokumentace k fakturaci</a>
            </div>
         </div>
       ) : isLoading ? (
@@ -171,71 +176,61 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
               <Globe className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-amber-500/40 animate-pulse" />
            </div>
            <p className="text-amber-500 font-mono text-[10px] uppercase tracking-[0.4em] animate-pulse text-center">
-              Skenuji světové zdroje a analyzuji incidenty...
+              Skenuji globální incidenty...
            </p>
         </div>
       ) : error ? (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-[2.5rem] p-12 text-center animate-fade-in-up">
-           <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-6" />
-           <h2 className="text-xl font-display text-white mb-2 uppercase tracking-wide">Chyba synchronizace</h2>
-           <p className="text-gray-500 text-sm mb-8 leading-relaxed max-w-md mx-auto">{error}</p>
-           <button onClick={fetchNewsWithAI} className="bg-white text-black px-8 py-3 rounded-full font-bold uppercase text-xs tracking-widest shadow-lg hover:bg-amber-50 transition-colors">Zkusit znovu</button>
+        <div className="animate-fade-in-up space-y-6">
+          <div className="bg-red-500/10 border border-red-500/20 rounded-[2.5rem] p-12 text-center max-w-2xl mx-auto shadow-2xl">
+             <ShieldAlert className="w-12 h-12 text-red-500 mx-auto mb-6" />
+             <h2 className="text-xl font-display text-white mb-2 uppercase">{error}</h2>
+             <p className="text-gray-500 text-sm mb-10 max-w-md mx-auto leading-relaxed">{debugInfo}</p>
+             <div className="flex flex-wrap justify-center gap-4">
+                <button onClick={fetchNewsWithAI} className="bg-white text-black px-8 py-3 rounded-xl font-bold uppercase text-[10px] tracking-widest shadow-lg">Zkusit znovu</button>
+                <button onClick={handleOpenKeyDialog} className="bg-white/10 text-white border border-white/10 px-8 py-3 rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-white/20 transition-colors">Změnit projekt</button>
+             </div>
+          </div>
+
+          <div className="bg-[#0f0f0f] border border-white/5 rounded-3xl p-8 max-w-2xl mx-auto">
+             <h3 className="text-white font-display text-xs mb-8 uppercase tracking-widest flex items-center gap-2">
+                <Settings className="w-4 h-4 text-amber-500" /> Kontrolní seznam pro GCP
+             </h3>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <CheckItem icon={<CheckCircle className="text-emerald-500" />} label="Gemini API" sub="Povolené v Google Cloud" />
+                <CheckItem icon={<CreditCard className="text-amber-500" />} label="Billing Active" sub="Pay-as-you-go tarif" />
+             </div>
+          </div>
         </div>
       ) : (
         <div className="space-y-20 pb-20">
-          
           <section className="animate-fade-in-up">
             <div className="flex items-center gap-4 mb-8">
-               <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-                  <MapPin className="w-6 h-6 text-amber-500" />
-               </div>
-               <div>
-                  <h2 className="text-2xl font-display text-white uppercase tracking-tight">Domácí Scéna</h2>
-                  <p className="text-[10px] text-gray-500 font-mono uppercase tracking-[0.2em]">Incidenty v České republice</p>
-               </div>
+               <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center"><MapPin className="w-6 h-6 text-amber-500" /></div>
+               <h2 className="text-2xl font-display text-white uppercase tracking-tight">Incidenty v ČR</h2>
             </div>
-
-            {domesticArticles.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                 {domesticArticles.map((article, idx) => <ArticleCard key={idx} article={article} idx={idx} />)}
-              </div>
-            ) : (
-              <div className="p-10 border border-dashed border-white/5 rounded-3xl text-center text-gray-600 text-xs font-mono uppercase">
-                 Hledám aktuální domácí incidenty... (Zkuste obnovit)
-              </div>
-            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+               {domesticArticles.length > 0 ? domesticArticles.map((a, i) => <ArticleCard key={i} article={a} idx={i} />) : <div className="col-span-full p-16 border border-dashed border-white/5 rounded-3xl text-center text-gray-600 font-mono text-xs uppercase tracking-widest">Žádné zásadní lokální incidenty nebyly detekovány.</div>}
+            </div>
           </section>
 
-          <section className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+          <section className="animate-fade-in-up">
             <div className="flex items-center gap-4 mb-8">
-               <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
-                  <Globe className="w-6 h-6 text-orange-500" />
-               </div>
-               <div>
-                  <h2 className="text-2xl font-display text-white uppercase tracking-tight">Světový monitoring</h2>
-                  <p className="text-[10px] text-gray-500 font-mono uppercase tracking-[0.2em]">Globální kyber-hrozby</p>
-               </div>
+               <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center"><Globe className="w-6 h-6 text-orange-500" /></div>
+               <h2 className="text-2xl font-display text-white uppercase tracking-tight">Světová scéna</h2>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-               {worldArticles.map((article, idx) => <ArticleCard key={idx} article={article} idx={idx + 10} />)}
+               {worldArticles.map((a, i) => <ArticleCard key={i} article={a} idx={i+10} />)}
             </div>
           </section>
 
           {groundingUrls.length > 0 && (
             <div className="mt-16 animate-fade-in-up border-t border-white/5 pt-12">
                <h3 className="text-white font-display text-[10px] mb-6 uppercase tracking-widest flex items-center gap-2 text-gray-500">
-                  <Languages className="w-3 h-3" /> Citované zdroje v reálném čase
+                  <Languages className="w-3 h-3" /> Zdroje informací (Google Search Grounding)
                </h3>
                <div className="flex flex-wrap gap-2">
                   {groundingUrls.map((url, i) => (
-                    <a 
-                      key={i} 
-                      href={url.uri} 
-                      target="_blank" 
-                      rel="noreferrer" 
-                      className="text-[9px] bg-white/5 hover:bg-amber-500/10 border border-white/5 hover:border-amber-500/20 px-3 py-1.5 rounded-full text-gray-500 hover:text-amber-400 transition-all font-mono truncate max-w-[200px]"
-                    >
+                    <a key={i} href={url.uri} target="_blank" rel="noreferrer" className="text-[9px] bg-white/5 hover:bg-amber-500/10 border border-white/5 hover:border-amber-500/20 px-3 py-1.5 rounded-full text-gray-500 hover:text-amber-400 transition-all font-mono truncate max-w-[200px]">
                       {url.title}
                     </a>
                   ))}
@@ -248,42 +243,31 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
   );
 };
 
+const CheckItem: React.FC<{ icon: React.ReactNode, label: string, sub: string }> = ({ icon, label, sub }) => (
+  <div className="flex gap-4 p-5 bg-white/5 rounded-2xl border border-white/5">
+     <div className="mt-1">{icon}</div>
+     <div>
+        <div className="text-white text-xs font-bold uppercase tracking-tight">{label}</div>
+        <div className="text-[10px] text-gray-500 font-mono uppercase">{sub}</div>
+     </div>
+  </div>
+);
+
 const ArticleCard: React.FC<{ article: Article, idx: number }> = ({ article, idx }) => (
   <div 
-    className="group relative flex flex-col bg-[#0a0a0a]/60 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden hover:border-amber-500/40 transition-all duration-500"
+    className="group relative flex flex-col bg-[#0a0a0a]/60 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden hover:border-amber-500/40 transition-all duration-500 shadow-2xl"
     style={{ animationDelay: `${idx * 100}ms` }}
   >
-     <div className="p-6 md:p-8 flex flex-col h-full">
+     <div className="p-8 flex flex-col h-full">
         <div className="flex items-center justify-between mb-6">
-           <div className="flex items-center gap-2 text-[8px] text-gray-500 font-mono uppercase tracking-widest">
-              <Calendar className="w-3 h-3 text-amber-500/50" />
-              {article.date}
-           </div>
-           <span className="text-[8px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20 font-mono uppercase tracking-tight">
-              {article.category}
-           </span>
+           <span className="text-[8px] text-gray-500 font-mono uppercase tracking-widest">{article.date}</span>
+           <span className="text-[8px] bg-amber-500/10 text-amber-400 px-2 py-1 rounded border border-amber-500/20 font-mono uppercase font-bold tracking-tighter">{article.category}</span>
         </div>
-
-        <h3 className="text-lg font-bold text-white mb-4 font-display uppercase tracking-tight leading-tight group-hover:text-amber-400 transition-colors min-h-[3rem] line-clamp-3">
-           {article.title}
-        </h3>
-
-        <p className="text-xs text-gray-500 leading-relaxed font-light mb-8 line-clamp-4">
-           {article.description}
-        </p>
-
+        <h3 className="text-lg font-bold text-white mb-4 font-display uppercase tracking-tight leading-tight group-hover:text-amber-400 transition-colors line-clamp-3">{article.title}</h3>
+        <p className="text-xs text-gray-500 leading-relaxed font-light mb-8 line-clamp-4">{article.description}</p>
         <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
-           <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2 truncate max-w-[150px]">
-              <Flag className="w-3 h-3" /> {article.source}
-           </div>
-           <a 
-             href={article.url} 
-             target="_blank" 
-             rel="noreferrer"
-             className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 hover:text-white hover:border-amber-500/40 transition-all group/link"
-           >
-              <ExternalLink className="w-4 h-4 group-hover/link:scale-110 transition-transform" />
-           </a>
+           <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2 truncate max-w-[150px]"><Flag className="w-3 h-3 text-amber-500" /> {article.source}</div>
+           <a href={article.url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 hover:text-white hover:border-amber-500/40 transition-all shadow-inner"><ExternalLink className="w-4 h-4" /></a>
         </div>
      </div>
   </div>
