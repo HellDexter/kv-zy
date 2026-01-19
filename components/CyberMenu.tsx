@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { ArrowLeft, BrainCircuit, Presentation, ArrowRight, ClipboardList, PlayCircle, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, BrainCircuit, Presentation, ArrowRight, ClipboardList, PlayCircle, ShieldAlert, Newspaper } from 'lucide-react';
 
 interface Props {
-  onNavigate: (view: 'quizzes' | 'presentations' | 'practical_exercises' | 'videos' | 'security_scanner') => void;
+  onNavigate: (view: 'quizzes' | 'presentations' | 'practical_exercises' | 'videos' | 'security_scanner' | 'cyber_news') => void;
   onBack: () => void;
 }
 
@@ -27,7 +27,7 @@ const CyberMenu: React.FC<Props> = ({ onNavigate, onBack }) => {
           Kyberbezpečnost
         </h1>
         <p className="text-gray-500 text-lg md:text-xl font-light max-w-3xl leading-relaxed">
-          Zvolte formu studia. Testujte se, prohlížejte materiály nebo využijte interaktivní skenery hrozeb.
+          Zvolte formu studia. Testujte se, prohlížejte materiály nebo sledujte nejnovější bezpečnostní incidenty ze světa.
         </p>
       </header>
 
@@ -38,7 +38,8 @@ const CyberMenu: React.FC<Props> = ({ onNavigate, onBack }) => {
           { id: 'presentations', title: 'Prezentace', desc: 'Teoretické základy a materiály ke studiu.', icon: Presentation, color: 'purple' },
           { id: 'videos', title: 'Videa', desc: 'Video tutoriály a záznamy praktických lekcí.', icon: PlayCircle, color: 'cyan' },
           { id: 'practical_exercises', title: 'Audit', desc: 'Zkontrolujte si zabezpečení svého zařízení.', icon: ClipboardList, color: 'pink' },
-          { id: 'security_scanner', title: 'Bezpečnostní Lab', desc: 'Skenery úniků dat a reputace podezřelých URL.', icon: ShieldAlert, color: 'rose' }
+          { id: 'security_scanner', title: 'Bezpečnostní Lab', desc: 'Skenery úniků dat a reputace podezřelých URL.', icon: ShieldAlert, color: 'rose' },
+          { id: 'cyber_news', title: 'Kyber Zprávy', desc: 'Aktuální bezpečnostní novinky ze světa přeložené AI.', icon: Newspaper, color: 'amber' }
         ].map((item) => (
           <button
             key={item.id}

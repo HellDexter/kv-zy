@@ -13,9 +13,10 @@ import PresentationScreen from './components/PresentationScreen';
 import AuditScreen from './components/AuditScreen';
 import VideoScreen from './components/VideoScreen';
 import SecurityScanner from './components/SecurityScanner';
+import CyberNews from './components/CyberNews';
 import { supabase } from './supabaseClient';
 
-type View = 'login' | 'dashboard' | 'cyber_menu' | 'ai_menu' | 'quizzes' | 'presentations' | 'practical_exercises' | 'videos' | 'quiz' | 'result' | 'security_scanner';
+type View = 'login' | 'dashboard' | 'cyber_menu' | 'ai_menu' | 'quizzes' | 'presentations' | 'practical_exercises' | 'videos' | 'quiz' | 'result' | 'security_scanner' | 'cyber_news';
 type Module = 'cyber' | 'ai';
 type AuthStatus = 'initializing' | 'authenticated' | 'unauthenticated' | 'syncing';
 
@@ -200,6 +201,7 @@ const App: React.FC = () => {
     case 'practical_exercises': content = <AuditScreen onBack={() => setCurrentView(activeModule === 'cyber' ? 'cyber_menu' : 'ai_menu')} />; break;
     case 'videos': content = <VideoScreen videos={currentVideos} onBack={() => setCurrentView(activeModule === 'cyber' ? 'cyber_menu' : 'ai_menu')} theme={activeModule === 'cyber' ? 'emerald' : 'purple'} />; break;
     case 'security_scanner': content = <SecurityScanner onBack={() => setCurrentView('cyber_menu')} />; break;
+    case 'cyber_news': content = <CyberNews onBack={() => setCurrentView('cyber_menu')} />; break;
     case 'quiz':
       const qBlock = currentModuleData.find(b => b.id === quizState.currentBlockId);
       if (qBlock) {
