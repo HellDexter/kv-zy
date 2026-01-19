@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Newspaper, ExternalLink, RefreshCw, Globe, Sparkles, MapPin, Flag, Key, Info, CheckCircle, ShieldAlert, Settings, CreditCard, AlertCircle, Languages } from 'lucide-react';
+// Fix: Added missing ArrowRight icon to the import list from lucide-react
+import { ArrowLeft, ArrowRight, Newspaper, ExternalLink, RefreshCw, Globe, Sparkles, MapPin, Flag, Key, Info, CheckCircle, ShieldAlert, Settings, CreditCard, AlertCircle, Languages } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 
 interface Props {
@@ -23,8 +24,27 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
   const [error, setError] = useState<string | null>(null);
   const [groundingUrls, setGroundingUrls] = useState<{title: string, uri: string}[]>([]);
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
+  const [needsKeySelection, setNeedsKeySelection] = useState(false);
+
+  const handleOpenKeyDialog = async () => {
+    try {
+      // @ts-ignore
+      await window.aistudio.openSelectKey();
+      setNeedsKeySelection(false);
+      // Small delay to let the key inject
+      setTimeout(fetchNewsWithAI, 1000);
+    } catch (err) {
+      console.error("Failed to open key dialog:", err);
+    }
+  };
 
   const fetchNewsWithAI = async () => {
+    // Check if key is available in environment
+    if (!process.env.API_KEY) {
+      setNeedsKeySelection(true);
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     setDebugInfo(null);
@@ -73,9 +93,12 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
     } catch (err: any) {
       console.error("News AI Error:", err);
       const msg = err.message || "";
-      if (msg.includes("403") || msg.includes("permission") || msg.includes("not found")) {
-        setError("Vyhledávání vyžaduje aktivní Billing");
-        setDebugInfo("Váš API klíč musí patřit k projektu se zapnutou platební kartou (Pay-as-you-go). V bezplatném tarifu Google funkci Search blokuje.");
+      
+      if (msg.includes("API Key") || msg.includes("not set")) {
+        setNeedsKeySelection(true);
+      } else if (msg.includes("403") || msg.includes("permission") || msg.includes("not found")) {
+        setError("Chyba oprávnění (Billing)");
+        setDebugInfo("Funkce Google Search vyžaduje API klíč z projektu s aktivní platební kartou (Pay-as-you-go).");
       } else {
         setError("Chyba při propojování s internetem");
         setDebugInfo(msg);
@@ -120,7 +143,23 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
         </p>
       </header>
 
-      {isLoading ? (
+      {needsKeySelection ? (
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-[2.5rem] p-12 text-center max-w-2xl mx-auto animate-fade-in-up">
+           <div className="w-20 h-20 bg-amber-500/20 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-amber-500/30">
+              <Key className="w-10 h-10 text-amber-500" />
+           </div>
+           <h2 className="text-2xl font-display text-white mb-4 uppercase">Klíč nenalezen</h2>
+           <p className="text-gray-500 text-sm mb-10 leading-relaxed">
+              V tomto prohlížeči nebyl detekován platný API klíč. Pro živé hledání je nutné vybrat klíč z projektu se zapnutým Billingem.
+           </p>
+           <button 
+             onClick={handleOpenKeyDialog}
+             className="bg-white text-black px-12 py-5 rounded-2xl font-bold uppercase text-xs tracking-widest hover:bg-amber-50 transition-all flex items-center gap-3 mx-auto"
+           >
+             Vybrat API klíč <ArrowRight className="w-4 h-4" />
+           </button>
+        </div>
+      ) : isLoading ? (
         <div className="flex flex-col items-center justify-center py-24">
            <div className="relative w-24 h-24 mb-10">
               <div className="absolute inset-0 border-2 border-amber-500/10 rounded-full"></div>
@@ -139,16 +178,7 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
              <p className="text-gray-500 text-sm mb-10 max-w-md mx-auto leading-relaxed">{debugInfo}</p>
              <div className="flex flex-wrap justify-center gap-4">
                 <button onClick={fetchNewsWithAI} className="bg-white text-black px-8 py-3 rounded-xl font-bold uppercase text-[10px] tracking-widest shadow-lg">Zkusit znovu</button>
-             </div>
-          </div>
-
-          <div className="bg-[#0f0f0f] border border-white/5 rounded-3xl p-8 max-w-2xl mx-auto">
-             <h3 className="text-white font-display text-xs mb-8 uppercase tracking-widest flex items-center gap-2">
-                <Settings className="w-4 h-4 text-amber-500" /> Kontrolní seznam pro zprovoznění
-             </h3>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <CheckItem icon={<CheckCircle className="text-emerald-500" />} label="Gemini API" sub="Povolené v Google Cloud" />
-                <CheckItem icon={<CreditCard className="text-amber-500" />} label="Billing Active" sub="Nutné pro Google Search" />
+                <button onClick={handleOpenKeyDialog} className="bg-white/10 text-white border border-white/10 px-8 py-3 rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-white/20 transition-colors">Změnit klíč</button>
              </div>
           </div>
         </div>
@@ -173,21 +203,6 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
                {worldArticles.map((a, i) => <ArticleCard key={i} article={a} idx={i+10} />)}
             </div>
           </section>
-
-          {groundingUrls.length > 0 && (
-            <div className="mt-16 animate-fade-in-up border-t border-white/5 pt-12">
-               <h3 className="text-white font-display text-[10px] mb-6 uppercase tracking-widest flex items-center gap-2 text-gray-500">
-                  <Languages className="w-3 h-3" /> Zdroje informací (Google Search Grounding)
-               </h3>
-               <div className="flex flex-wrap gap-2">
-                  {groundingUrls.map((url, i) => (
-                    <a key={i} href={url.uri} target="_blank" rel="noreferrer" className="text-[9px] bg-white/5 hover:bg-amber-500/10 border border-white/5 hover:border-amber-500/20 px-3 py-1.5 rounded-full text-gray-500 hover:text-amber-400 transition-all font-mono truncate max-w-[200px]">
-                      {url.title}
-                    </a>
-                  ))}
-               </div>
-            </div>
-          )}
         </div>
       )}
     </div>

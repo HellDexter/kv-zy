@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Check, Bot, X, ShieldAlert, ShieldCheck, Send, Loader2, AlertTriangle, ChevronDown, ChevronUp, Zap } from 'lucide-react';
+import { ArrowLeft, Check, Bot, X, ShieldAlert, ShieldCheck, Send, Loader2, AlertTriangle, ChevronDown, ChevronUp, Zap, Key, ArrowRight } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 
 interface Props {
@@ -77,6 +77,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
   const [loading, setLoading] = useState(false);
   const [activeItem, setActiveItem] = useState<AuditItem | null>(null);
   const [inputMessage, setInputMessage] = useState("");
+  const [needsKey, setNeedsKey] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const totalItemsCount = AUDIT_DATA.reduce((acc, section) => acc + section.items.length, 0);
@@ -87,6 +88,21 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatHistory, showChat, loading]);
 
+  const handleOpenKeyDialog = async () => {
+    try {
+      // @ts-ignore
+      await window.aistudio.openSelectKey();
+      setNeedsKey(false);
+      if (activeItem) {
+        // Retry the call
+        const dummyEvent = { stopPropagation: () => {} } as React.MouseEvent;
+        startAiConsultant(activeItem, dummyEvent);
+      }
+    } catch (err) {
+      console.error("Failed to open key dialog:", err);
+    }
+  };
+
   const toggleCheck = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }));
@@ -94,30 +110,39 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
 
   const startAiConsultant = async (item: AuditItem, e: React.MouseEvent) => {
     e.stopPropagation();
-    setLoading(true);
     setActiveItem(item);
     setShowChat(true);
     setChatHistory([]);
+    setNeedsKey(false);
+
+    if (!process.env.API_KEY) {
+      setNeedsKey(true);
+      return;
+    }
+
+    setLoading(true);
 
     try {
-      // Always create fresh instance with system API key
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-preview', // Upgraded for better reasoning
+        model: 'gemini-3-pro-preview',
         contents: [{ role: 'user', parts: [{ text: item.aiPrompt }] }],
         config: { 
-          systemInstruction: `Jsi Kyber-GURU, špičkový expert na IT bezpečnost. Pomoz uživateli s konkrétním tématem: ${item.label}. 
-          Vysvětli mu, proč je to důležité, jaké je riziko (${item.risk}) a dej mu přesný, srozumitelný návod v češtině. 
-          Buď profesionální, ale lidský.` 
+          systemInstruction: `Jsi Kyber-GURU, špičkový expert na IT bezpečnost. Pomoz uživateli s tématem: ${item.label}. Riziko: ${item.risk}.` 
         }
       });
 
       if (response.text) {
         setChatHistory([{ role: 'model', text: response.text }]);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("AI Consultant Error:", err);
-      setChatHistory([{ role: 'model', text: "Omlouvám se, ale nepodařilo se mi navázat spojení s mojí bezpečnostní databází. Zkuste to prosím za chvíli." }]);
+      const msg = err.message || "";
+      if (msg.includes("API Key") || msg.includes("not set")) {
+        setNeedsKey(true);
+      } else {
+        setChatHistory([{ role: 'model', text: "Omlouvám se, ale nepodařilo se mi navázat spojení. Zkontrolujte prosím svůj API klíč." }]);
+      }
     } finally {
       setLoading(false);
     }
@@ -125,7 +150,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputMessage.trim() || loading || !activeItem) return;
+    if (!inputMessage.trim() || loading || !activeItem || !process.env.API_KEY) return;
 
     const userText = inputMessage;
     const newHistory: Message[] = [...chatHistory, { role: 'user', text: userText }];
@@ -143,7 +168,7 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
         setChatHistory(prev => [...prev, { role: 'model', text: response.text! }]);
       }
     } catch (e) {
-      setChatHistory(prev => [...prev, { role: 'model', text: "Došlo k chybě při generování odpovědi. Zkontrolujte prosím své připojení." }]);
+      setChatHistory(prev => [...prev, { role: 'model', text: "Došlo k chybě při generování odpovědi." }]);
     } finally {
       setLoading(false);
     }
@@ -247,26 +272,41 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
                 </div>
                 <button onClick={() => setShowChat(false)} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-500 hover:text-white transition-all"><X className="w-5 h-5" /></button>
              </div>
+             
              <div className="flex-grow overflow-y-auto p-6 space-y-6">
-                {chatHistory.map((msg, idx) => (
-                  <div key={idx} className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                    <div className={`w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center mt-1 border ${msg.role === 'model' ? 'bg-pink-500/10 text-pink-500 border-pink-500/20' : 'bg-white/5 text-gray-500 border-white/10'}`}>
-                      {msg.role === 'model' ? <Bot className="w-4 h-4" /> : <div className="w-1 h-1 bg-white rounded-full"></div>}
-                    </div>
-                    <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === 'model' ? 'bg-[#181818] text-gray-200 border border-white/5' : 'bg-pink-600 text-white shadow-lg'}`}>
-                      <div dangerouslySetInnerHTML={{ __html: msg.text.replace(/\n/g, '<br/>') }}></div>
-                    </div>
+                {needsKey ? (
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-3xl p-8 text-center animate-fade-in-up">
+                     <Key className="w-10 h-10 text-amber-500 mx-auto mb-4" />
+                     <h3 className="text-white font-bold mb-2">Chybí API klíč</h3>
+                     <p className="text-gray-500 text-xs mb-6">AI konzultant vyžaduje platný API klíč s aktivním Billingem.</p>
+                     <button onClick={handleOpenKeyDialog} className="bg-white text-black px-6 py-3 rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-amber-50 transition-all flex items-center gap-2 mx-auto">Vybrat klíč <ArrowRight className="w-3 h-3" /></button>
                   </div>
-                ))}
-                {loading && <div className="flex gap-4 animate-pulse"><div className="w-8 h-8 rounded-lg bg-pink-500/10 border border-pink-500/20" /><div className="bg-[#181818] rounded-2xl px-6 py-4 w-32" /></div>}
+                ) : (
+                  <>
+                    {chatHistory.map((msg, idx) => (
+                      <div key={idx} className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                        <div className={`w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center mt-1 border ${msg.role === 'model' ? 'bg-pink-500/10 text-pink-500 border-pink-500/20' : 'bg-white/5 text-gray-500 border-white/10'}`}>
+                          {msg.role === 'model' ? <Bot className="w-4 h-4" /> : <div className="w-1 h-1 bg-white rounded-full"></div>}
+                        </div>
+                        <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === 'model' ? 'bg-[#181818] text-gray-200 border border-white/5' : 'bg-pink-600 text-white shadow-lg'}`}>
+                          <div dangerouslySetInnerHTML={{ __html: msg.text.replace(/\n/g, '<br/>') }}></div>
+                        </div>
+                      </div>
+                    ))}
+                    {loading && <div className="flex gap-4 animate-pulse"><div className="w-8 h-8 rounded-lg bg-pink-500/10 border border-pink-500/20" /><div className="bg-[#181818] rounded-2xl px-6 py-4 w-32" /></div>}
+                  </>
+                )}
                 <div ref={chatEndRef} />
              </div>
-             <div className="p-6 bg-[#111] border-t border-white/5">
-                <form onSubmit={handleSendMessage} className="flex gap-3">
-                  <input value={inputMessage} onChange={(e) => setInputMessage(e.target.value)} placeholder="Zeptejte se na detaily..." className="flex-grow bg-[#050505] border border-white/10 rounded-2xl px-6 py-4 text-sm text-white focus:outline-none focus:border-pink-500/50 transition-all font-light" />
-                  <button type="submit" disabled={loading || !inputMessage.trim()} className="w-14 h-14 bg-pink-600 text-white rounded-2xl hover:bg-pink-500 disabled:opacity-30 transition-all flex items-center justify-center shadow-lg"><Send className="w-5 h-5" /></button>
-                </form>
-             </div>
+             
+             {!needsKey && (
+               <div className="p-6 bg-[#111] border-t border-white/5">
+                  <form onSubmit={handleSendMessage} className="flex gap-3">
+                    <input value={inputMessage} onChange={(e) => setInputMessage(e.target.value)} placeholder="Zeptejte se na detaily..." className="flex-grow bg-[#050505] border border-white/10 rounded-2xl px-6 py-4 text-sm text-white focus:outline-none focus:border-pink-500/50 transition-all font-light" />
+                    <button type="submit" disabled={loading || !inputMessage.trim()} className="w-14 h-14 bg-pink-600 text-white rounded-2xl hover:bg-pink-500 disabled:opacity-30 transition-all flex items-center justify-center shadow-lg"><Send className="w-5 h-5" /></button>
+                  </form>
+               </div>
+             )}
           </div>
         </div>
       )}
