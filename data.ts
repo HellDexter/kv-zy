@@ -14,8 +14,14 @@ export const cyberVideos: Video[] = [
 ];
 
 export const aiVideos: Video[] = [
-  { id: 1, title: "Co je to Generativní AI?", description: "Vysvětlení principů LLM a budoucnosti.", youtubeId: "hfUIWp0xpg0" },
-  { id: 2, title: "ChatGPT: Tipy a triky", description: "Efektivní využití ChatGPT pro produktivitu.", youtubeId: "L_Guz73e6fw" }
+  { id: 1, title: "NotebookLM a analýza dokumentů", description: "Jak využít revoluční nástroj od Google pro práci s vlastními daty.", youtubeId: "7d0qP5hv-Dk" },
+  { id: 2, title: "Pokročilé techniky promptování", description: "Jak psát zadání, aby AI dělala přesně to, co chcete.", youtubeId: "H9p42slytsM" },
+  { id: 3, title: "Rizika AI a Deepfakes", description: "Na co si dát pozor ve světě syntetických médií.", youtubeId: "a5xZ4BA_PAk" },
+  { id: 4, title: "Úvod do generativních modelů", description: "Jak fungují LLM modely pod kapotou.", youtubeId: "bKeURsM2WmQ" },
+  { id: 5, title: "Praktické využití AI v kanceláři", description: "Automatizace rutinních úkolů a mailové komunikace.", youtubeId: "BHv2BSn7xYA" },
+  { id: 6, title: "Srovnání: ChatGPT vs Gemini", description: "Velký test aktuálně nejlepších AI asistentů na trhu.", youtubeId: "F8CCv005kGA" },
+  { id: 7, title: "Perplexity AI: Nová éra hledání", description: "Proč je tento vyhledávač lepší než klasický Google.", youtubeId: "OMYQvVURYkA" },
+  { id: 8, title: "Top AI nástroje pro produktivitu", description: "Přehled nejlepších aplikací pro rok 2025.", youtubeId: "tgTIx7C90eo" }
 ];
 
 export const courseData: Block[] = [
@@ -180,7 +186,7 @@ export const aiCourseData: Block[] = [
     { id: 5, question: "Role prompting?", options: ["Děti", "Zadání identity (Jsi expert)", "Hra", "Maska"], correctAnswer: 1, hint: "Nastavení experta." },
     { id: 6, question: "Chain of Thought?", options: ["Zákaz", "Krok za krokem", "Rychlost", "Zmatek"], correctAnswer: 1, hint: "Postupné uvažování." },
     { id: 7, question: "Iterace?", options: ["Zánik", "Postupné vylepšování chatu", "Opakování stejného", "Chyba"], correctAnswer: 1, hint: "Zpřesňování." },
-    { id: 8, question: "System Prompt?", options: ["Monitor", "Globální instrukce chování", "Restart", "Bios"], correctAnswer: 1, hint: "Základní nastavení." },
+    { id: 8, question: "System Prompt?", options: ["Monitor", "Globální instrukce chování", "Restart", "Bios"], correctAnswer: 1, hint: "Zábalní nastavení." },
     { id: 9, question: "Prompt Engineering?", options: ["Oprava PC", "Umění psát zadání", "Stavba stroje", "Sítě"], correctAnswer: 1, hint: "Nová dovednost." },
     { id: 10, question: "Délka promptu?", options: ["Musí být krátký", "Může být velmi detailní", "Jedno slovo", "Jen v AJ"], correctAnswer: 1, hint: "Detailnost pomáhá." }
   ]},
