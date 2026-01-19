@@ -12,9 +12,10 @@ import AiMenu from './components/AiMenu';
 import PresentationScreen from './components/PresentationScreen';
 import AuditScreen from './components/AuditScreen';
 import VideoScreen from './components/VideoScreen';
+import HibpScanner from './components/HibpScanner';
 import { supabase } from './supabaseClient';
 
-type View = 'login' | 'dashboard' | 'cyber_menu' | 'ai_menu' | 'quizzes' | 'presentations' | 'practical_exercises' | 'videos' | 'quiz' | 'result';
+type View = 'login' | 'dashboard' | 'cyber_menu' | 'ai_menu' | 'quizzes' | 'presentations' | 'practical_exercises' | 'videos' | 'quiz' | 'result' | 'hibp_scanner';
 type Module = 'cyber' | 'ai';
 type AuthStatus = 'initializing' | 'authenticated' | 'unauthenticated' | 'syncing';
 
@@ -79,9 +80,7 @@ const App: React.FC = () => {
   });
 
   const syncProfile = useCallback(async (userId: string) => {
-    // Lock - pokud už synchronizace běží, nepouštíme ji znova
     if (syncingRef.current) return;
-    
     syncingRef.current = true;
     setAuthStatus('syncing');
 
@@ -98,16 +97,13 @@ const App: React.FC = () => {
         userIdRef.current = userId;
         setUserProfile(data as UserProfile);
         setAuthStatus('authenticated');
-        // Přepneme na dashboard pouze pokud jsme na login obrazovce
         setCurrentView(prev => prev === 'login' ? 'dashboard' : prev);
       } else {
-        console.error("Profile not found for authenticated user");
         await supabase.auth.signOut();
         setAuthStatus('unauthenticated');
         setCurrentView('login');
       }
     } catch (err) {
-      console.error("Profile sync failed:", err);
       setAuthStatus('unauthenticated');
       setCurrentView('login');
     } finally {
@@ -117,24 +113,17 @@ const App: React.FC = () => {
 
   useEffect(() => {
     let mounted = true;
-
     const initAuth = async () => {
-      // 1. Získáme session hned při startu (řeší F5 refresh)
       const { data: { session } } = await supabase.auth.getSession();
-      
       if (!mounted) return;
-
       if (session?.user) {
         await syncProfile(session.user.id);
       } else {
         setAuthStatus('unauthenticated');
         setCurrentView('login');
       }
-
-      // 2. Nastavíme listener pro budoucí změny (login/logout/token refresh)
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
         if (!mounted) return;
-
         if (session?.user) {
           if (userIdRef.current !== session.user.id) {
             await syncProfile(session.user.id);
@@ -146,12 +135,9 @@ const App: React.FC = () => {
           setCurrentView('login');
         }
       });
-
       return subscription;
     };
-
     const authPromise = initAuth();
-
     return () => {
       mounted = false;
       authPromise.then(sub => sub?.unsubscribe());
@@ -194,12 +180,7 @@ const App: React.FC = () => {
               <div className="absolute inset-0 border-2 border-cyan-500/10 rounded-full"></div>
               <div className="absolute inset-0 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="text-cyan-500 font-mono text-sm tracking-[0.3em] font-bold animate-pulse uppercase">
-                {authStatus === 'initializing' ? 'Navazování spojení' : 'Synchronizace profilu'}
-              </div>
-              <div className="text-[10px] text-gray-600 font-mono tracking-widest uppercase">Encrypted Handshake</div>
-            </div>
+            <div className="text-cyan-500 font-mono text-sm tracking-[0.3em] font-bold animate-pulse uppercase">Syncing</div>
           </div>
        </div>
     );
@@ -218,6 +199,7 @@ const App: React.FC = () => {
     case 'presentations': content = <PresentationScreen blocks={currentModuleData} onBack={() => setCurrentView(activeModule === 'cyber' ? 'cyber_menu' : 'ai_menu')} theme={activeModule === 'cyber' ? 'cyan' : 'purple'} />; break;
     case 'practical_exercises': content = <AuditScreen onBack={() => setCurrentView(activeModule === 'cyber' ? 'cyber_menu' : 'ai_menu')} />; break;
     case 'videos': content = <VideoScreen videos={currentVideos} onBack={() => setCurrentView(activeModule === 'cyber' ? 'cyber_menu' : 'ai_menu')} theme={activeModule === 'cyber' ? 'emerald' : 'purple'} />; break;
+    case 'hibp_scanner': content = <HibpScanner onBack={() => setCurrentView('cyber_menu')} />; break;
     case 'quiz':
       const qBlock = currentModuleData.find(b => b.id === quizState.currentBlockId);
       if (qBlock) {

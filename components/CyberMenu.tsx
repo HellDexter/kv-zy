@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { ArrowLeft, BrainCircuit, Presentation, ArrowRight, ClipboardList, PlayCircle } from 'lucide-react';
+import { ArrowLeft, BrainCircuit, Presentation, ArrowRight, ClipboardList, PlayCircle, Search, ShieldAlert } from 'lucide-react';
 
 interface Props {
-  onNavigate: (view: 'quizzes' | 'presentations' | 'practical_exercises' | 'videos') => void;
+  onNavigate: (view: 'quizzes' | 'presentations' | 'practical_exercises' | 'videos' | 'hibp_scanner') => void;
   onBack: () => void;
 }
 
@@ -27,18 +27,18 @@ const CyberMenu: React.FC<Props> = ({ onNavigate, onBack }) => {
           Kyberbezpečnost
         </h1>
         <p className="text-gray-500 text-lg md:text-xl font-light max-w-3xl leading-relaxed">
-          Zvolte formu studia. Testujte se, prohlížejte materiály nebo sledujte lekce.
+          Zvolte formu studia. Testujte se, prohlížejte materiály nebo provádějte aktivní skenování hrozeb.
         </p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
         
-        {/* Card Helper Component for Menu */}
         {[
           { id: 'quizzes', title: 'Kvízy', desc: '9 interaktivních bloků pro testování znalostí.', icon: BrainCircuit, color: 'emerald' },
           { id: 'presentations', title: 'Prezentace', desc: 'Teoretické základy a materiály ke studiu.', icon: Presentation, color: 'purple' },
           { id: 'videos', title: 'Videa', desc: 'Video tutoriály a záznamy praktických lekcí.', icon: PlayCircle, color: 'cyan' },
-          { id: 'practical_exercises', title: 'Audit', desc: 'Zkontrolujte si zabezpečení svého zařízení.', icon: ClipboardList, color: 'pink' }
+          { id: 'practical_exercises', title: 'Audit', desc: 'Zkontrolujte si zabezpečení svého zařízení.', icon: ClipboardList, color: 'pink' },
+          { id: 'hibp_scanner', title: 'Scanner úniků', desc: 'Zjistěte, zda jsou vaše údaje v databázích hackerů.', icon: ShieldAlert, color: 'rose' }
         ].map((item) => (
           <button
             key={item.id}
