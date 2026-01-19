@@ -12,10 +12,10 @@ import AiMenu from './components/AiMenu';
 import PresentationScreen from './components/PresentationScreen';
 import AuditScreen from './components/AuditScreen';
 import VideoScreen from './components/VideoScreen';
-import HibpScanner from './components/HibpScanner';
+import SecurityScanner from './components/SecurityScanner';
 import { supabase } from './supabaseClient';
 
-type View = 'login' | 'dashboard' | 'cyber_menu' | 'ai_menu' | 'quizzes' | 'presentations' | 'practical_exercises' | 'videos' | 'quiz' | 'result' | 'hibp_scanner';
+type View = 'login' | 'dashboard' | 'cyber_menu' | 'ai_menu' | 'quizzes' | 'presentations' | 'practical_exercises' | 'videos' | 'quiz' | 'result' | 'security_scanner';
 type Module = 'cyber' | 'ai';
 type AuthStatus = 'initializing' | 'authenticated' | 'unauthenticated' | 'syncing';
 
@@ -199,7 +199,7 @@ const App: React.FC = () => {
     case 'presentations': content = <PresentationScreen blocks={currentModuleData} onBack={() => setCurrentView(activeModule === 'cyber' ? 'cyber_menu' : 'ai_menu')} theme={activeModule === 'cyber' ? 'cyan' : 'purple'} />; break;
     case 'practical_exercises': content = <AuditScreen onBack={() => setCurrentView(activeModule === 'cyber' ? 'cyber_menu' : 'ai_menu')} />; break;
     case 'videos': content = <VideoScreen videos={currentVideos} onBack={() => setCurrentView(activeModule === 'cyber' ? 'cyber_menu' : 'ai_menu')} theme={activeModule === 'cyber' ? 'emerald' : 'purple'} />; break;
-    case 'hibp_scanner': content = <HibpScanner onBack={() => setCurrentView('cyber_menu')} />; break;
+    case 'security_scanner': content = <SecurityScanner onBack={() => setCurrentView('cyber_menu')} />; break;
     case 'quiz':
       const qBlock = currentModuleData.find(b => b.id === quizState.currentBlockId);
       if (qBlock) {
