@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Newspaper, ExternalLink, Loader2, AlertTriangle, RefreshCw, Languages, Calendar, Globe, Sparkles, MapPin, Flag } from 'lucide-react';
+import { ArrowLeft, Newspaper, ExternalLink, Loader2, AlertTriangle, RefreshCw, Languages, Calendar, Globe, Sparkles, MapPin, Flag, Key } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 
 interface Props {
@@ -19,9 +19,38 @@ interface Article {
 
 const CyberNews: React.FC<Props> = ({ onBack }) => {
   const [articles, setArticles] = useState<Article[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [groundingUrls, setGroundingUrls] = useState<{title: string, uri: string}[]>([]);
+  const [needsKey, setNeedsKey] = useState(false);
+
+  const checkKeyAndFetch = async () => {
+    try {
+      // @ts-ignore
+      const hasKey = await window.aistudio.hasSelectedApiKey();
+      if (!hasKey) {
+        setNeedsKey(true);
+        setIsLoading(false);
+        return;
+      }
+      setNeedsKey(false);
+      fetchNewsWithAI();
+    } catch (err) {
+      console.error("Key check error:", err);
+      fetchNewsWithAI(); // Fallback to try anyway
+    }
+  };
+
+  const handleOpenKeyDialog = async () => {
+    try {
+      // @ts-ignore
+      await window.aistudio.openSelectKey();
+      setNeedsKey(false);
+      fetchNewsWithAI();
+    } catch (err) {
+      console.error("Failed to open key dialog:", err);
+    }
+  };
 
   const fetchNewsWithAI = async () => {
     setIsLoading(true);
@@ -32,16 +61,14 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       
       const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-preview',
+        model: 'gemini-3-flash-preview',
         contents: [{ 
           role: 'user', 
           parts: [{ 
-            text: "Najdi nejvýznamnější aktuální zprávy ze světa kybernetické bezpečnosti za posledních 48 hodin. " +
-                  "Rozděl výsledky na dvě jasné kategorie:\n" +
-                  "1. 'domestic' - Zprávy týkající se výhradně České republiky (útoky na české banky, úřady, varování NÚKIB, české firmy).\n" +
-                  "2. 'world' - Globální incidenty, útoky na velké technologické firmy nebo nové celosvětové hrozby.\n" +
-                  "Najdi alespoň 3 zprávy pro každou kategorii. Pro každou zprávu uveď: region (hodnota 'domestic' nebo 'world'), název v češtině, stručné shrnutí v češtině, název zdroje, URL adresu, dnešní datum a kategorii hrozby.\n" +
-                  "Výstup formátuj striktně jako JSON pole objektů."
+            text: "Najdi 6 nejvýznamnějších aktuálních zpráv ze světa kybernetické bezpečnosti za posledních 48 hodin. " +
+                  "Rozděl je na 'domestic' (Česká republika) a 'world' (zbytek světa). " +
+                  "Pro každou zprávu uveď: region, název v češtině, stručné shrnutí v češtině, název zdroje, URL adresu a kategorii. " +
+                  "Výstup vrať jako čistý JSON pole objektů."
           }] 
         }],
         config: { 
@@ -62,24 +89,29 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
         setGroundingUrls(urls);
       }
 
+      // Extract JSON from potential markdown blocks
       const jsonMatch = text.match(/\[[\s\S]*\]/);
       if (jsonMatch) {
         const parsedArticles = JSON.parse(jsonMatch[0]);
         setArticles(parsedArticles);
       } else {
-        throw new Error("Nepodařilo se zpracovat strukturu zpráv. Zkuste to prosím znovu.");
+        throw new Error("Model nevrátil data ve správném formátu. Zkuste to prosím znovu.");
       }
 
     } catch (err: any) {
       console.error("News AI Error:", err);
-      setError("Nepodařilo se načíst zprávy. AI vyhledávání narazilo na problém nebo vypršel časový limit.");
+      if (err.message?.includes("Requested entity was not found")) {
+        setNeedsKey(true);
+      } else {
+        setError("Nepodařilo se načíst zprávy. Ujistěte se, že máte vybraný platný API klíč s povoleným vyhledáváním.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchNewsWithAI();
+    checkKeyAndFetch();
   }, []);
 
   const domesticArticles = articles.filter(a => a.region === 'domestic');
@@ -94,7 +126,7 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
       <header className="mb-12 animate-fade-in-up">
         <div className="flex items-center gap-3 mb-6">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/5 text-amber-400 text-[10px] uppercase tracking-widest font-mono">
-            <Sparkles className="w-3 h-3" /> Real-time Cyber Intelligence
+            <Sparkles className="w-3 h-3" /> Real-time Intelligence
           </div>
           <button 
             onClick={fetchNewsWithAI}
@@ -110,11 +142,28 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
            Kyber <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-600">Zpravodaj</span>
         </h1>
         <p className="text-gray-400 font-light max-w-2xl leading-relaxed">
-           Inteligentní monitoring hrozeb rozdělený na domácí scénu a světové incidenty.
+           Inteligentní monitoring hrozeb využívající Google Search grounding pro maximální aktuálnost.
         </p>
       </header>
 
-      {isLoading ? (
+      {needsKey ? (
+        <div className="bg-amber-500/5 border border-amber-500/20 rounded-[2.5rem] p-12 text-center animate-fade-in-up max-w-2xl mx-auto">
+           <Key className="w-12 h-12 text-amber-500 mx-auto mb-6" />
+           <h2 className="text-xl font-display text-white mb-4 uppercase">Vyžadována autorizace</h2>
+           <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+              Pro funkci živého vyhledávání zpráv je nutné vybrat váš vlastní API klíč z placeného projektu (nebo s povoleným Search Grounding).
+           </p>
+           <div className="flex flex-col gap-4 items-center">
+              <button 
+                onClick={handleOpenKeyDialog} 
+                className="bg-white text-black px-10 py-4 rounded-full font-bold uppercase text-xs tracking-[0.2em] shadow-xl hover:bg-amber-50 transition-all flex items-center gap-3"
+              >
+                Vybrat API klíč <ArrowLeft className="w-4 h-4 rotate-180" />
+              </button>
+              <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noreferrer" className="text-[10px] text-gray-600 uppercase underline tracking-widest">Více o nastavení klíče</a>
+           </div>
+        </div>
+      ) : isLoading ? (
         <div className="flex flex-col items-center justify-center py-24">
            <div className="relative w-24 h-24 mb-10">
               <div className="absolute inset-0 border-2 border-amber-500/10 rounded-full"></div>
@@ -122,7 +171,7 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
               <Globe className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-amber-500/40 animate-pulse" />
            </div>
            <p className="text-amber-500 font-mono text-[10px] uppercase tracking-[0.4em] animate-pulse text-center">
-              Analyzuji české i světové zdroje...
+              Skenuji světové zdroje a analyzuji incidenty...
            </p>
         </div>
       ) : error ? (
@@ -135,15 +184,14 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
       ) : (
         <div className="space-y-20 pb-20">
           
-          {/* DOMESTIC SECTION */}
           <section className="animate-fade-in-up">
             <div className="flex items-center gap-4 mb-8">
                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
                   <MapPin className="w-6 h-6 text-amber-500" />
                </div>
                <div>
-                  <h2 className="text-2xl font-display text-white uppercase tracking-tight">Z domova (ČR)</h2>
-                  <p className="text-[10px] text-gray-500 font-mono uppercase tracking-[0.2em]">Lokální incidenty a varování NÚKIB</p>
+                  <h2 className="text-2xl font-display text-white uppercase tracking-tight">Domácí Scéna</h2>
+                  <p className="text-[10px] text-gray-500 font-mono uppercase tracking-[0.2em]">Incidenty v České republice</p>
                </div>
             </div>
 
@@ -153,20 +201,19 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
               </div>
             ) : (
               <div className="p-10 border border-dashed border-white/5 rounded-3xl text-center text-gray-600 text-xs font-mono uppercase">
-                 Žádné aktuální domácí incidenty nebyly detekovány
+                 Hledám aktuální domácí incidenty... (Zkuste obnovit)
               </div>
             )}
           </section>
 
-          {/* WORLD SECTION */}
           <section className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
             <div className="flex items-center gap-4 mb-8">
                <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
                   <Globe className="w-6 h-6 text-orange-500" />
                </div>
                <div>
-                  <h2 className="text-2xl font-display text-white uppercase tracking-tight">Ze světa</h2>
-                  <p className="text-[10px] text-gray-500 font-mono uppercase tracking-[0.2em]">Globální útoky a kyber-geopolitika</p>
+                  <h2 className="text-2xl font-display text-white uppercase tracking-tight">Světový monitoring</h2>
+                  <p className="text-[10px] text-gray-500 font-mono uppercase tracking-[0.2em]">Globální kyber-hrozby</p>
                </div>
             </div>
 
@@ -175,11 +222,10 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
             </div>
           </section>
 
-          {/* CITATIONS */}
           {groundingUrls.length > 0 && (
             <div className="mt-16 animate-fade-in-up border-t border-white/5 pt-12">
                <h3 className="text-white font-display text-[10px] mb-6 uppercase tracking-widest flex items-center gap-2 text-gray-500">
-                  <Languages className="w-3 h-3" /> Použité zdroje pro AI analýzu
+                  <Languages className="w-3 h-3" /> Citované zdroje v reálném čase
                </h3>
                <div className="flex flex-wrap gap-2">
                   {groundingUrls.map((url, i) => (
