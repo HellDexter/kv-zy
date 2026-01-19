@@ -22,35 +22,7 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [groundingUrls, setGroundingUrls] = useState<{title: string, uri: string}[]>([]);
-  const [needsKey, setNeedsKey] = useState(false);
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
-
-  const checkKeyAndFetch = async () => {
-    try {
-      // @ts-ignore
-      const hasKey = await window.aistudio.hasSelectedApiKey();
-      if (!hasKey) {
-        setNeedsKey(true);
-        return;
-      }
-      setNeedsKey(false);
-      fetchNewsWithAI();
-    } catch (err) {
-      setNeedsKey(true);
-    }
-  };
-
-  const handleOpenKeyDialog = async () => {
-    try {
-      // @ts-ignore
-      await window.aistudio.openSelectKey();
-      setNeedsKey(false);
-      // Small delay to ensure the key is injected into process.env
-      setTimeout(fetchNewsWithAI, 1000);
-    } catch (err) {
-      console.error("Failed to open key dialog:", err);
-    }
-  };
 
   const fetchNewsWithAI = async () => {
     setIsLoading(true);
@@ -114,7 +86,7 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
   };
 
   useEffect(() => {
-    checkKeyAndFetch();
+    fetchNewsWithAI();
   }, []);
 
   const domesticArticles = articles.filter(a => a.region === 'domestic');
@@ -144,31 +116,11 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
            Kyber <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-600">Zpravodaj</span>
         </h1>
         <p className="text-gray-400 font-light max-w-2xl leading-relaxed">
-           Prohledáváme světové databáze incidentů pomocí <strong>Gemini AI</strong>. Vyžaduje projekt s aktivním fakturačním účtem.
+           Prohledáváme světové databáze incidentů pomocí <strong>Gemini AI</strong>. Monitorujeme hrozby v reálném čase.
         </p>
       </header>
 
-      {needsKey ? (
-        <div className="bg-amber-500/5 border border-amber-500/20 rounded-[2.5rem] p-12 text-center animate-fade-in-up max-w-2xl mx-auto">
-           <div className="w-20 h-20 bg-amber-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-amber-500/20">
-              <Key className="w-10 h-10 text-amber-500" />
-           </div>
-           <h2 className="text-2xl font-display text-white mb-4 uppercase">Autorizace vyžadována</h2>
-           <p className="text-gray-500 text-sm mb-10 leading-relaxed">
-              Google Search Grounding (živé hledání) je pokročilá funkce. <br/>
-              Pro její spuštění musíte vybrat svůj <strong>placený API klíč</strong>.
-           </p>
-           <div className="flex flex-col items-center gap-4">
-              <button 
-                onClick={handleOpenKeyDialog} 
-                className="bg-white text-black px-12 py-5 rounded-2xl font-bold uppercase text-xs tracking-widest shadow-2xl hover:bg-amber-50 transition-all flex items-center gap-3"
-              >
-                Vybrat API klíč <ArrowLeft className="w-4 h-4 rotate-180" />
-              </button>
-              <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" className="text-[10px] text-gray-600 hover:text-amber-500 font-mono uppercase underline tracking-widest">Dokumentace k fakturaci</a>
-           </div>
-        </div>
-      ) : isLoading ? (
+      {isLoading ? (
         <div className="flex flex-col items-center justify-center py-24">
            <div className="relative w-24 h-24 mb-10">
               <div className="absolute inset-0 border-2 border-amber-500/10 rounded-full"></div>
@@ -187,17 +139,16 @@ const CyberNews: React.FC<Props> = ({ onBack }) => {
              <p className="text-gray-500 text-sm mb-10 max-w-md mx-auto leading-relaxed">{debugInfo}</p>
              <div className="flex flex-wrap justify-center gap-4">
                 <button onClick={fetchNewsWithAI} className="bg-white text-black px-8 py-3 rounded-xl font-bold uppercase text-[10px] tracking-widest shadow-lg">Zkusit znovu</button>
-                <button onClick={handleOpenKeyDialog} className="bg-white/10 text-white border border-white/10 px-8 py-3 rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-white/20 transition-colors">Změnit projekt</button>
              </div>
           </div>
 
           <div className="bg-[#0f0f0f] border border-white/5 rounded-3xl p-8 max-w-2xl mx-auto">
              <h3 className="text-white font-display text-xs mb-8 uppercase tracking-widest flex items-center gap-2">
-                <Settings className="w-4 h-4 text-amber-500" /> Kontrolní seznam pro GCP
+                <Settings className="w-4 h-4 text-amber-500" /> Kontrolní seznam pro zprovoznění
              </h3>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <CheckItem icon={<CheckCircle className="text-emerald-500" />} label="Gemini API" sub="Povolené v Google Cloud" />
-                <CheckItem icon={<CreditCard className="text-amber-500" />} label="Billing Active" sub="Pay-as-you-go tarif" />
+                <CheckItem icon={<CreditCard className="text-amber-500" />} label="Billing Active" sub="Nutné pro Google Search" />
              </div>
           </div>
         </div>

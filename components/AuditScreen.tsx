@@ -7,7 +7,6 @@ interface Props {
   onBack: () => void;
 }
 
-// Added Message interface to fix "Cannot find name 'Message'" errors
 interface Message {
   role: 'user' | 'model';
   text: string;
@@ -74,7 +73,6 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   const [showChat, setShowChat] = useState(false);
-  // Uses the newly defined Message interface
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeItem, setActiveItem] = useState<AuditItem | null>(null);
@@ -102,23 +100,24 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
     setChatHistory([]);
 
     try {
-      // @ts-ignore
-      const hasKey = await window.aistudio.hasSelectedApiKey();
-      if (!hasKey) {
-        // @ts-ignore
-        await window.aistudio.openSelectKey();
-      }
-
+      // Always create fresh instance with system API key
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-3-pro-preview', // Upgraded for better reasoning
         contents: [{ role: 'user', parts: [{ text: item.aiPrompt }] }],
-        config: { systemInstruction: `Jsi Kyber-GURU. Pomoz uživateli s: ${item.label}. Riziko: ${item.risk}. Odpovídej česky a srozumitelně.` }
+        config: { 
+          systemInstruction: `Jsi Kyber-GURU, špičkový expert na IT bezpečnost. Pomoz uživateli s konkrétním tématem: ${item.label}. 
+          Vysvětli mu, proč je to důležité, jaké je riziko (${item.risk}) a dej mu přesný, srozumitelný návod v češtině. 
+          Buď profesionální, ale lidský.` 
+        }
       });
 
-      if (response.text) setChatHistory([{ role: 'model', text: response.text }]);
+      if (response.text) {
+        setChatHistory([{ role: 'model', text: response.text }]);
+      }
     } catch (err) {
-      setChatHistory([{ role: 'model', text: "Chyba připojení. Zkuste znovu po výběru klíče." }]);
+      console.error("AI Consultant Error:", err);
+      setChatHistory([{ role: 'model', text: "Omlouvám se, ale nepodařilo se mi navázat spojení s mojí bezpečnostní databází. Zkuste to prosím za chvíli." }]);
     } finally {
       setLoading(false);
     }
@@ -129,7 +128,6 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
     if (!inputMessage.trim() || loading || !activeItem) return;
 
     const userText = inputMessage;
-    // Uses the newly defined Message interface
     const newHistory: Message[] = [...chatHistory, { role: 'user', text: userText }];
     setChatHistory(newHistory);
     setInputMessage("");
@@ -138,12 +136,14 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-3-pro-preview',
         contents: newHistory.map(m => ({ role: m.role, parts: [{ text: m.text }] })),
       });
-      if (response.text) setChatHistory(prev => [...prev, { role: 'model', text: response.text! }]);
+      if (response.text) {
+        setChatHistory(prev => [...prev, { role: 'model', text: response.text! }]);
+      }
     } catch (e) {
-      setChatHistory(prev => [...prev, { role: 'model', text: "Došlo k chybě při generování odpovědi." }]);
+      setChatHistory(prev => [...prev, { role: 'model', text: "Došlo k chybě při generování odpovědi. Zkontrolujte prosím své připojení." }]);
     } finally {
       setLoading(false);
     }
@@ -151,7 +151,6 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 min-h-screen pb-32">
-      {/* STICKY HEADER */}
       <div className="sticky top-0 z-40 bg-[#050505]/95 backdrop-blur-xl -mx-4 px-4 pt-4 pb-8 mb-8 border-b border-white/5 animate-fade-in-up">
         <button onClick={onBack} className="text-gray-500 hover:text-white transition-all flex items-center gap-2 text-xs font-bold tracking-widest uppercase mb-6 font-mono group">
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Zpět do menu
@@ -175,7 +174,6 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
         </div>
       </div>
 
-      {/* AUDIT LIST */}
       <div className="space-y-12">
         {AUDIT_DATA.map((section, sIdx) => (
           <div key={sIdx} className="animate-fade-in-up" style={{ animationDelay: `${sIdx * 100}ms` }}>
@@ -238,7 +236,6 @@ const AuditScreen: React.FC<Props> = ({ onBack }) => {
         ))}
       </div>
 
-      {/* AI CHAT MODAL */}
       {showChat && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-6">
           <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={() => setShowChat(false)}></div>
